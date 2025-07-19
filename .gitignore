@@ -1,6 +1,9 @@
 # Ignore .qmd files, until the end of the week1
 /labs/**/*.qmd
 
+# Ignore rendered solutions for now
+/labs/**/*.solved.html
+
 # macOS files
 .DS_Store
 
