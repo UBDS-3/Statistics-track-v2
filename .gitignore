@@ -1,6 +1,3 @@
-# Ignore .qmd files, until the end of the week1
-/labs/**/*.qmd
-
 # macOS files
 .DS_Store
 

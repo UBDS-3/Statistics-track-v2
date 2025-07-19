@@ -1,0 +1,282 @@
+---
+title: "Lab0: Setup"
+author: "Bio Data Science^3 faculty"
+date: "July 19 - August 2, 2025"
+output:
+  html_document:
+    toc: true
+    toc_depth: 2
+    toc_float: true
+---
+
+# R and RStudio
+
+This lab will help you prepare your computer environment for the
+practical component of UBDS\^3. You will learn how to install or update
+R and RStudio, as well as how to obtain R-packages, and makes sure you
+have right versions of the software.
+
+## Getting R
+
+  + **R is a free software** available for download from
+[CRAN](https://cran.rstudio.com/), the Comprehensive R Archive Network.
+<br/>The latest release of R is 4.5.0, *How About a Twenty-Six* (released on
+2025/04/11).
+
+  + To install or update R **go to <https://cran.rstudio.com/> and download** the
+precompiled binary distribution for your operating system. The links
+for Linux/Mac/Windows appear on the top of the website, as shown in the
+image below. <br>After downloading the appropriate file, open it and
+**follow the instructions to complete the installation.** <br><br>
+
+![](figs/cran.png) <br><br>
+
+## Getting RStudio
+
+  + **RStudio is an IDE** (Integrated Development Environment) for R. It
+provides you with a powerful interface for working with R, which
+includes a **text editor** where you can write your code and/or notes.
+
+  + **To get RStudio** go to
+<https://posit.co/download/rstudio-desktop/#download> and download a
+free version by clicking the blue button 'DOWNLOAD RSTUDIO DESKTOP'.
+Open the file and follow the instructions.![](figs/rstudio.png) <br><br>
+If you don't see the appropriate
+version for your OS, you can scroll down to find it <br><br>
+![](figs/rstudio2.png)
+
+<br>
+
+**If you encounter issues don't hesitate to ask the TAs for assistance.**
+
+
+## Getting started
+There are two ways you can use R:
+
+  + access through a **command-line interpreter**:<br>
+  open the terminal and type R.<br> ![](figs/rterminal.png){width=500px}
+
+  + **Rstudio interface**: <br>
+  open Rstudio, the interface can have 4 panels:
+
+      + top-left: scripts and files
+      + bottom-left: R console
+      + top-right: objects, history and environment
+      + bottom-right: tree of folders(files), graph window(plots), packages, help window, viewer<br>
+
+![](figs/rstudio_session.png)
+
+To test whether the installation of R and RStudio was successful, type in a simple arithmetic calculation in the Console panel (bottom left)
+e.g.:
+
+```{r, eval = FALSE}
+1+1
+2^3
+```
+
+to see if the commands execute and the results are correct.
+<br><br>
+
+# R document types
+
+RStudio incorporates a very user-friendly text editor. You can edit different type of files:
+
+  + plain text with notes and comments
+  + write, debug and execute your R code
+  + write and run notebooks using `rmarkdown`, `knitr` and `quarto` - see lab on quarto
+
+
+## R Scripts
+
+An R-script is a simple text file storing all the R code you want to execute.<br>
+As a good practice, when coding, gather all your code in a text file, **!!with comments!!**.<br>
+About comments:
+
+  + in a line, everything that is after the '#' is a comment (and is ignored by the program)
+  + they are essential for others (and for you later!) to know what the program is doing at every step
+
+#### create
+To start a new R-script, press a black triangle dropdown button
+![](figs/add_doc.png) in the top-left corner of your RStudio window.
+You will see multiple options of file formats to choose from, like in
+the picture below:
+
+<br>
+![](figs/rdocs.png)
+<br><br>
+
+Choose the first option `R Script`. <br>
+You will see a new, source code panel, with
+a tab `Untitled1` appear on top of your R console. Here, you
+can write and edit your R code.
+
+Now, type in a few lines of simple code into `Untitled1`, e.g.
+
+```{r, eval=FALSE}
+x <- seq(0, 10, length.out = 1000)
+y <- x*sin(2*pi*x)
+plot(x, y)
+```
+
+#### execute from Rstudio
+To execute your code select/highlight the portion you want to evaluate and then
+you have two options:
+
+  1. or press the `Run` button on the top-right corner of the panel (green
+  circle in the image below)
+  2. or press a keyboard shortcut: `Ctrl` (`Command` on macOS X) + `Enter`
+
+#### save
+To save your code, press the floppy disk button (blue circle in the image below).
+Pick a location and a name for your file,
+and press `Save`. Your R-script file will have an extention '.R' to indicate
+it contains R code.
+
+<br>
+![](figs/rscript.png)
+<br><br>
+
+#### run from command line and `source`
+
+  + You can run the script from command line of your terminal using the following: `Rscript my_rscript.R`<br>
+  + You can also use the function `source("my_rscript.R")` to execute an entire
+  R-script file from the R console or another R script.
+
+
+<br><br>
+
+
+### Installing packages
+Please install these packages that you are going to need in the following days:<br>
+
+#### Lab - intro to tidy R:
+
+Install `Bioconductor`
+```{r, eval=F}
+if (!require("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+BiocManager::install(version = "3.21")
+```
+
+```{r, eval=F}
+pkgs_needed = c("dplyr", "ggplot2", "tidyverse", "DESeq2",
+                "patchwork", "limma", "muscat","purrr")
+
+letsinstall = setdiff(pkgs_needed, installed.packages())
+if (length(letsinstall) > 0) {
+  for (pkg in letsinstall) {
+    BiocManager::install(pkg, dependencies = TRUE)
+  }
+}
+```
+
+
+#### Lab - Quarto:
+In the next days we are going to introduce you to literate programming with Quarto (and R Markdown). More about it in the Lab2_quarto
+
+**Getting Quarto**<br>
+Recent versions of Rstudio come with Quarto incorporated. You can check this by going to the `new file` button (do you remember how to [create] a new file?);
+
+  + if you see `quarto document` as an option, it means Quarto is installed. <br>
+  + if this is not the case, go to the website https://quarto.org/docs/get-started/ and download the appropriate file for your OS. Open and follow the instructions. <br>
+
+In order to render documents into pdf format, `Quarto` needs to be able to
+access LaTeX. You can use `Quarto` to install `TinyTeX` by following the
+instructions at [https://quarto.org/docs/output-formats/pdf-basics.html](https://quarto.org/docs/output-formats/pdf-basics.html). <br>
+Go to your terminal and type
+```{bash, eval=F}
+quarto install tinytex
+```
+
+Go to the website https://quarto.org/docs/get-started/ and download. Open and follow the instructions. <br>
+
+You can install the `quarto` package to later render the documents from the **R console**:
+```{r, eval=FALSE}
+pkgs_needed = c("quarto", "ggplot2", "patchwork")
+
+letsinstall = setdiff(pkgs_needed, installed.packages())
+if (length(letsinstall) > 0) {
+  for (pkg in letsinstall) {
+    BiocManager::install(pkg, dependencies = TRUE)
+  }
+}
+#quarto::quarto_render("hello.qmd")
+```
+<br>
+
+**Getting R Markdown**<br>
+To work with R Markdown you need to install the appropriate packages to knit and render your documents. <br>
+From the R console do this:
+```{r, eval=F}
+pkgs_needed = c("rmarkdown", "knitr", "magrittr", "stringi", "stringr")
+
+letsinstall = setdiff(pkgs_needed, installed.packages())
+if (length(letsinstall) > 0) {
+  for (pkg in letsinstall) {
+    BiocManager::install(pkg, dependencies = TRUE)
+  }
+}
+```
+
+
+#### Lab - multivariate:
+```{r}
+pkgs_needed = c("tidyverse","GGally", "factoextra", "ade4")
+letsinstall = setdiff(pkgs_needed, installed.packages())
+if (length(letsinstall) > 0) {
+  for (pkg in letsinstall)
+    BiocManager::install(pkg, dependencies = TRUE)
+}
+```
+
+#### Lab - clustering:
+```{r }
+pkgs_needed = c("tidyverse",
+  "dbscan", "GGally", "pheatmap",
+  "flowCore","flowViz","flowPeaks", "ggcyto"
+)
+letsinstall = setdiff(pkgs_needed, installed.packages())
+if (length(letsinstall) > 0) {
+  for (pkg in letsinstall)
+    BiocManager::install(pkg, dependencies = TRUE)
+}
+```
+
+#### Lab - testing:
+```{r}
+pkgs_needed = c("dplyr","ggplot2", "DESeq2","pasilla","genefilter",
+                "pheatmap","readr","tibble","apeglm")
+
+letsinstall = setdiff(pkgs_needed, installed.packages())
+if (length(letsinstall) > 0) {
+  for (pkg in letsinstall) {
+    BiocManager::install(pkg, dependencies = TRUE)
+  }
+}
+```
+
+#### Lab - machine learning:
+
+```{r}
+pkgs_needed = c("MASS","ExperimentHub", "tidyverse","glmnet",
+                "RColorBrewer","caret", "magrittr")
+letsinstall = setdiff(pkgs_needed, installed.packages())
+if (length(letsinstall) > 0) {
+  for (pkg in letsinstall) {
+    BiocManager::install(pkg, dependencies = TRUE)
+  }
+}
+```
+
+#### single-cell data applications
+```{r}
+pkgs_needed = c("muscData", "scran", "scuttle", "scater")
+letsinstall = setdiff(pkgs_needed, installed.packages())
+if (length(letsinstall) > 0) {
+  for (pkg in letsinstall) {
+    BiocManager::install(pkg, dependencies = TRUE)
+  }
+}
+#To download (& cache data) in advance: when asked, type yes to create the cache
+muscData::Kang18_8vs8()
+```
