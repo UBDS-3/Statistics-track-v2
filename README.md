@@ -9,6 +9,12 @@ This repository contains simplified version of `Statistics-track` -- teaching ma
 * [Regression](labs/regression/regression.html)
 * ...
 
+## For faculty members
+
+Run bash script `render.sh` to get `html` files for your labs. For usage run `./render.sh`.
+
+Make sure to have proper `R_HOME` variable, for macOS with RStudio (latest) is `R_HOME=/Library/Frameworks/R.framework/Resources`
+
 ## License
 
 The project is licensed under CC0, see `LICENSE` for more information.
