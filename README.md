@@ -1,7 +1,7 @@
 # UBDS3-2025
-If you a student, who was very curious -- well done smart ass, you have all the solutions, but please keep it as our secret :)
+If you are a student, who was very curious - well done smart ass, you have all the solutions, but please keep it as our secret :)
 
-This repository contains simplified version of `Statistics-track` -- teaching material for the Ukrainian Biological Data Science Summer School 2025
+This repository contains teaching material for the R statistical course of the Ukrainian Biological Data Science Summer School 2025
 
 ## Contents
 
@@ -9,7 +9,12 @@ This repository contains simplified version of `Statistics-track` -- teaching ma
 * [Exploratory Data Analysis](labs/exploratory/exploratory.html)
 * [Data and Randomness](labs/randomness/randomness.html)
 * [Regression](labs/regression/regression.html)
-* ...
+* [Omics](labs/omics/omics.html)
+* [Hypothesis testing](labs/testing/testing.html)
+* [Clustering analysis](labs/clustering/clustering.html)
+* [Multivariate analysis](labs/multivariate/multivariate.html)
+* [Machine Learning](labs/ML/ML.html)
+
 
 ## For faculty members
 
