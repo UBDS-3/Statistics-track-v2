@@ -1,4 +1,6 @@
 # UBDS3-2025
+If you a student, who was very curious -- well done smart ass, you have all the solutions, but please keep it as our secret :)
+
 This repository contains simplified version of `Statistics-track` -- teaching material for the Ukrainian Biological Data Science Summer School 2025
 
 ## Contents
