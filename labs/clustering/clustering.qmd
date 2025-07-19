@@ -25,7 +25,7 @@ knitr::opts_chunk$set(
     echo  = params$answers,
     message = FALSE,
     warning = FALSE,
-    fig.width=6, fig.height=4, fig.align="center", fig.pos="h"
+    fig.width=15, fig.height=8, fig.align="center", fig.pos="h"
 )
 set.seed(533)
 ```
@@ -66,7 +66,7 @@ load(url("http://web.stanford.edu/class/bios221/data/Morder.RData"))
 
 If you downloaded the file before, you can load it from the local directory.
 
-```{r load-data-loc}
+```{r }
 #| label: loadDataLoc
 #| echo: true
 #| eval: true
@@ -114,8 +114,9 @@ to compute a distance matrix storing all pairwise (gene-to-gene)
 dissimilarities. This is how to do it:
 
 ```{r}
-#| label: hclust_genes
-#| eval: !expr (! isTRUE(params$skip_execution))
+#| label: hclustGenes
+#| eval: true
+#| echo: true
 #| fig.width: 18
 #| fig.height: 8
 # distance calculation
@@ -133,8 +134,7 @@ plot(gene_clust)
 Why in the provided code the input to `dist` function is `t(Morder)`?
 
 ```{r}
-#| label: question_transpose
-#| eval: !expr (! params$skip_execution & ! params$skip_answers)
+#| label: questionTranspose
 #| echo: false
 #| results: 'asis'
 cat(
@@ -154,12 +154,21 @@ uses a "complete" linkage method (see `?hclust` for info).
 
 Redo hierarchical clustering with the `ward.D2` method and plot the dendrogram.
 
+```{r }
+#| label: hclustGenesWard.D2Hint
+#| eval: false
+#| echo: !expr params$simplified
+# Fill in the blanks to complete the code and answer the question above
+
+gene_clust_wd2 = ______(d = ____(_(______)), ______ = "_______")
+____(gene_clust_wd2)
+
+# Hints:
+# ...
+```
+
 ```{r}
-#| label: hclust_genes_ward.D2
-#| eval: !expr (! params$skip_execution & ! params$skip_answers)
-#| echo: !expr (! params$skip_answers)
-#| fig.width: 15
-#| fig.height: 8
+#| label: hclustGenesWard.D2Solution
 gene_clust_wd2 = hclust(d = dist(t(Morder)), method = "ward.D2")
 plot(gene_clust_wd2)
 ```
@@ -169,7 +178,6 @@ What do they correspond to?
 
 ```{r}
 #| label: hclust_genes_ward.D2_dend
-#| eval: !expr (! params$skip_execution & ! params$skip_answers)
 #| echo: false
 #| results: 'asis'
 cat(
@@ -191,12 +199,21 @@ hierarchical clustering for samples (observations).
 
 Use dist and hclust (with default linkage method) to cluster samples.
 
+```{r }
+#| label: hclustSamplesHint
+#| eval: false
+#| echo: !expr params$simplified
+# Fill in the blanks to complete the code and answer the question above
+
+D_samples = ____(______)
+sample_clust = ______(_ = D_samples)
+
+# Hints:
+# 1. Do we need to transpose the matrix?
+```
+
 ```{r}
-#| label: hclust_samples
-#| eval: !expr (! params$skip_execution)
-#| echo: !expr (! params$skip_answers)
-#| fig.width: 15
-#| fig.height: 8
+#| label: hclustSamplesSolution
 # we don't transpose the matrix now (samples are rows)
 D_samples = dist(Morder)
 sample_clust = hclust(d = D_samples)
@@ -205,23 +222,33 @@ sample_clust = hclust(d = D_samples)
 How many clusters of samples are there at the dendrogram height of 12?
 Hint: the `abline()` and `cutree()` functions might be helpful.
 
+```{r }
+#| label: hclustSamplesAblineHint
+#| eval: false
+#| echo: !expr params$simplified
+# Fill in the blanks to complete the code and answer the question above
+
+____(sample_clust)
+______(a=12, b=0, col="blue")
+
+clusts <- ______(sample_clust, _ = __)
+_____(clusts)
+
+# Hints:
+# ...
+```
+
 ```{r}
-#| label: hclust_samples_abline
-#| eval: !expr (! params$skip_execution & ! params$skip_answers)
-#| echo: !expr (! params$skip_answers)
-#| fig.width: 15
-#| fig.height: 8
+#| label: hclustSamplesAblineSolution
 plot(sample_clust)
 abline(a=12, b=0, col="blue")
 
 clusts <- cutree(sample_clust, h = 12)
 table(clusts)
-
 ```
 
 ```{r}
-#| label: hclust_samples_abline_answer
-#| eval: !expr (! params$skip_execution & ! params$skip_answers)
+#| label: hclustSamplesAblineAnswer
 #| echo: false
 #| results: 'asis'
 cat(sprintf(
@@ -239,7 +266,8 @@ sure that 0 is in the center of the color scale, and use beautiful colors.
 
 ```{r}
 #| label: pheatmap
-#| eval: !expr (! isTRUE(params$skip_execution))
+#| eval: true
+#| echo: true
 #| fig.height: 6
 #| fig.width: 10
 library("pheatmap")
@@ -260,8 +288,7 @@ What type of distance and which clustering method does
 `pheatmap` use by default for clustering rows and columns?
 
 ```{r}
-#| label: pheatmap_default_distance
-#| eval: !expr (! params$skip_execution & ! params$skip_answers)
+#| label: pheatmapDefaultDistanceSolution
 #| echo: false
 #| results: 'asis'
 cat(
@@ -273,10 +300,39 @@ Note that these are default values for `dist` and `hclust`, too.
 Look at how clustering heatmap changes if you use different
 distance and clustering methods (e.g. 'ward.D2').
 
+```{r }
+#| label: pheatmapWd2Hint
+#| eval: false
+#| echo: !expr params$simplified
+#| fig.height: 6
+#| fig.width: 10
+# Fill in the blanks to complete the code and answer the question above
+
+# cluster genes
+gene_clust_wd2 = ______(_ = ____(_(______)), ______ = "_______")
+
+# cluster samples
+sample_clust_wd2 = ______(_ = ____(______), ______ = "_______")
+
+# order expression matrix by clustering results
+Morder_clustered = Morder[sample_clust_wd2$order, gene_clust_wd2$order]
+
+# we use pre-computed clustering, so we need to specify that pheatmap should not
+# re-cluster the input data
+pheatmap(
+  mat = ________________,
+  cluster_rows = FALSE, cluster_cols = FALSE,
+  fontsize_col = 5, fontsize_row = 10,
+  color = mycolors,
+  breaks = max(abs(Morder)) * seq(-1, +1, length.out = length(mycolors) + 1)
+)
+
+# Hints:
+# ...
+```
+
 ```{r}
-#| label: pheatmap_wd2
-#| eval: !expr (! params$skip_execution & ! params$skip_answers)
-#| echo: !expr (! params$skip_answers)
+#| label: pheatmapWd2Solution
 #| fig.height: 6
 #| fig.width: 10
 # cluster genes
@@ -310,8 +366,8 @@ We will use the `kmeans` function to cluster the data into 3 groups.
 
 ```{r}
 #| label: kmeans
-#| eval: !expr (! isTRUE(params$skip_execution))
-
+#| eval: true
+#| echo: true
 # convert to data.frame
 Morder_df <- as.data.frame(Morder)
 
@@ -320,7 +376,7 @@ Morder_df$cell_type <- stringr::str_extract(rownames(Morder), "EFF|MEM|NAI")
 Morder_df$condition <- stringr::str_extract(rownames(Morder), "HEA|MEL")
 
 # k means
-set.seed(1234)
+#set.seed(1234) # already set in the preamble
 km <- kmeans(x = Morder[, -match(c("cell_type","condition"), colnames(Morder_df))], centers = 3)
 
 # we can visualize the results
@@ -335,10 +391,20 @@ Check how different cell types are distributed in the three clusters,
 i.e. are the samples clustering by the cell types?
 Hint: use "shape" argument of the `autoplot` function to indicate cell types.
 
+```{r }
+#| label: kmeansCellTypesHint
+#| eval: false
+#| echo: !expr params$simplified
+# Fill in the blanks to complete the code and answer the question above
+
+________(km, Morder_df, frame = TRUE,  _____ = "_________", size = 4, alpha = 0.6) + coord_equal()
+
+# Hints:
+# ...
+```
+
 ```{r}
-#| label: kmeans_cell_types
-#| eval: !expr (! params$skip_execution & ! params$skip_answers)
-#| echo: !expr (! params$skip_answers)
+#| label: kmeansCellTypesSolution
 
 autoplot(km, Morder_df, frame = TRUE,  shape = "cell_type", size = 4, alpha = 0.6) + coord_equal()
 ```
@@ -352,12 +418,23 @@ autoplot(km, Morder_df, frame = TRUE,  shape = "cell_type", size = 4, alpha = 0.
 Notice that one cluster contains samples from different cell types.
 If you repeat k means with k=4, do they separate?
 
+```{r }
+#| label: kmeans4Hint
+#| eval: false
+#| echo: !expr params$simplified
+# Fill in the blanks to complete the code and answer the question above
+
+km <- kmeans(x = Morder_df[, -match(c("cell_type","condition"), colnames(Morder_df))], _______ = _)
+# plot
+autoplot(km, Morder_df, frame = TRUE, _____ = "_________", size = 4, alpha = 0.6)
+
+# Hints:
+# ...
+```
+
 ```{r}
-#| label: kmeans_4
-#| eval: !expr (! params$skip_execution & ! params$skip_answers)
-#| echo: !expr (! params$skip_answers)
+#| label: kmeans4Solution
 # k means
-set.seed(1234)
 km <- kmeans(x = Morder_df[, -match(c("cell_type","condition"), colnames(Morder_df))], centers = 4)
 # plot
 autoplot(km, Morder_df, frame = TRUE, shape = "cell_type", size = 4, alpha = 0.6)
@@ -372,12 +449,23 @@ autoplot(km, Morder_df, frame = TRUE, shape = "cell_type", size = 4, alpha = 0.6
 The data are coming from two conditions: healthy and melanoma. Repeat k-means
 clustering with k=2 and see if the clusters now correspond to these conditions?
 
+```{r }
+#| label: kmeans2Hint
+#| eval: false
+#| echo: !expr params$simplified
+# Fill in the blanks to complete the code and answer the question above
+
+km <- kmeans(x = Morder_df[, -match(c("cell_type","condition"), colnames(Morder_df))], _______ = _)
+# plot
+autoplot(km, Morder_df, frame = TRUE, _____ = "_________", size = 4, alpha = 0.6)
+
+# Hints:
+# ...
+```
+
 ```{r}
-#| label: kmeans_2
-#| eval: !expr (! params$skip_execution & ! params$skip_answers)
-#| echo: !expr (! params$skip_answers)
+#| label: kmeans2Solution
 # k means
-set.seed(1234)
 km <- kmeans(x = Morder[, -match(c("cell_type","condition"), colnames(Morder_df))], centers = 2)
 # plot
 autoplot(km, Morder_df, frame = TRUE, shape = "condition", size = 4, alpha = 0.6)
@@ -398,12 +486,13 @@ One way to choose the number of clusters is to use of the "wss"
 for different number of clusters in kmeans.
 
 ```{r}
-#| label: wss_plot
-#| eval: !expr (! isTRUE(params$skip_execution))
+#| label: wssPlot
+#| eval: true
+#| echo: true
 #| fig.width: 6
 #| fig.height: 6
 
-wssplot <- function(data, nc=10, seed=1234){
+wssplot <- function(data, nc=10, seed=533){
   wss <- (nrow(data)-1)*sum(apply(data,2,var))
   print(wss)
   for (i in 2:nc){
@@ -418,6 +507,8 @@ wssplot <- function(data, nc=10, seed=1234){
 Inspect how `wss` looks for different number of clusters in our `Morder` data.
 
 ```{r}
+#| eval: true
+#| echo: true
 wssplot(Morder)
 ```
 
@@ -429,5 +520,7 @@ In practice, we would choose $k=3$, a value happening at the 'elbow' of the plot
 
 ```{r}
 #| label: sessionInfo
+#| eval: true
+#| echo: true
 sessionInfo()
 ```
