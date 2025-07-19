@@ -117,6 +117,7 @@ fd <- df |>
 
 ```{r }
 #| label: filSolution
+#| eval: true
 fd <- df |>
     data.frame() |>
     arrange(bio) |>
