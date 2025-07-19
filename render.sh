@@ -13,7 +13,7 @@ usage() {
 }
 
 # Labs that must be rendered only in default mode
-DEFAULT_ONLY_LABS=(exploratory regression randomness ML)   # add more names as needed
+DEFAULT_ONLY_LABS=(exploratory regression randomness)   # add more names as needed
 
 die() { echo "Error: $*" >&2; exit 1; }
 
