@@ -44,6 +44,33 @@ render() {
   local lab=$1 type=$2
   local qmd=labs/$lab/$lab.qmd
   [[ -f $qmd ]] || die "Missing $qmd"
+
+  echo "Rendering $qmd ($type)"
+  case $type in
+    solved)
+      quarto render "$qmd" -P answers:true
+      ;;
+    simplified)
+      quarto render "$qmd" -P simplified:true
+      ;;
+    default)
+      quarto render "$qmd"
+      ;;
+  esac
+
+  local src=labs/$lab/$lab.html
+  [[ -f $src ]] || die "Quarto did not create $src"
+
+  if [[ $type != default ]]; then
+    local dst=labs/$lab/${lab}.${type}.html
+    mv "$src" "$dst"
+  fi
+}
+
+render() {
+  local lab=$1 type=$2
+  local qmd=labs/$lab/$lab.qmd
+  [[ -f $qmd ]] || die "Missing $qmd"
   echo "Rendering $lab ($type)"
   case $type in
     solved)     quarto render "$qmd" -P answers:true ;;
@@ -52,7 +79,7 @@ render() {
   esac
   local src=labs/$lab/$lab.html
   [[ -f $src ]] || die "Quarto did not create $src"
-  [[ $type != default ]] && mv "$src" "labs/$lab/${lab}-${type}.html"
+  [[ $type != default ]] && mv "$src" "labs/$lab/${lab}.${type}.html"
 }
 
 for l in "${labs[@]}"; do
@@ -64,4 +91,5 @@ for l in "${labs[@]}"; do
     done
   fi
 done
+
 
