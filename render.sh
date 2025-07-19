@@ -12,6 +12,9 @@ usage() {
     --lab: testing|exploratory|clustering|omics|ML|regression|randomness|multivariate|all"
 }
 
+# Labs that must be rendered only in default mode
+DEFAULT_ONLY_LABS=(exploratory regression randomness ML)   # add more names as needed
+
 die() { echo "Error: $*" >&2; exit 1; }
 
 [[ $# -eq 0 ]] && { usage; exit 1; }
@@ -41,32 +44,24 @@ render() {
   local lab=$1 type=$2
   local qmd=labs/$lab/$lab.qmd
   [[ -f $qmd ]] || die "Missing $qmd"
-
-  echo "Rendering $qmd ($type)"
+  echo "Rendering $lab ($type)"
   case $type in
-    solved)
-      quarto render "$qmd" -P answers:true
-      ;;
-    simplified)
-      quarto render "$qmd" -P simplified:true
-      ;;
-    default)
-      quarto render "$qmd"
-      ;;
+    solved)     quarto render "$qmd" -P answers:true ;;
+    simplified) quarto render "$qmd" -P simplified:true ;;
+    default)    quarto render "$qmd" ;;
   esac
-
   local src=labs/$lab/$lab.html
   [[ -f $src ]] || die "Quarto did not create $src"
-
-  if [[ $type != default ]]; then
-    local dst=labs/$lab/${lab}.${type}.html
-    mv "$src" "$dst"
-  fi
+  [[ $type != default ]] && mv "$src" "labs/$lab/${lab}-${type}.html"
 }
 
 for l in "${labs[@]}"; do
-  for t in "${types[@]}"; do
-    render "$l" "$t"
-  done
+  if [[ " ${DEFAULT_ONLY_LABS[*]} " == *" $l "* ]]; then
+    render "$l" default
+  else
+    for t in "${types[@]}"; do
+      render "$l" "$t"
+    done
+  fi
 done
 
