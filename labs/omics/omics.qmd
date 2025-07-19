@@ -1,21 +1,33 @@
 ---
-title: "Lab5: Omics"
-author: "Bio Data Science^3"
+title: "Omics"
+author: "Bio Data Science^3 faculty"
 date: "July 19 - August 2, 2025"
-format: 
+format:
   html:
-    toc: true 
     code-fold: false
     code-tools: true
     embed-resources: true
     highlight-style: github
-    code-line-numbers: false 
+    toc: true
+    code-line-numbers: false
 params:
-  solve: true
+  answers:    false
+  simplified: false
 ---
 
-```{r setup, echo=FALSE}
-knitr::opts_chunk$set(echo = TRUE, message = FALSE, warnging = FALSE) 
+```{r}
+#| label: initialize
+#| echo: FALSE
+#| include: FALSE
+options("scipen"=100, "digits"=4)
+knitr::opts_chunk$set(
+    eval  = params$answers,
+    echo  = params$answers,
+    message = FALSE,
+    warning = FALSE,
+    fig.align="center", fig.pos="h"
+)
+set.seed(533)
 ```
 
 # scRNA-seq analysis
@@ -24,7 +36,10 @@ knitr::opts_chunk$set(echo = TRUE, message = FALSE, warnging = FALSE)
 
 ### Dependencies
 
-```{r load-libs}
+```{r }
+#| eval: true
+#| echo: true
+# load required packages
 library(dplyr)
 library(scran)
 library(scran)
@@ -36,13 +51,19 @@ library(pheatmap)
 library(ExperimentHub)
 ```
 
-```{r load-libs-hide, echo=FALSE}
+```{r }
+#| eval: true
+#| echo: false
+#| label: loadLibsHide
 library(patchwork)
 ```
 
 ### Data retrieval
 
-```{r load-data}
+```{r }
+#| label: loadData
+#| eval: true
+#| echo: true
 eh <- ExperimentHub()
 q <- query(eh, "Kang18")
 (sce <- eh[[q$ah_id]])
@@ -52,7 +73,10 @@ q <- query(eh, "Kang18")
 
 ### Quality control
 
-```{r qc}
+```{r }
+#| label: qc
+#| eval: true
+#| echo: true
 sce <- sce[rowSums(counts(sce) > 0) > 0, ]
 sce <- addPerCellQC(sce)
 sce <- sce[, !isOutlier(sce$detected, nmads=2, log=TRUE)]
@@ -63,18 +87,36 @@ sce <- sce[rowSums(counts(sce) > 1) >= 10, ]
 
 For each gene, we compute the variance and mean of the log-expression values. A trend is fitted to the variance against the mean for all genes. The fitted value for each gene is used as a proxy for the technical component of variation for each gene, under the assumption that most genes exhibit a low baseline level of variation that is not biologically interesting. The biological component of variation for each gene is defined as the the residual from the trend. (see `?modelGeneVar`)
 
-```{r sel}
+```{r }
+#| label: sel
+#| eval: true
+#| echo: true
 # log-library size normalization
-sce <- logNormCounts(sce) 
+sce <- logNormCounts(sce)
 # model gene expr. mean vs. var.
-df <- modelGeneVar(sce) 
+df <- modelGeneVar(sce)
 head(df)
 ```
 
 > Use `dplyr` to filter the above gene-level statistics (`df`) for genes the 2,000 genes with the highest `bio`logical variance component.
 
-```{r fil}
-#| echo: !expr params$solve
+```{r }
+#| label: filHint
+#| eval: false
+#| echo: !expr params$simplified
+# Fill in the blanks to complete the code and answer the question above
+
+fd <- df |>
+    data.frame() |>
+    arrange(___) |>
+    tail(n=___)
+
+# Hint:
+# ...
+```
+
+```{r }
+#| label: filSolution
 fd <- df |>
     data.frame() |>
     arrange(bio) |>
@@ -92,8 +134,27 @@ fd <- df |>
 
 > Reproduce the below scatter plot (`geom_point()`) of gene expression `mean`s vs. `total` variance estimates. You will need a 2nd layer to highlight the top-2,000 genes selected above (red points), and a 3rd layer to add the `tech`nical variance estimate (blue dashed line).
 
-```{r mv-tot, fig.width=4, fig.height=4}
-#| echo: !expr params$solve
+```{r }
+#| label: mvTotHint
+#| eval: false
+#| echo: !expr params$simplified
+#| fig.width: 4
+#| fig.heigth: 4
+# Fill in the blanks to complete the code and answer the question above
+
+ggplot(df, aes(x=____, y=_____)) +
+    geom_point() +
+    geom_point(data=__, col="red") +
+    geom_line(aes(y=____), col="blue", lty=2)
+
+# Hint:
+# ...
+```
+
+```{r }
+#| label: mvTotSolution
+#| fig.width: 4
+#| fig.heigth: 4
 ggplot(df, aes(x=mean, y=total)) +
     geom_point() +
     geom_point(data=fd, col="red") +
@@ -102,7 +163,12 @@ ggplot(df, aes(x=mean, y=total)) +
 
 The genes selected above correspond to genes with a large deviation from the baseline level of (technical) variation, i.e., they tend to have a large biological variance component:
 
-```{r mv-var, echo=FALSE, fig.width=4, fig.height=4}
+```{r }
+#| label: mvVar
+#| eval: true
+#| echo: false
+#| fig.width: 4
+#| fig.heigth: 4
 ggplot(df, aes(x=mean, y=bio)) +
     geom_point() +
     geom_point(data=fd, col="red") +
@@ -113,7 +179,10 @@ ggplot(df, aes(x=mean, y=bio)) +
 
 In standard scRNA-seq data anlysis pipelines, these "highly variable features" are subjected to principal component analysis (PCA) in order to identify major axes of variation. We can perform PCA on a `SingleCellExperiment` using `runPCA()` (`scater` package), where we specify the subset of features to use via argument `subset_row`:
 
-```{r pca-calc}
+```{r }
+#| label: pcaCalc
+#| echo: true
+#| eval: true
 # get selected features
 length(sel <- rownames(fd))
 # perform principal component analysis
@@ -122,48 +191,101 @@ sce <- runPCA(sce, subset_row=sel)
 
 By default, `runPCA()` computes 50 PCs that are stored in the input object as a `reducedDim()` slot:
 
-```{r pca-show}
+```{r }
+#| label: pcaShow
+#| echo: true
+#| eval: true
 # rows=cells, columns=PCs
 pcs <- reducedDim(sce, "PCA")
 pcs[1:5, 1:5]
-dim(pcs) 
+dim(pcs)
 ```
 
-> Construct a `data.frame` that includes both, PCs and cell-level metdata (`colData`). Generate a scatter plot of PCs 1 and 2 as shown below, with cells colored by experimental condition and `cell` subpopulation, respectively; x and y axes should have a fixed aspect ratio! 
+> Construct a `data.frame` that includes both, PCs and cell-level metdata (`colData`). Generate a scatter plot of PCs 1 and 2 as shown below, with cells colored by experimental condition and `cell` subpopulation, respectively; x and y axes should have a fixed aspect ratio!
 
-```{r plt-pca-stim, fig.width=5, fig.height=4}
-#| echo: !expr params$solve
+```{r }
+#| label: pltPcaStimHint
+#| eval: false
+#| echo: !expr params$simplified
+#| fig.width: 5
+#| fig.heigth: 4
+# Fill in the blanks to complete the code and answer the question above
+
+df <- data.frame(___, colData(___))
+ggplot(__, aes(___, ___, col=____)) +
+    geom_point(size=0.2) + ___________() +
+    guides(col=guide_legend(override.aes=list(size=2)))
+
+# Hint:
+# ...
+```
+
+```{r }
+#| label: pltPcaStimSolution
+#| fig.width: 5
+#| fig.heigth: 4
 df <- data.frame(pcs, colData(sce))
 ggplot(df, aes(PC1, PC2, col=stim)) +
-    geom_point(size=0.2) + coord_equal() +
-    guides(col=guide_legend(override.aes=list(size=2))) 
-```
-
-```{r plt-pca-cell, fig.width=6, fig.height=4}
-#| echo: !expr params$solve
-ggplot(df, aes(PC1, PC2, col=cell)) + 
     geom_point(size=0.2) + coord_equal() +
     guides(col=guide_legend(override.aes=list(size=2)))
 ```
 
-It's pretty clear from the plots above that experimental condition (`stim`) and `cell` subpopulations seem to be considerable drivers of gene expression variability. But what is driving these differences? We can explore this visually by coloring cells by other cell metadata, e.g., library size (total sum of counts). 
+```{r }
+#| label: pltPcaCellHint
+#| eval: false
+#| echo: !expr params$simplified
+# Fill in the blanks to complete the code and answer the question above
+
+ggplot(__, aes(___, ___, col=____)) +
+    geom_point(size=0.2) + ___________() +
+    guides(col=guide_legend(override.aes=list(size=2)))
+
+# Hint:
+# ...
+```
+
+```{r }
+#| label: pltPcaCellSolution
+#| fig.width: 6
+#| fig.heigth: 4
+ggplot(df, aes(PC1, PC2, col=cell)) +
+    geom_point(size=0.2) + coord_equal() +
+    guides(col=guide_legend(override.aes=list(size=2)))
+```
+
+It's pretty clear from the plots above that experimental condition (`stim`) and `cell` subpopulations seem to be considerable drivers of gene expression variability. But what is driving these differences? We can explore this visually by coloring cells by other cell metadata, e.g., library size (total sum of counts).
 
 > Generate a scatter plot of PCs 1 and 2 with cells colored by log-library size. Taking into consideration the plots generated above, what is the main driver of gene expression variation (PC1)?
 
-```{r plt-pcs-ls}
-#| echo: !expr params$solve
+```{r }
+#| label: pltPcsLsHint
+#| eval: false
+#| echo: !expr params$simplified
+# Fill in the blanks to complete the code and answer the question above
+
+ggplot(__, aes(___, ___, col=log10(___))) +
+    geom_point(size=0.2) + coord_equal() +
+    scale_color_viridis_c()
+
+# Hint:
+# ...
+```
+
+```{r }
+#| label: pltPcsLsSolution
 ggplot(df, aes(PC1, PC2, col=log10(sum))) +
     geom_point(size=0.2) + coord_equal() +
     scale_color_viridis_c()
 ```
 
-Finally, note that the dataset retrieved from `ExperimentHub` already contains a non-linear embedding, t-SNE, that has been pre-computed by the original authors. We can access this representation as follows, and you are welcomed to explore visually exploring the data on your own, e.g., 
+Finally, note that the dataset retrieved from `ExperimentHub` already contains a non-linear embedding, t-SNE, that has been pre-computed by the original authors. We can access this representation as follows, and you are welcomed to explore visually exploring the data on your own, e.g.,
 
 - color cells by gene expression (`logcounts()`)
 - plot PCs (linear) again t-SNE dimensions (non-linear)
 - `facet_wrap()` by `stim/ind/cell` to split plots according to some metadata variable
 
-```{r eval=FALSE}
+```{r }
+#| eval: false
 map <- reducedDim(sce, "TSNE")
 df <- cbind(df, map)
 ggplot(df, ...)
@@ -173,9 +295,12 @@ ggplot(df, ...)
 
 A standard approach to cluster scRNA-seq data is to (i) construct a graph where nodes = cells and edges = neighbors based on distances in, e.g., PCA space; and, (ii) finding communities of cells that are highly inter-connected. In other words: we want to link cells with each other based on their PCs to find *clusters* of transcriptionally similar cells.
 
-```{r snn-louvain, message=FALSE, warning=FALSE}
+```{r }
+#| label: snnLouvain
+#| echo: true
+#| eval: true
 # construct shared nearest neighbor (SNN) graph of cells
-# using principal components 1-3 & based on Jaccard similarity 
+# using principal components 1-3 & based on Jaccard similarity
 # (see ?makeSNNGraph if you're interested in more details!)
 g <- buildSNNGraph(sce, use.dimred="PCA", k=30, type="jaccard")
 # use the Louvain algorithm to identify communities
@@ -185,13 +310,18 @@ k <- cluster_louvain(g, resolution=0.5)$membership
 
 We can visualize the resulting cellular graph as follows (for computational reasons, we'll use a representative subset of cells):
 
-```{r plt-snn, fig.width=8, fig.height=8}
+```{r }
+#| label: pltSnn
+#| echo: true
+#| eval: true
+#| fig.width: 8
+#| fig.heigth: 8
 # sample at most 100 cells per cluster
 i <- split(seq(ncol(sce)), k)
 i <- lapply(i, \(.) sample(., min(50, length(.))))
 # subset SNN graph & plot it
 g_sub <- subgraph(g, unlist(i))
-plot(g_sub, vertex.size=5, vertex.color="white") 
+plot(g_sub, vertex.size=5, vertex.color="white")
 ```
 
 Now, we'll run the community detection step, which will return cluster assignments of each cell (accessible via `$membership` in the output object):
@@ -200,18 +330,21 @@ Now, we'll run the community detection step, which will return cluster assignmen
 
 ## Question
 
-- How many *unique* clusters did we identify with the code above?  
-- How does the number of clusters change when you decrease/increase the `resolution` parameter?  
+- How many *unique* clusters did we identify with the code above?
+- How does the number of clusters change when you decrease/increase the `resolution` parameter?
 - Compare the cluster assignments you get with available `cell` types using `table(old_cluster_IDs, new_cluster_IDs)`; can you guess, i.e., which cluster(s) correspond to B cells, CD4/8 T cells, etc.?
 
 :::
 
 Let's visualize the clustering results we obtain above, and compare them to previous results. To do this, we'll first construct a table (`data.frame`) containing all cell-information available to us at this point, i.e., cell metadata (`colData`), low-dimensional embeddings (`reducedDims`), and clustering results (`k` from the code above):
 
-```{r prep-df-1}
+```{r }
+#| label: prepDf1
+#| echo: true
+#| eval: true
 df <- data.frame(
     k=factor(k),
-    colData(sce), 
+    colData(sce),
     reducedDim(sce, "PCA"),
     reducedDim(sce, "TSNE"))
 ```
@@ -222,12 +355,34 @@ df <- data.frame(
 
 Using the `data.frame` constructed above, visualize the t-SNE with cells colored by cluster assignment (`k`) and annotations (`cell`) using `ggplot`.
 
-```{r plt-tsne-ks, fig.width=8, fig.height=3}
-#| echo: !expr params$solve
-#| eval: !expr params$solve
+```{r }
+#| label: pltTsneKsHint
+#| eval: false
+#| echo: !expr params$simplified
+#| fig.width: 8
+#| fig.heigth: 3
+# Fill in the blanks to complete the code and answer the question above
+
+nk <- max(nlevels(__$k), nlevels(__$cell))
+ggplot(__, aes(col=_)) +
+ggplot(__, aes(col=____)) +
+plot_layout(nrow=1) &
+    geom_point(aes(tsne1, tsne2), size=0.2) &
+    guides(col=guide_legend(override.aes=list(size=2))) &
+    scale_color_manual(values=hcl.colors(nk, "Spectral")) &
+    theme_void() & theme(aspect.ratio=1, legend.key.size=unit(0.5, "lines"))
+
+# Hint:
+# ...
+```
+
+```{r }
+#| label: pltTsneKsSolution
+#| fig.width: 8
+#| fig.heigth: 3
 nk <- max(nlevels(df$k), nlevels(df$cell))
-ggplot(df, aes(col=k)) + 
-ggplot(df, aes(col=cell)) + 
+ggplot(df, aes(col=k)) +
+ggplot(df, aes(col=cell)) +
 plot_layout(nrow=1) &
     geom_point(aes(tsne1, tsne2), size=0.2) &
     guides(col=guide_legend(override.aes=list(size=2))) &
@@ -239,7 +394,10 @@ plot_layout(nrow=1) &
 
 In addition, we will add the expression (`logcounts`) of a few genes. Because `assay`s are stored with rows = genes and columns = cells, we need to transpose the expression matrix so that rows = cells using `t()`:
 
-```{r prep-df-2}
+```{r }
+#| label: prepDf2
+#| echo: true
+#| eval: true
 gs <- c("MS4A1", "ISG15", "CD14")
 es <- logcounts(sce)[gs, ]
 es <- as.matrix(t(es))
@@ -248,35 +406,46 @@ df <- data.frame(df, es)
 
 We can repeat the trick above, coloring cell by their expression of a given gene instead, e.g.:
 
-```{r plt-tsne-es, echo=FALSE, fig.width=10, fig.height=3}
-ggplot(df, aes(col=MS4A1)) + 
-ggplot(df, aes(col=ISG15)) + 
-ggplot(df, aes(col=CD14)) + 
+```{r }
+#| label: pltTsneEs
+#| echo: false
+#| eval: true
+#| fig.width: 10
+#| fig.heigth: 3
+ggplot(df, aes(col=MS4A1)) +
+ggplot(df, aes(col=ISG15)) +
+ggplot(df, aes(col=CD14)) +
 plot_layout(nrow=1) &
     scale_color_gradientn(colors=c("navy", "red", "gold", "ivory")) &
     geom_point(aes(tsne1, tsne2), size=0.2) &
     theme(aspect.ratio=1) &
-    theme_void() 
+    theme_void()
 ```
 
 These type of visualizations are not ideal for many reasons (e.g., t-SNE is a non-linear embedding so that cell-cell distances are misleading, plots are too spacious when considering 100s of genes...). We could instead use, say, boxplots or heatmaps to understand different clusters' expression profiles. For the latter, we would first have to aggregate expression by each cluster, e.g., by computing the average:
 
 ```{r}
+#| echo: true
+#| eval: true
 # split cell indices by cluster assignment
 cs <- split(seq_len(ncol(sce)), k)
 # count number of cells in each group
-sapply(cs, length) 
-# for each group of cells, subset 
-# -> get exprs. (logcounts) 
-# -> compute gene (row) means 
+sapply(cs, length)
+# for each group of cells, subset
+# -> get exprs. (logcounts)
+# -> compute gene (row) means
 mu <- sapply(cs, \(.) rowMeans(logcounts(sce[, .])))
 # rows = genes, columns = clusters
 dim(mu)
 ```
 
-We can visualize the results average expression by cluster using `pheatmap()`. Because genes can be expressed at very different levels of expression, we set `scale="row"` in order to scale each genes average expression to have zero mean and unit standard deviation across clusters: 
+We can visualize the results average expression by cluster using `pheatmap()`. Because genes can be expressed at very different levels of expression, we set `scale="row"` in order to scale each genes average expression to have zero mean and unit standard deviation across clusters:
 
-```{r fig.width=5, fig.height=3}
+```{r }
+#| echo: true
+#| eval: true
+#| fig.width: 5
+#| fig.heigth: 3
 pheatmap(mu[gs, ], scale="row")
 ```
 
@@ -292,5 +461,7 @@ Based on the `table()` output comparing your and previous cluster assignments, a
 
 ```{r}
 #| label: sessionInfo
+#| echo: true
+#| eval: true
 sessionInfo()
 ```
