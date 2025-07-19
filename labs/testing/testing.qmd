@@ -65,21 +65,23 @@ colnames(genome_size) = c("group","size")
 1. Print the first rows to get an idea of how it looks like.
 
 ```{r }
+#| label: headDataHint
+#| eval: false
+#| echo: !expr params$simplified
+# Fill in the blanks to complete the code and answer the question above
+
+____(genome_size)
+
+# Hint:
+# ...
+```
+
+```{r }
 #| label: headDataSolution
 # Head returns the first parts of the genome_size data.frame. By default it
 # returns the first six elements but you can change it via n argument
 # e.g., head(genome_size, n = 10) to display the first ten elements
 head(genome_size)
-```
-
-```{r }
-#| label: headDataHint
-#| eval: false
-#| echo: !expr params$simplified
-# Fill in the blanks to complete the code and answer the question above
-____(genome_size)
-# Hint:
-# ...
 ```
 
 2. How many groups do we have? What is the sample size for each group?
@@ -89,7 +91,9 @@ ____(genome_size)
 #| eval: false
 #| echo: !expr params$simplified
 # Fill in the blanks to complete the code and answer the question above
+
 _____(genome_size$_____)
+
 # Hint:
 # ...
 ```
@@ -350,7 +354,7 @@ sd(genome_size[,"log10"])
 # The number inside the function could be any number
 # as long as you use always the same number if you want to obtain the same results.
 # If you don't set the seed, different sessions will give different simulation results
-set.seed(533)
+# already set in preamble
 
 # **create a million genome size values.**
 # We use the rnorm function to create n = 1e6 values coming from a normal distribution
@@ -1001,7 +1005,7 @@ Try yourself first! And if you struggle, you can look at the code.
 
 # set seed for random number generation
 # in order to make results reproducible
-set.seed(300)
+# already set in preamble
 
 # rnorm is a function that simulates a normal distribution,
 # sampling 10000 numbers, from a distribution of mean 0 and variance 1
@@ -1057,7 +1061,6 @@ samples were shifted. In that case, the histogram is skewed to the right.
 #| echo: !expr params$simplified
 # Fill in the blanks to complete the code and answer the question above
 
-set.seed(300)
 y = cbind(Control = _____(10000, _, _),
           Control = _____(10000, _, _),
           Treatment = _____(10000, _, _),
@@ -1073,7 +1076,6 @@ ______(______(pvalue), aes(x = pvalue)) +
 
 ```{r solution12, fig.width = 4.5, fig.height = 4.5}
 
-set.seed(300)
 y = cbind(Control = rnorm(10000, 0, 1),
           Control = rnorm(10000, 2, 1),
           Treatment = rnorm(10000, 0, 1),
@@ -1120,7 +1122,7 @@ ______(______(pvalue), aes(x = pvalue)) +
 
 # set seed for random number generation
 # in order to make results reproducible
-set.seed(300)
+# already set in preamble
 
 y = cbind(Control = rnorm(10000, 0, 1),
           Control = rnorm(10000, 0, 1),

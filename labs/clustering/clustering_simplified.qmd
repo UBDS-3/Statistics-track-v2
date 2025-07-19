@@ -1,0 +1,428 @@
+---
+title: "Clustering"
+author: "Bio Data Science^3"
+date: "July 19 - August 2, 2025"
+format: 
+  html:
+    toc: true 
+    code-fold: false
+    code-tools: true
+    embed-resources: true
+    highlight-style: github
+    code-line-numbers: false 
+params:
+  skip_execution: false
+  skip_answers: true
+---
+
+```{r}
+#| label: initialize
+#| echo: FALSE
+knitr::opts_chunk$set(echo = TRUE, fig.width=7, fig.height=5) 
+```
+
+# Preamble
+
+## Goal
+
+In this lab we will learn the basics of clustering. The methods we will 
+cover include hierarchical clustering, K means and density clustering.
+
+## How to answer the coding questions
+
+In some cases, you will be provided with hints (e.g., you need to fill in the 
+blanks in the code instead of writing a full solution from scratch). You can 
+execute such code chunks in this qmd file as many times as you need to find the 
+correct answer. Once you are ready, please change the `eval` option in the chunk 
+header from `FALSE` to `TRUE` in order to render the qmd file completely.
+
+## Dependencies
+
+```{r load-libs, message=FALSE, warning=FALSE}
+#| eval: !expr (! isTRUE(params$skip_execution))
+library(pheatmap)
+library(ggfortify)
+library(tidyverse)
+```
+
+## Data retrieval
+
+The Morder data are gene expression measurements for 156 genes on T cells 
+of 3 types (naïve, effector, memory) from 10 patients (Holmes et al. 2005).  
+
+Here we load the `Morder` `data.frame` from the online directory.
+
+```{r load-data-web, eval=FALSE}
+load(url("http://web.stanford.edu/class/bios221/data/Morder.RData"))
+# if download fails with timeout 
+# error, try increasing it via:
+# options(timeout = 1000)
+```
+
+If you downloaded the file before, you can load it from the local directory.
+
+```{r load-data-loc}
+#| eval: !expr (! isTRUE(params$skip_execution))
+load("Morder.RData")
+```
+
+# Hierarchical clustering
+
+::: {.callout-note collapse="false"}
+
+## Question
+
+Inspect the data. How many samples of each T cell type 
+(naïve, effector, memory) are there in the data?
+
+```{r}
+#| label: question_cell_types
+#| eval: !expr (! params$skip_execution & ! params$skip_answers)
+#| echo: !expr (! params$skip_answers)
+```
+
+```{r, eval = FALSE}
+# Fill in the blanks to complete the code and answer the question above
+_______(Morder) |> 
+  stringr::_______("_", _) |>
+  _____()
+# Hints:
+# 1. What function extracts the row names?
+# 2. What function splits the string, and which position (number) corresponds 
+# to the name of a cell type?
+# 3. What function creates a frequency table from a vector?
+```
+
+:::
+
+In base R the function to perform hierarchical clustering is `hclust`.
+To cluster the genes with hierarchical clustering you first need
+to compute a distance matrix storing all pairwise (gene-to-gene)
+dissimilarities. This is how to do it:
+
+```{r}
+#| label: hclust_genes
+#| eval: !expr (! isTRUE(params$skip_execution))
+#| fig.width: 18
+#| fig.height: 8
+# distance calculation
+D = dist(t(Morder))
+# clustering
+gene_clust = hclust(d = D)
+# plot dendrogram
+plot(gene_clust)
+```
+
+::: {.callout-note collapse="false"}
+
+## Question
+
+Why in the provided code the input to `dist` function is `t(Morder)`? 
+
+```{r}
+#| label: question_transpose
+#| eval: !expr (! params$skip_execution & ! params$skip_answers)
+#| echo: false
+#| results: 'asis'
+```
+
+```{r, echo = FALSE}
+cat("Type your text answer here")
+```
+
+:::
+
+In hierarchical clustering, one needs to choose the method 
+for agglomerating the clusters. By default `hclust`, 
+uses a "complete" linkage method (see `?hclust` for info). 
+
+::: {.callout-note collapse="false"}
+
+## Question
+
+Redo hierarchical clustering with the `ward.D2` method and plot the dendrogram.
+
+```{r}
+#| label: hclust_genes_ward.D2
+#| eval: !expr (! params$skip_execution & ! params$skip_answers)
+#| echo: !expr (! params$skip_answers)
+#| fig.width: 15
+#| fig.height: 8
+```
+
+```{r, eval = FALSE}
+#| fig.width: 15
+#| fig.height: 8
+# Fill in the blanks to complete the code and answer the question above
+_______ = hclust(d = dist(t(____)), ___ = "___")
+___(_______)
+```
+
+Notice that the values on the y axis of hclust dendrogram changed.
+What do they correspond to? 
+
+```{r, echo = FALSE}
+cat("Type your text answer here")
+```
+
+:::
+
+Note that in the `hclust` there are the `ward.D` and `ward.D2` methods available. 
+Please call `?hclust` to read about the difference between the two methods.
+
+Next, instead of clustering genes, we will apply 
+hierarchical clustering for samples (observations).
+
+::: {.callout-note collapse="false"}
+
+## Question
+
+Use dist and hclust (with default linkage method) to cluster samples.
+
+```{r}
+#| label: hclust_samples
+#| eval: !expr (! params$skip_execution)
+#| echo: !expr (! params$skip_answers)
+#| fig.width: 15
+#| fig.height: 8
+```
+
+```{r, eval = FALSE}
+# Fill in the blanks to complete the code 
+_______ = _______(_______)
+_______ = hclust(_______)
+# Hints:
+# Do we need to transpose the matrix?
+```
+
+How many clusters of samples are there at the dendrogram height of 12? 
+Hint: the `abline()` and `cutree()` functions might be helpful.
+
+```{r, eval = FALSE}
+# Fill in the blanks to complete the code 
+plot(_______)
+abline(_______)
+```
+
+```{r, eval = FALSE}
+# Apply cutree() and table() functions to answer the question above 
+```
+
+:::
+
+Now that you know how to perform hierarchical clustering, 
+use `pheatmap` to generate a heatmap with clustered rows and columns. 
+Below, we do some extra work compared to the default parameters to make 
+sure that 0 is in the center of the color scale, and use beautiful colors.
+
+```{r}
+#| label: pheatmap
+#| eval: !expr (! isTRUE(params$skip_execution))
+#| fig.height: 6
+#| fig.width: 10
+library("pheatmap")
+mycolors = colorRampPalette(c("#FFD800", "#0056B9"))(100)
+pheatmap(
+  mat = Morder,
+  fontsize_col = 5, fontsize_row = 10, 
+  color = mycolors, 
+  breaks = max(abs(Morder)) * seq(-1, +1, length.out = length(mycolors) + 1)
+) 
+```
+
+::: {.callout-note collapse="false"}
+
+## Question
+
+What type of distance and which clustering method does
+`pheatmap` use by default for clustering rows and columns?
+
+```{r}
+#| label: pheatmap_default_distance
+#| eval: !expr (! params$skip_execution & ! params$skip_answers)
+#| echo: false
+#| results: 'asis'
+```
+
+```{r, echo = FALSE}
+cat("Type your text answer here")
+```
+
+Note that these are default values for `dist` and `hclust`, too.
+Look at how clustering heatmap changes if you use different 
+distance and clustering methods (e.g. 'ward.D2').
+
+```{r}
+#| label: pheatmap_wd2
+#| eval: !expr (! params$skip_execution & ! params$skip_answers)
+#| echo: !expr (! params$skip_answers)
+#| fig.height: 6
+#| fig.width: 10
+```
+
+```{r, eval = FALSE}
+# Fill in the blanks to complete the code 
+
+# cluster genes
+gene_clust_wd2 = _______
+
+# cluster samples
+sample_clust_wd2 = _______
+
+# order expression matrix by clustering results
+Morder_clustered = Morder[sample_clust_wd2$order, gene_clust_wd2$order]
+
+# we use pre-computed clustering, so we need to specify that pheatmap should not
+# re-cluster the input data
+pheatmap(
+  mat = _______,
+  cluster_rows = FALSE, cluster_cols = FALSE,
+  fontsize_col = 5, fontsize_row = 10,
+  color = mycolors, 
+  breaks = max(abs(Morder)) * seq(-1, +1, length.out = length(mycolors) + 1)
+) 
+```
+
+:::
+
+# K means
+
+Next we will do k-means clustering on the same dataset.
+First thing we need to do is select the number of clusters.
+In this dataset, we expect to have three clusters (naïve, effector, memory T cells). 
+We will use the `kmeans` function to cluster the data into 3 groups.
+
+```{r}
+#| label: kmeans
+#| eval: !expr (! isTRUE(params$skip_execution))
+
+# convert to data.frame
+Morder_df <- as.data.frame(Morder)
+
+# add cell type  column - wee will use this for plotting
+Morder_df$cell_type <- stringr::str_extract(rownames(Morder), "EFF|MEM|NAI")
+Morder_df$condition <- stringr::str_extract(rownames(Morder), "HEA|MEL")
+
+# k means
+set.seed(1234)
+km <- kmeans(x = Morder[, -match(c("cell_type","condition"), colnames(Morder_df))], centers = 3)
+
+# we can visualize the results
+autoplot(km, Morder_df, frame = TRUE, size = 4, alpha = 0.6) + coord_equal()
+```
+
+::: {.callout-note collapse="false"}
+
+## Question
+
+Check how different cell types are distributed in the three clusters, 
+i.e. are the samples clustering by the cell types?
+Hint: use "shape" argument of the `autoplot` function to indicate cell types.
+
+```{r}
+#| label: kmeans_cell_types
+#| eval: !expr (! params$skip_execution & ! params$skip_answers)
+#| echo: !expr (! params$skip_answers)
+```
+
+```{r, eval = FALSE}
+# Fill in the blanks to complete the code 
+autoplot(_______) + coord_equal()
+```
+
+:::
+
+::: {.callout-note collapse="false"}
+
+## Question
+
+Notice that one cluster contains samples from different cell types.
+If you repeat k means with k=4, do they separate?
+
+```{r}
+#| label: kmeans_4
+#| eval: !expr (! params$skip_execution & ! params$skip_answers)
+#| echo: !expr (! params$skip_answers)
+# k means
+```
+
+```{r, eval = FALSE}
+# Fill in the blanks to complete the code 
+set.seed(1234)
+km <- kmeans(_______)
+# plot
+autoplot(_______)
+```
+
+:::
+
+::: {.callout-note collapse="false"}
+
+## Question
+
+The data are coming from two conditions: healthy and melanoma. Repeat k-means 
+clustering with k=2 and see if the clusters now correspond to these conditions?
+
+```{r}
+#| label: kmeans_2
+#| eval: !expr (! params$skip_execution & ! params$skip_answers)
+#| echo: !expr (! params$skip_answers)
+# k means
+```
+
+```{r, eval = FALSE}
+# Fill in the blanks to complete the code 
+set.seed(1234)
+km <- kmeans(_______)
+# plot
+autoplot(_______)
+```
+
+:::
+
+Choosing the number of clusters for k-means is important and at the same time 
+not trivial, because usually we don't know the number of clusters in the data 
+_a priori_.  
+
+How can we choose appropriate value of `k`?  
+One way to choose the number of clusters is to use of the "wss" 
+(within sum of squares) statistic.
+
+`kmeans()` function reports wss for every cluster in the results (check 
+`km$withinss`). Here we implement the function that computes the wss statistic 
+for different number of clusters in kmeans.
+
+```{r}
+#| label: wss_plot
+#| eval: !expr (! isTRUE(params$skip_execution))
+#| fig.width: 6
+#| fig.height: 6
+
+wssplot <- function(data, nc=10, seed=1234){
+  wss <- (nrow(data)-1)*sum(apply(data,2,var))
+  print(wss)
+  for (i in 2:nc){
+    set.seed(seed)
+    wss[i] <- sum(kmeans(data, centers=i)$withinss)}
+  plot(1:nc, wss, type="b", xlab="Number of Clusters",
+       ylab="Within groups sum of squares")
+  wss
+}
+```
+
+Inspect how `wss` looks for different number of clusters in our `Morder` data.
+
+```{r}
+wssplot(Morder)
+```
+
+Within sum of squares (wss) statistic, we see that the last substantial decrease of the 
+statistic occurres before $k=3$, and for values $k=4,5,6,\dots$ the quantity 'levels-off'. 
+In practice, we would choose $k=3$, a value happening at the 'elbow' of the plot (elbow-rule).
+
+# Session info
+
+```{r}
+#| label: sessionInfo
+sessionInfo()
+```

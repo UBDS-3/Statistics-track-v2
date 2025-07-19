@@ -1,0 +1,528 @@
+---
+title: "Lab: Multivariate Analysis"
+author: "Wolfgang Huber, Helena Crowell, et al."
+date: "22 July 2025"
+format: 
+  html:
+    code-fold: false
+    code-tools: true
+    embed-resources: true
+    highlight-style: github
+    toc: true 
+    code-line-numbers: false 
+params:
+  include_answers: true
+---
+
+```{r}
+#| label: initialize
+#| echo: FALSE
+knitr::opts_chunk$set(message = FALSE, warning = FALSE)
+```
+
+License: CC-BY NC SA
+
+# Goal
+
+In this lab we will learn the basics of multivariate analysis and PCA using a few simple examples.
+
+Work through this lab by running all the R code to your computer and making sure 
+that you understand the input and the output. Make alterations where you seem
+fit. We encourage you to work through this lab with a partner. 
+
+# Setup
+
+The following code installs needed packages
+
+```{r setup}
+#| warning: false
+#| message: false
+#| results: 'hide'
+install_if_needed = function(x) {
+  p = setdiff(x, installed.packages())
+  if (length(p) > 0) BiocManager::install(p)
+}
+install_if_needed(c("GGally", "factoextra", "ade4"))
+```
+
+Read in data sets that we will be working with.
+
+```{r}
+#| label: turtlesload
+turtles = read.table("PaintedTurtles.txt", header = TRUE)
+head(turtles)
+```
+
+```{r}
+load("athletes.RData")
+athletes[1:3, ]
+```
+
+Let's first get to know our data sets. 
+
+::: {.callout-note collapse="false"}
+
+## Questions
+
+1. How many athletes / turtles do you have in the data sets? 
+2. What's the record distance in the longjump category? And which athlete (number) made this record?
+3. What's the average time across all athletes for the 100m run?
+4. Can you plot the histogram showing the distribution of the times for the 100m run?
+5. How many athletes of those who run faster than the average in the 100m run, also run faster than the average in the 1500m distance? 
+
+```{r}
+#| label: questions-1-5-answers
+#| eval: !expr params$include_answers
+#| echo: !expr params$include_answers
+#| fig-width: 4
+#| fig-height: 4
+#| out-width: "60%"
+
+# Hint for question #5
+# 1. Calculate the average times for 100m run and 1500m run.
+# 2. Compare each athlete's time to the calculated average times.
+# 3. Count how many athletes meet both conditions above.
+
+# Alternative approaches:
+# 1. Use a summary table to examine how mant athletes fall below the average 
+# in each type of run.
+# 2. Apply your knowledge of dplyr and its filter() function, and count the rows.
+```
+
+:::
+
+# Low dimensional data summaries and preparation
+
+It is instructive to first consider 2-dimensional summaries of the data. The function `ggpairs` from the `GGally` package gives a nice summary of the features and how they are correlated with each other. 
+
+```{r}
+#| label: GGally
+#| fig-width: 5
+#| fig-height: 5
+#| out-width: "80%"
+#| message: false
+#| warning: false
+library("GGally")
+ggpairs(turtles[, -1], axisLabels = "none")
+```
+
+::: {.callout-note collapse="false"}
+
+## Questions
+
+1. What do you see on the diagonal? What do the stars indicate next to the correlation value?
+2. Can you repeat this plot for the `athletes` data?
+3. In the lecture, we have seen another way to investigate correlations in the data. Use the `pheatmap` function in the package with the same name, `pheatmap`, to illustrate the pairwise correlations of the features in the athletes data set. 
+
+```{r}
+#| label: questions-6-7-answers
+#| eval: !expr params$include_answers
+#| echo: !expr params$include_answers
+#| fig-width: 8
+#| fig-height: 8
+#| out-width: "100%"
+```
+```{r}
+#| label: questions-8-answers
+#| eval: !expr params$include_answers
+#| echo: !expr params$include_answers
+#| fig-width: 5
+#| fig-height: 5
+#| out-width: "60%"
+# Hint for question 3:
+# Fill in the missing parts according to the instructions below and comment out the code
+# Load the "pheatmap" library
+# Color palette is predefined for you:
+mycolors = colorRampPalette(c("#FFD800", "#0056B9"))(100)
+# Next, calculate the correlation matrix for the columns in athletes dataset
+# using the cor() function and provide it to the pheatmap function to plot
+# pheatmap(___, cellwidth = 20, cellheight = 20,
+#         color = mycolors, breaks = seq(-1, +1, length.out = length(mycolors)))
+```
+
+:::
+
+# Preprocessing the data
+
+In many cases, different variables are measured in different units and at different scales. As discussed in the lecture, we have various options to transform the data. Here, we elect to standardize the data to a common standard deviation. This rescaling is done using the `scale` function, which subtracts the mean and divides by the standard deviation, so that every column has a unit standard deviation and mean zero.
+
+```{r turtlesDim12}
+scaledTurtles = data.frame(sex = turtles[, 1], scale(turtles[, -1]))
+head(scaledTurtles)
+```
+
+::: {.callout-note collapse="false"}
+
+## Questions
+
+1. Can you compute the standard deviation and mean of each column in the `turtles` data frame? Can you do the same on the scaled dataset, i.e. on `scaledturtles`? What was the mean of turtles' heights before standardizing?
+
+```{r}
+#| label: questions-9-answers
+#| eval: !expr params$include_answers
+#| echo: !expr params$include_answers# TODO
+
+# Hint
+# Select only numeric columns from the data frame and use the apply() function
+# with appropriate MARGIN to calculate statistics (e.g. mean or standard deviation)
+# column-wise
+```
+
+:::
+
+We can visualize two columns/dimensions (for example height and width) of the scaled data using `ggplot`.
+
+```{r turtlesDim}
+#| fig-width: 5
+#| fig-height: 4
+#| out-width: "80%"
+library("ggplot2")
+ggplot(scaledTurtles, aes(x = width, y = height, group = sex)) +
+  geom_point(aes(color = sex)) + coord_fixed()
+```
+
+What is the purpose of the `coord_fixed()` modifier here?
+
+# Dimensionality reduction
+
+In this part, we will use geometrical projections of points in a higher dimensional space and project them down to lower dimensions. 
+
+The first example will be the projection of the points in a two-dimensional space (defined by weight and disc distance in the athlete data set) onto a 1-dimensional space. The 1-dimensional space in this case is defined by the weight-axis/x-axis.  
+
+But first we need to scale the athlete data set, in the same way as we did it with the turtles data set. 
+
+```{r}
+#| label: scaledathletes
+scaledathletes = data.frame(scale(athletes))
+n = nrow(scaledathletes)
+```
+
+```{r}
+#| label: ggplotscaledathletes
+#| fig-width: 5
+#| fig-height: 4
+#| out-width: "80%"
+# First, p is a 2-dimensional plot of the points defined by weight (x) and disc (y)
+p = ggplot(scaledathletes, aes(x = weight, y = disc)) + geom_point(shape = 1)
+
+# Then we add the projected points and the projection lines (dashed)
+p + geom_point(aes(y = rep(0, n)), color = "#0056B9") +
+    geom_segment(aes(xend = weight, yend = rep(0, n)), linetype = "dashed")
+```
+
+::: {.callout-note collapse="false"}
+
+## Questions
+
+Now try to do the following:
+
+1. Calculate the standard deviation of the blue points (their $x$-coordinates) in the above figure.
+
+2. Make a similar plot showing projection lines onto the $y$-axis and show projected points in yellow. What is the standard deviation of the projected points now?
+
+```{r}
+#| label: questions-11-answers
+#| eval: !expr params$include_answers
+#| echo: !expr params$include_answers
+
+#1
+# Your code 
+
+#2
+# Your code: use the plotting script from the previous plot and modify
+# the aes() inputs in geom_point() and geom_segment()
+
+# Calculate standard deviation
+```
+
+:::
+
+# Summarize 2D-data by a line
+
+In the above example when projecting the 2-dimensional points to the `weight` axis, we lost the `disc` information. In order to keep more information, we will now project the 2 dimensional point cloud onto another line.  
+
+For this, we first compute a linear model to find the regression line using the `lm` function (linear model). We regress `disc` on `weight`. The regression line is defined by two parameters: its slope and its intercept. The slope a is given by the second coefficient in the output of `lm` and its intercept b is the first coefficient:
+
+```{r}
+#| label: reg1
+reg1 = lm(disc ~ weight, data = scaledathletes)
+```
+
+# Extract intercept and slope values   
+```{r}
+#| label: extractab
+a1 = reg1$coefficients[1] # Intercept
+b1 = reg1$coefficients[2] # slope
+```
+
+Plot the points p (computed in the code section before) and the regression line. 
+```{r}
+#| label: reg3
+pline = p + geom_abline(intercept = a1, slope = b1, col = "#0056B9", lwd = 1.5) + coord_fixed()
+```
+
+Add the projection lines (from the point to its fitted value)
+```{r}
+#| label: reg4
+#| fig-width: 5
+#| fig-height: 4
+#| out-width: "80%"
+pline + geom_segment(aes(xend = weight, yend = reg1$fitted),
+                     color = "#FFD800", arrow = arrow(length = unit(0.15, "cm")))
+```
+
+::: {.callout-note collapse="false"}
+
+## Question
+
+Can you regress `weight` on `discs` and generate a similar plot?
+
+```{r}
+#| label: questions-reg1-answers1
+#| eval: !expr params$include_answers
+#| echo: !expr params$include_answers
+#| message: false
+#| fig-width: 4
+#| fig-height: 4
+#| out-width: "80%"
+#1 Fill in the missing parts in the code and run it
+# reg2 = lm(...) # Fit a linear model
+
+# Extract the intercept and slope values   
+# a2 =  # Intercept
+# b2 =  # Slope
+
+# Plot the points 'p' (computed in the code section before) & the regression line 
+# p = ggplot(..., aes(x = ..., y = ...)) + geom_point(shape = 1) + coord_fixed()
+# newline = p + geom_abline(intercept = ..., slope = ..., col = "#FFD800")
+
+# Add the projection lines (from the point to its fitted value)
+# newline + geom_segment(
+#   aes(y = ..., x = ..., yend = ..., xend = ...), 
+#   color = "#0056B9", 
+#   arrow = arrow(length = unit(0.15, "cm"))) + coord_flip()
+```
+
+:::
+
+::: {.callout-note collapse="false"}
+
+## Question
+
+Can you create a plot that shows all points, as well as both regression lines, i.e., a plot that show both the line you get from `lm(disc ~ weight)` and `lm(weight ~ disc)`?
+
+```{r}
+#| label: questions-reg1-answers2
+#| eval: !expr params$include_answers
+#| echo: false
+#| results: 'asis'
+cat("We plot the data such that the $x$-axis is `disc` and the $y$-axis is `weight`. So we can directly use the intercept and slope parameters from the first regression, `reg1`. For the second regression, `reg2`, we invert
+\\begin{align}
+y&=a+bx\\quad\\quad\\Rightarrow\\\\
+x&=-\\frac{a}{b}+\\frac{1}{b}y
+\\end{align}")
+```
+```{r}
+#| label: questions-reg1-answers3
+#| eval: !expr params$include_answers
+#| echo: !expr params$include_answers
+#| fig-width: 4
+#| fig-height: 4
+#| out-width: "80%"
+
+# Fill in the missing parts in the code and run it
+# ggplot(scaledathletes, aes(x = ..., y = ...)) + geom_point(shape = 1) + 
+#   coord_fixed() + 
+#   geom_abline(intercept =     a1, slope =   b1, col = "#0056B9") +
+#   geom_abline(intercept = -a2/b2, slope = 1/b2, col = "#FFD800")
+```
+
+:::
+
+
+# A line that minimizes distances in both directions
+
+Below we are plotting a line chosen to minimize the error in both the horizontal and vertical directions. This results in minimizing the diagonal projections onto the line.  
+
+Specifically, we compute a line that minimizes the sum of squares of the orthogonal (perpendicular) projections of data points onto it. We call this the principal component line.
+
+```{r, include = TRUE}
+
+X = cbind(scaledathletes$disc, scaledathletes$weight)
+svda = svd(X)
+pc = X %*% svda$v[, 1] %*% t(svda$v[, 1])
+bp = svda$v[2, 1] / svda$v[1, 1]
+ap = mean(pc[, 2]) - bp * mean(pc[, 1])
+
+p + geom_segment(xend = pc[, 1], yend = pc[, 2], arrow = arrow(length = unit(0.15, "cm"))) + 
+  geom_abline(intercept = ap, slope = bp, col = "#606060", lwd = 1.5) + 
+  coord_fixed()
+
+```
+
+Now let's see how we can use the learned on a higher-dimensional data set. 
+
+# Turtle PCA
+
+To start we will come back to the turtles data set. First, we need to make sure we understand the basic features of the data and preprocess it in a way that its in the correct "shape" for running the PCA analysis. 
+
+::: {.callout-note collapse="false"}
+
+## Questions
+
+1. What are the mean values and standard deviation, of each of the 3 features: length, width and height. 
+2. Scale the data. 
+3. Explore the correlations between the 3 variables after scaling the data. What do you see? 
+
+```{r}
+#| label: questions-turtle-answers
+#| eval: !expr params$include_answers
+#| echo: !expr params$include_answers
+#| fig-width: 4
+#| fig-height: 4
+#| out-width: "60%"
+#1 Your code 
+
+#2 Your code 
+
+#3 Your code 
+# corrs = ...
+# pheatmap(corrs, cellwidth = 40, cellheight = 40, color = mycolors)
+```
+
+:::
+
+```{r}
+#| echo: false
+#| eval: true
+turtlesc = scale(turtles[, -1])
+```
+
+From the correlations, you see that all 3 variables are strongly correlated. (In the heatmap, note that the color scale already starts with a high value at its lower end.) Hence we expect that the data can be well approximated by a single variable. Let's do the PCA:
+
+```{r}
+#| label: pcaturtles
+#| fig-width: 4
+#| fig-height: 4
+#| out-width: "60%"
+#| message: false
+library("factoextra")
+pca1 = princomp(turtlesc)
+pca1
+```
+
+To look at the relative importance of the principal components, 
+we can look at their variances: the screeplot. 
+The screeplot shows the eigenvalues for the standardized data. 
+
+```{r scree}
+#| fig-width: 4
+#| fig-height: 4
+#| out-width: "60%"
+fviz_eig(pca1, geom = "bar", width = 0.4)
+```
+
+Note: Here we see one very large component in this case and two very small ones. 
+In this case the data are (almost) one dimensional.
+
+::: {.callout-note collapse="false"}
+
+## Questions
+
+1. What is the percentage of variance explained by the first PC? 
+How can you obtain this value from the pca1 object? 
+2. How many PCs are you using if you want to project the turtles data set? 
+
+```{r}
+#| label: questions-summarypcaturtle
+#| eval: !expr params$include_answers
+#| echo: !expr params$include_answers
+#1 You code 
+# Find the way to view the summary of the pca1 object generated above
+
+#2
+# Your text answer
+```
+
+:::
+
+Now, lets plot the samples with their PC1 and PC2 coordinates, 
+together with the variables. The representation of both, 
+the samples and the variables is called a biplot.  
+
+```{r turtlesbiplot}
+fviz_pca_biplot(pca1, label = "var") 
+```
+
+::: {.callout-note collapse="false"}
+
+## Questions
+
+1. Can you extend this plotting code to color the female samples differently than the male samples? 
+2. Did the males or female turtles tend to be larger?
+
+```{r}
+#| label: questions-fviz_pca_biplot-turtles
+#| eval: !expr params$include_answers
+#| echo: !expr params$include_answers
+#| fig-width: 4
+#| fig-height: 4
+#| out-width: "60%"
+#6 Modify the code 
+# fviz_pca_biplot(pca1, label = "var", col.ind = ...) 
+
+#7 Your text answer here
+#  
+```
+
+:::
+
+# Back to the athletes
+
+Now let us try to run the PCA on a larger data set 
+and interpret the corresponding scree plot. 
+In this case we are using a different library, 
+with a slightly different output of the PCA computation. 
+But the principle is the same. 
+
+```{r}
+#| label: pac.ath
+library("ade4")
+# The dudi.pca function by default already centers and scales the data by itself
+pca.ath = dudi.pca(athletes, scannf = FALSE)
+pca.ath$eig
+```
+
+::: {.callout-note collapse="false"}
+
+## Questions
+
+1. Just like in the above turtle data set. Can you produce a scree plot? 
+2. How many PCs are you using if you want to project the athletes data set? 
+3. Can you plot the samples with their PC1 and PC2 coordinates, 
+together with the variables in a biplot? 
+4. Can you plot the numbers of the athletes onto the samples. 
+What do you notice about the numbers?
+
+```{r}
+#| label: questions-athletets
+#| eval: !expr params$include_answers
+#| echo: !expr params$include_answers
+#| fig-width: 4
+#| fig-height: 4
+#| out-width: "60%"
+
+#1 Your code 
+# fviz_eig(..., geom = "bar", bar_width = 0.3) + ggtitle("")
+
+#2 Your text answer
+#  
+
+#3 Your code 
+# fviz_pca_biplot(..., label = "var") 
+
+#4 Your code 
+# fviz_pca_ind(...) + ggtitle("") + ylim(c(-2.5, 5.7))
+```
+
+:::

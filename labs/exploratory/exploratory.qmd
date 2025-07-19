@@ -1,0 +1,721 @@
+---
+title: "Exploratory Data Analysis"
+author: "Michael Love"
+date: "July 19, 2025"
+license: "CC-BY"
+format: 
+  html:
+    toc: true 
+    code-fold: false
+    code-tools: true
+    embed-resources: true
+    highlight-style: github
+    code-line-numbers: false 
+params:
+  skip_execution: false
+  skip_answers: true
+---
+
+```{r}
+#| label: initialize
+#| echo: FALSE
+knitr::opts_chunk$set(echo = TRUE, fig.width=7, fig.height=5) 
+```
+
+## Introduction
+
+Exploratory data analysis (EDA), including data inspection and visualization, is a key component of data analysis. Performing routine statistical analysis such as linear modeling or statistical tests, without examination of data, can result in incorrect scientific inference, both in the direction of false findings and missed discoveries, i.e. false positives and negatives.
+
+In this document, we will walk through some common EDA steps as part of the analysis of a particular genomics dataset. No particular genomics knowledge is required for this lecture note, and any additional information that is useful for examining the data will be provided during the data exploration. As with any data, learning a bit about the expected relationships is useful, so feel free to consult e.g. Wikipedia or other sources.
+
+We will start with basic data import and high-level plots, then move on to more advanced analyses such as principal components analysis (PCA), concluding with some specific genome-focused analysis, and complex manipulation of the data, organized into a rich data object. We will describe how organizing data into objects helps EDA and can help to avoid common bookkeeping errors.
+
+## Reading and looking at data
+
+### The Alasoo *et al.* 2018 dataset
+
+To find meaningful patterns in data, we need to first consider a bit about how they were generated, and the experimental design.
+
+In this document, I will work through examples from summary data associated with a particular experiment, published in 2018:
+
+> Alasoo K, Rodrigues J, Mukhopadhyay S, Knights AJ, Mann AL, Kundu K; HIPSCI Consortium; Hale C, Dougan G, Gaffney DJ. Shared genetic effects on chromatin and gene expression indicate a role for enhancer priming in immune response. Nat Genet. 2018 Mar;50(3):424-431. doi: 10.1038/s41588-018-0046-7. Epub 2018 Jan 29. PMID: 29379200; PMCID: PMC6548559.
+
+<https://pubmed.ncbi.nlm.nih.gov/29379200/>
+
+The key experiment design is described in this section:
+
+> We focussed on enhancer priming in the context of human macrophage immune response. To ensure sufficient numbers of cells, we differentiated macrophages from a panel of 123 human induced pluripotent cell lines (iPSCs) obtained from the HipSci project. We profiled gene expression (RNA-seq) and chromatin accessibility (ATAC-seq) in a subset of 86 successfully differentiated lines ... in four experimental conditions: naive (N), 18 hours IFNγ stimulation (I), 5 hours Salmonella enterica serovar Typhimurium (Salmonella) infection (S), and IFNγ stimulation followed by Salmonella infection (I+S).
+
+To restate, the authors used *induced stem cell lines*, differentiated these into *macrophage-like cells* (so capable of immune response), and then subjected the cells to three *treatments* (plus control condition), in order to explore the cellular immune response. Key considerations to the experimental design here:
+
+1.  Different human donors will have different genotypes, and so can be used to study genetic effects on immune response.
+
+2.  Interferon gamma (IFNg or IFNγ) stimulation primes the immune system to respond to Salmonella infection, and so may show a different effect than each treatment alone.
+
+In the summary data we will work with, we do not have genotype information, so we will ignore this aspect of the data (the paper is very interesting and focuses on this, so do read further if you are interested). The full data is available but requires an formal application to be submitted for data use.
+
+### A bit of omics background
+
+**Overview:** We will look at data that summarizes the *RNA-seq* and *ATAC-seq*, in cell lines from diverse human donors, across four experimental conditions. If these experiments are not familiar, all we need to know is that RNA-seq measures the expression of genes, and ATAC-seq measures the accessibility of chromatin across the genome. They use DNA sequencing machines to make these measurements, but that detail is not critical right now. Accessibility is another word for the chromatin being less compact, such that the DNA is more open and available to DNA-binding proteins. Compact chromatin is less accessible for DNA-binding proteins.
+
+**Motivation:** We are interested in measuring the average accessibility of chromatin across cells in the sample, as these DNA-binding proteins often mediate cellular response by binding to specific DNA sequences and influencing transcription of genes on the same chromosomes (referred to as *cis* in genetics for occurring on the same molecule) and "nearby" in the linear molecule. These DNA-binding proteins could be called regulatory proteins, or "transcription factors", and the piece of DNA that they bind to could be called a regulatory element, or more specifically a *cis*-regulatory element (CRE). For our purposes, "nearby" on the chromosome may mean 10-100 thousands of basepairs in either direction from the location that the protein binds. For interpreting this paragraph, take a look at panels [Fig 1a and 1b](https://www.ncbi.nlm.nih.gov/core/lw/2.0/html/tileshop_pmc/tileshop_pmc_inline.html?title=Alasoo%202018&p=PMC3&id=6548559_EMS83143-f001.jpg) in the published article.
+
+**Data interpretation:** The data will consist of counts organized into a matrix. The arrangement of the matrix is described below, but I first describe at a high level, the meaning of the counts that appear within. A count in the matrix is an observation of particular region of DNA being *accessible* in a particular sample. The measurements are *relative* in that the total count for one sample across all the regions is basically arbitrary. A zero or a low count means that the region was *less accessible* than a region with a higher count, within a sample.
+
+### File descriptions
+
+Summary versions of the expression and chromatin accessibility data are available here:
+
+<https://zenodo.org/records/1188300>
+
+I have downloaded a few of these files and made small versions of them in this git repository. I subset the chromatin accessibility (ATAT-seq) data to the first 1000 rows. In this data a row corresponds to a region of the genome (a potential regulatory element). Columns will correspond to samples (human cell lines in one of the treatment conditions). There are three important files:
+
+1.  the count matrix describing accessibility
+2.  the genome regions being described (rows of the matrix). these happen to be called "peaks"
+3.  the samples being assayed (columns of the matrix)
+
+### Reading in data
+
+Let's start by reading in the counts matrix. Here I use the basic `read.delim()` function to read in a matrix of data, and then convert to something called a "tibble". Two packages used here:
+
+1.  *tibble* for storing the information
+2.  *here* for referring to local files
+
+```{r}
+#| message: false
+library(tibble)
+library(here)
+# this file has no column name for first column (these are e.g. row names)
+counts <- read.delim(here("labs/exploratory/counts.txt.gz"))
+counts <- counts |> 
+  rownames_to_column("peak") |>
+  as_tibble()
+counts
+```
+
+The last line prints the tibble to the console which shows the first 10 rows in this case, and then states the remaining number of rows. We see a selection of the columns, which are samples.
+
+Some brief terminology: "peaks" refers to regions of the genome. They are called "peaks" because the raw data from the experiment looks like a peak of a mountain when visualized, because the observations of openness stack on top of each other. We will continue with the domain-specific work "peak" but when you see this word you can just think "region of the genome".
+
+A quick note on `tibble` vs `data.frame`, these are often equivalent. Tibble is used often with packages such as *dplyr*, and has more convenient display in my opinion. Anther detail is that the tibble cannot have row names, only column names.
+
+```{r}
+test_dat <- tibble(foo = c("a","b","c"), bar = c(-1.1, 2.0, 10.56))
+test_dat
+test_dat |> as.data.frame()
+```
+
+```{r}
+library(readr)
+peaks <- read_delim(here("labs/exploratory/peaks.txt.gz"))
+peaks
+```
+
+And the sample information, in a file referring to "column data", because the columns of the matrix are samples:
+
+```{r}
+coldata <- read_delim(here("labs/exploratory/coldata.txt.gz"))
+coldata
+```
+
+::: {.callout-note collapse="false"}
+## Question
+
+How many experiments do you spot per cell line donor?
+:::
+
+We now have three pieces of data in our R session, but each alone doesn't tell us that much. We will see as we step through the analysis that it is more convenient to tie these tables together.
+
+## Quick summaries
+
+We can use the `glimpse()` function from the *dplyr* package for quick summaries of the dataset. *dplyr* also provides many useful utilities for subsetting and manipulating tabular data, which we will see later.
+
+```{r}
+#| message: false
+library(dplyr)
+dplyr::glimpse(peaks)
+```
+
+Note that the first column "gene_id" is a misnomer (wrong name), as we are not looking at genes. This sometimes happens in genomics, when a file format is re-used for other types of data.
+
+```{r}
+dplyr::glimpse(coldata)
+```
+
+Another useful package for summarizing data is *skimr* with the `skim()` function:
+
+```{r}
+library(skimr)
+skim(peaks)
+```
+
+::: {.callout-note collapse="false"}
+## Question
+
+Scroll to the right in the numeric variable table. How would you describe the distribution of the different numeric columns? Do these distributions make sense? Note that our subset of the data contains just the first 1,000 regions on chromosome 1.
+:::
+
+We will also run `skim` on the column data. We do this twice: once on the data after de-selecting the columns `assigned` and `peak_count`, and once just on those two columns. This is because the scale of those two columns is much larger than the other numberic columns, so it helps with printing to isolate them.
+
+```{r}
+coldata |> select(!c(assigned, peak_count)) |> skim()
+```
+
+Note that the meaning of the columns is described in a metadata file at the Zenodo link.
+
+::: {.callout-note collapse="false"}
+## Question
+
+The `assigned_frac` column is described as the "fraction of non-mitochondrial reads assigned to consensus peaks". A "read" is an observation of accessibility in this context. What is a typical value? For a typical sample, are most of the observations within the regions called "peaks"?
+:::
+
+```{r}
+coldata |> select(assigned, peak_count) |> skim()
+```
+
+::: {.callout-note collapse="false"}
+## Question
+
+What is the general number of peaks for a typical sample? Is the distribution of number of peaks left or right skewed? The `assigned` column gives the "total number of paired-end fragments overlapping peaks", that is the number of observations that are within the regions called "peaks". What is a typical value here? Recall that the total number of observations per sample is arbitrary. This `assigned` number is influenced both by the total number of observations and by the enrichment of observations in the "peak" regions.
+:::
+
+Note that we can also select by pattern, see `?select` for more details:
+
+```{r}
+coldata |> select(ends_with("_date"))
+```
+
+## Cumulative densities, histograms, ggplot
+
+Above we saw small text-based histograms of numeric data, which allow us to quickly look at the distribution of values. Here I explore that further, first introducing the `ecdf()` function. An *empirical cumulative density function* shows similar information to a histogram, as if the bars of the histogram were stacking on top of each other from left to right. But instead of breaking the range of the data on the x-axis into bins, each data point is represented. The value on the y-axis goes from 0 on the left edge of the data (minimum) to 1 on the right edge of the data (maximum). Reading the x-value where the y-value equals 0.5 gives the median.
+
+Let's make some ECDF plots for the 1,000 rows of the count data. For example, the column sums (in thousands):
+
+```{r}
+dim(counts)
+counts[1:5,1:5]
+col_sum <- counts |> select(-peak) |> colSums()
+plot( ecdf(col_sum/1e3) )
+```
+
+::: {.callout-note collapse="false"}
+## Question
+
+What is a typical value for the column sum of our counts matrix?
+:::
+
+Let's also look at row sums (in thousands). These are the total number of observations in a region of the genome across all samples.
+
+```{r}
+row_sum <- counts |> select(-peak) |> rowSums()
+plot( ecdf(row_sum/1e3) )
+```
+
+::: {.callout-note collapse="false"}
+## Question
+
+What do you notice about the row sum in contrast to the column sum? Any outliers?
+:::
+
+We can focus on the area where most of the rows are:
+
+```{r}
+plot( ecdf(row_sum/1e3), xlim=c(0,10) )
+```
+
+::: {.callout-note collapse="false"}
+## Question
+
+What's a typical value for the row sum?
+:::
+
+Another powerful package for making plots is *ggplot2*. This package is widely used and has many tutorials online. The "gg" stands for Grammar of Graphics, which refers the concept of splitting apart specification of plotting elements from the mapping of the variables to visual aesthetics. I find the best way to learn is by trying it out.
+
+The `ggplot()` function requires input in the form of a tibble or dataframe. This is because it uses the names of the columns (variables) in mapping to the aesthetics.
+
+In order to plot a histogram of the column sums, we first need to put this variable into a tibble, which is done on the first line below.
+
+Then we call `ggplot()`, giving it the tibble, and in the second argument we *map* the column sum in thousands to the `x` aesthetic, within the function `aes()`.
+
+Finally we specify a "geometry" for the data, in this case a histogram. In *ggplot2* we combine these operations with `+`.
+
+```{r}
+library(ggplot2)
+dat <- tibble(col_sum_thousands = col_sum / 1e3)
+ggplot(
+  data = dat,
+  mapping = aes(x = col_sum_thousands)
+) +
+  geom_histogram()
+```
+
+We can make a more interesting plot from the column data. Note that it is common and possible to leave off the names of the first two arguments `x` and `y`. Here we specify to make a geometry, `point`, which produces a scatterplot.
+
+This time we leave off the names of the first and second argument of `ggplot`.
+
+```{r}
+ggplot(
+  coldata,
+  aes(x = assigned, y = assigned_frac, color = condition_name)
+) +
+  geom_point()
+```
+
+::: {.callout-note collapse="false"}
+## Question
+
+Check out the possible `geoms` at [this link](https://ggplot2.tidyverse.org/reference/index.html#geoms). Try different plots for the various character and numeric data columns in `coldata`.
+:::
+
+Additional plot alelemnts can be added with `+`, building up to complex figures that are suitable for manuscripts. A few lines of code produces a scatterplot with separate regression lines for each group.
+
+```{r}
+ggplot(
+  coldata,
+  aes(x = assigned, y = assigned_frac, color = condition_name)
+) +
+  geom_point() +
+  stat_smooth(
+    method = "lm",
+    formula = "y ~ x",
+    se = FALSE
+  )
+```
+
+::: {.callout-note collapse="false"}
+## Question
+
+Advanced: try using a different smoothing method, from [?stat_smoooth](https://ggplot2.tidyverse.org/reference/geom_smooth.html).
+:::
+
+## Visualizing matrix data
+
+Matrix data, where each column provides a numeric value on the same scale, has specialized plots that helps us understand the structure of the data in the matrix. It often helps to look at transformed data, especially with counts. Below we take the logarithm (base 10) of the data plus a pseudocount of 1. While we can do this operation simply with `log10(matrix + 1)`, here we use a *dplyr* approach, keeping the data in the *tibble* format.
+
+```{r}
+log_counts <- counts |>
+  select(-peak) |>
+  mutate(across(everything(), ~ log10(.x + 1)))
+log_counts_6 <- log_counts |> select(1:6)
+```
+
+Alternatively, we could have used more basic R code...
+
+```{r}
+counts_subset <- as.matrix(counts[,2:7])
+head( log10(counts_subset + 1) )
+```
+
+The package *DataExplorer* offers paneled plots across columns of matrix data. For example, to scan across a grid of histograms:
+
+```{r}
+library(DataExplorer)
+plot_histogram(log_counts_6, ncol = 3)
+```
+
+This is a really useful paradigm to check for samples with different distribution. 
+
+What if we have very many samples? We could break the samples into groups of say 12 (4 x 3) and make a PDF with many pages of histograms.
+
+An alternative to this is to use ggplot2's density function, to draw lines for each sample. But to do so, we must arrange the matrix data into a table, using _tidyr_ package and the function `pivot_longer()`. This stacks the matrix columns into a single column, with an additional column specifying the sample name.
+
+Here we will use color to identify sample, but we may have to drop this if we had hundreds of samples.
+
+```{r}
+library(tidyr)
+long_log_counts <- log_counts_6 |>
+  pivot_longer(
+    cols = everything(),
+    names_to = "sample",
+    values_to = "log_counts"
+  )
+ggplot(
+  long_log_counts,
+  aes(x = log_counts, color = sample)
+) +
+  geom_density()
+```
+
+Another option would be boxplots or violin plots.
+
+```{r}
+ggplot(
+  long_log_counts,
+  aes(x = sample, y = log_counts)
+) +
+  geom_boxplot()
+```
+
+```{r}
+ggplot(
+  long_log_counts,
+  aes(x = sample, y = log_counts)
+) +
+  geom_violin() +
+  stat_summary(fun = median, geom = "point", size=3)
+```
+
+The "QQ-plot" aligns the quantiles of the data with those of a Normal distribution (or another reference distribution). If the values fall roughly on a line, this means the data is roughly normally distributed.
+
+```{r}
+plot_qq(log_counts_6, ncol = 3)
+```
+
+We can also make a matrix of correlations:
+
+```{r}
+#| fig-width: 5
+#| fig-height: 5
+plot_correlation(log_counts_6)
+```
+
+There are a number of packages that provide more fine-grained correlation matrices, such as [corrgram](https://cran.r-project.org/web/packages/corrgram/vignettes/corrgram_examples.html).
+
+::: {.callout-note collapse="false"}
+## Question
+
+-   What could you say, in broad terms, about the first six samples in terms of these plots?
+-   For those who are more familiar with omics data such as gene expression and chromatin accessibility: suppose we also read in the gene expression data as a matrix. What might be a way to check that our data is properly aligned by sample across the two assays? What part of a gene must be accessible for it to be expressed? What steps would it take to perform this check?
+:::
+
+## Wrangling data into objects
+
+Data wrangling is "the process of transforming and mapping data from one raw data form into another format with the intent of making it more appropriate and valuable for a variety of downstream purposes such as analytics" (from Wikipedia).
+
+For the dataset we have been exploring, we haven't yet made much use of the annotation of the rows (genome regions) or the columns (samples). We have three separate tables tracking this information, but we don't even know if the tables are properly aligned (e.g. row 100 in the `peaks` could be row 900 in the `counts` data for all we know, likewise for `coldata` and columns of `counts`). To clean up our code, and prevent potential errors, it makes sense to formally organize our data and metadata across these multiple tables.
+
+First we can do some checks, to make sure samples are present in both tables, and are in the same order. If these are not in order, we will have to re-arrange later.
+
+```{r}
+table(coldata$sample_id %in% colnames(counts)[-1])
+table(colnames(counts)[-1] %in% coldata$sample_id)
+# not in order! so we have to be careful below
+all.equal(coldata$sample_id, colnames(counts)[-1])
+```
+
+Again for the rows of the `counts`, i.e. the genomic regions:
+
+```{r}
+table(peaks$gene_id %in% counts$peak)
+table(counts$peak %in% peaks$gene_id)
+all.equal(peaks$gene_id, counts$peak)
+```
+
+"Object-oriented programming" helps with bookkeeping. The idea is to assemble our tables into a single "object", which has specific slots and rules for coordinating operations like re-ordering or subsetting across the tables. Putting information into (setting) and pulling information out of (getting) the object will be handled by "accessor" and "assignment" functions. These look like `foo(object)` or `foo(object) <- new_value`.
+
+Below we will create an object to combine and coordinate the `counts` (with rows as genomic regions and columns as samples) with the sample information (`coldata`). We can also add data about the rows (`peaks`).
+
+## Principal component analysis
+
+Principal component analysis (PCA) is a highly useful EDA technique, which rotates our dataset into a new coordinate system. It's helpful for plotting, diagnostics, machine learning, bias removal, and many more data analytic tasks. We will use it on our chromatin accessibility data to explore how the samples differ in the counts over the regions.
+
+As we have a table with samples as columns, this means we will be rotating our data from the original space of _p_ features (the number of rows) into a new space of _p_ features where the first features are the most "important". Mathemetically, we can say the first feature will have the most variance, defined as $\frac{1}{n} \sum_i (x_i - \bar{x})^2$, and so on for the second, third, etc. We can also say that taking the top T rotated features are the best at preserving distances in the entire space. So it's an efficient way to _compress_ information into a set of ranked features. 
+
+A technical detail before we run PCA: we need to deal with the fact that each column of our matrix has an arbitrary column sum, as we saw before. This tends to not tell us much about the chromatin accessibility, and so hides important biological relationships.
+
+```{r}
+plot(colSums(log_counts))
+```
+
+Without getting into too much detail, a decent approach is to simply scale the columns by some value. Here we will scale them by their median value.
+
+```{r}
+scaled_counts <- counts |> 
+  select(-peak) |>
+  mutate(across(everything(),  ~ .x / median(.x))) |>
+  as.matrix()
+```
+
+Now we compute PCA on the samples. We need to transpose with `t()` to make samples into rows. We take the logarithm (base 10) of the counts in addition, with a pseudocount of 1. There are many considerations about which transformation if any, but something like a logarithm on count data is useful for seeing patterns. 
+
+We can immediately make a plot of the data in the rotated space. A 2D scatterplot shows us PC1 and PC2.
+
+```{r}
+pca <- prcomp(t(log10(scaled_counts + 1)))
+plot(pca$x[,1:2])
+```
+
+We can ask, what original features are contributing substantially to these top rotated dimensions?
+
+```{r}
+rot <- pca$rotation[,1:4] |> as_tibble()
+rot |> 
+  arrange(desc(abs(PC1))) |>
+  head()
+```
+
+And again for PC2:
+
+```{r}
+rot |> 
+  arrange(desc(abs(PC2))) |>
+  head()
+```
+
+However, this analysis would be much more valuable if we had sample and feature metadata alongside. Let's arrange the `coldata` so it matches the columns of `counts`:
+
+```{r}
+coldata_arr <- coldata |>
+  arrange(match(sample_id, colnames(counts)[-1]))
+```
+
+Now we can put the `counts` and its column data together into an object. We can use the _SummarizedExperiment_ package to build an object of the same name. This will tie together the two tables and facilitate data manipulation and plotting.
+
+```{r}
+#| message: false
+library(SummarizedExperiment)
+se <- SummarizedExperiment(
+  list(counts = counts |> select(-1) |> as.matrix()),
+  colData = coldata_arr
+)
+se
+```
+
+We can access variables about the rows and columns with `rowData` and `colData`. There is also a shortcut for accessing variables about the columns, simply using a `$` and the variable name:
+
+```{r}
+head( se$sample_id )
+# same as
+head( colData(se)$sample_id )
+```
+
+Additionally, I will define an ordering of the conditions, and define a new variable about the samples, `condition`:
+
+```{r}
+fct_lvls <- c("naive","IFNg","SL1344","IFNg_SL1344")
+se$condition <- factor( se$condition_name, fct_lvls )
+table( se$condition )
+```
+
+Another benefit to building such an object is that there are many R/Bioconductor packages that take in such an annotated matrix object. The DESeq2 package allows us to quickly scale, transform, and plot the data with a few lines of code. We avoid potential issues with the tables getting out of orer, as the entire object is passed from one line to the other (`dds` is just another type of SummarizedExperiment here).
+
+```{r}
+library(DESeq2)
+dds <- DESeqDataSet(se, ~condition)
+dds <- estimateSizeFactors(dds)
+vsd <- varianceStabilizingTransformation(dds) 
+plotPCA(vsd, intgroup="condition")
+```
+
+::: {.callout-note collapse="false"}
+## Question
+
+What do you observe in the PCA plot colored by sample condition?
+:::
+
+We actually have three aligned tables (remember, `peaks` and `counts` were already aligned by row). Let's add the peak data
+
+```{r}
+rowData(se) <- peaks |> 
+  select(
+    peak_id = gene_id, 
+    length, 
+    gc = percentage_gc_content)
+rowData(se)
+```
+
+I will annotate the rows of the `se` object:
+
+```{r}
+rownames(se) <- rowData(se)$peak_id
+```
+
+Next we will also add the particular information about the location of the peaks, to enable more sophisticated downstream EDA.
+
+## Case study: chromatin accessibility
+
+look for regions that have varying accessibility
+
+```{r}
+pca <- prcomp(t(assay(vsd)))
+plot(pca$x[,1:2], col=vsd$condition)
+rot <- pca$rotation[,1:4] |> as_tibble()
+rot |> 
+  arrange(desc(abs(PC1))) |>
+  head()
+pc1_features <- order(abs(rot$PC1), decreasing=TRUE) |> head(10)
+```
+
+```{r}
+par(mfrow = c(2, 2), mar = c(4.5, 4.5, .5, .5))
+for (i in c(1,3,5,7)) {
+  plotCounts(
+    dds,
+    gene = pc1_features[i],
+    intgroup = "condition",
+    ylim=c(1, 1000)
+  )
+}
+```
+
+```{r}
+set.seed(5)
+par(mfrow = c(3, 3), mar = c(4.5, 4.5, .5, .5))
+for (i in sample(1000, 9)) {
+  plotCounts(
+    dds,
+    gene = i,
+    intgroup = "condition",
+    ylim = c(1, 1000)
+  )
+}
+```
+
+```{r}
+#| message: false
+library(plyranges)
+library(nullranges)
+p <- peaks |>
+  as_granges(seqnames = chr)
+p
+```
+
+```{r}
+p <- p |>
+  mutate(
+    pc1 = rot[, "PC1", drop = TRUE],
+    abs_scaled_pc1 = abs(pc1)/max(abs(pc1))
+  )
+plot(p$abs_scaled_pc1)
+```
+
+```{r}
+tiles <- range(p) %>%
+  tile_ranges(width=1e4) %>%
+  mutate(id = seq_along(.))
+```
+
+```{r}
+tab <- tiles |> 
+  join_overlap_left(p) |>
+  group_by(id) |>
+  summarize(sum_pc1 = sum(abs_scaled_pc1)) |>
+  as_tibble() |>
+  mutate(sum_pc1 = tidyr::replace_na(sum_pc1, 0))
+plot(tab$sum_pc1)
+```
+
+```{r}
+which.max(tab$sum_pc1)
+tab |> slice(which.max(sum_pc1))
+max_tile <- tiles |> slice(which.max(tab$sum_pc1))
+p |>
+  filter_by_overlaps(max_tile)
+```
+
+How to bootstrap ranges?
+
+```{r}
+seqlengths(p) <- c("1" = 9e6) # just for demo
+boot <- bootRanges(p, blockLength = 1e5, R = 10)
+boot |>
+  filter_by_overlaps(max_tile) |>
+  group_by(iter) |>
+  summarize(
+    num_overlaps = n(),
+    sum_pc1 = sum(abs_scaled_pc1)
+  )
+```
+
+## Appendix
+
+### Tidy operations on rich objects
+
+The following code chunks show how we can use new packages in the _tidyomics_ project (within Biconductor), to manipulate objects using _dplyr_-like syntax.
+
+```{r}
+library(SummarizedExperiment)
+se_thin <- se
+cols <- c("donor","condition","mean_purity","assigned","peak_count")
+colData(se_thin) <- colData(se_thin)[,cols]
+```
+
+```{r}
+#| message: false
+library(plyxp)
+xp <- new_plyxp(se_thin) |>
+  mutate(
+    log_scaled_counts = log2(counts/.cols$assigned + 1),
+    rows(row_sums = rowSums(.assays_asis$counts))
+  )
+```
+
+```{r}
+#| message: false
+library(tidySummarizedExperiment)
+xp |>
+  filter(rows(peak_id == "ATAC_peak_162")) |>
+  se() |>
+  ggplot(aes(condition, log_scaled_counts)) + 
+  geom_point()
+```
+
+### iSEE - interactive exploratory applications
+
+_iSEE_ is a Bioconductor package (with many associated packages) that allows for interactive visualization of data objects. You can try it out with the following:
+
+```{r}
+#| eval: false
+library(iSEE)
+iSEE(se_thin)
+```
+
+### Missing data
+
+Identifying and characterizing missingness is important! The *naniar* package helps to deal with and visualize patterns of missingness. As our above worked example dataset doesn't contain very many missing values, here I simulate a dataset with missingness.
+
+```{r}
+#| message: false
+library(naniar)
+dat_with_na <- tibble(
+  foo = rnbinom(500, mu=20, size=5),
+  bar = rnbinom(500, mu=20, size=5)
+)
+dat_with_na <- dat_with_na |>
+  mutate(across(
+    everything(),
+    ~ {
+      na_idx <- sample(length(.x), 100)
+      .x[na_idx] <- NA
+      .x
+    }))
+```
+
+```{r}
+library(ggplot2)
+ggplot(dat_with_na, aes(foo, bar)) + 
+  geom_miss_point()
+```
+
+```{r}
+dat_with_na |>
+  bind_shadow()
+dat_with_na |>
+  bind_shadow() |>
+  ggplot(aes(foo, color = bar_NA)) +
+  geom_density()
+```
+
+### summarytools
+
+The *summarytools* package provides alternative summaries, a bit more verbose than the ones above.
+
+```{r}
+#| eval: false
+library(summarytools)
+descr(peaks) # simple table, like skim
+dfSummary(peaks) # pop-up descriptive page
+```
+
+It also allows for pop-out summary tables, within an RStudio session:
+
+```{r}
+#| eval: false
+view(dfSummary(peaks)) # RStudio
+```
+
+## Session info
+
+```{r}
+sessionInfo()
+```

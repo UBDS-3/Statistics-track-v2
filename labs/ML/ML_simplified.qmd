@@ -1,0 +1,950 @@
+---
+title: 'Machine learning'
+author: ''
+date: today
+format: 
+  html:
+    code-fold: false
+    code-tools: false
+    embed-resources: true
+    highlight-style: github
+    toc: true 
+    code-line-numbers: false 
+params:
+  skip_execution: false
+  skip_slow_chunks: true
+  skip_answers: true
+---
+
+```{r}
+#| label: initialize
+#| echo: FALSE
+knitr::opts_chunk$set(echo = TRUE, fig.width=7, fig.height=5) 
+```
+
+## Goal
+
+In this lab we will learn the basics of Machine Learning (ML). We will focus 
+on supervised learning. We will start with the simple idea of linear 
+discrimination, and then move on to important concepts in ML: cross-validation,
+overfitting and variance-bias trade-off.
+
+## Packages
+
+Install packages.
+
+```{r}
+#| label: installpkgs
+#| eval: FALSE
+#| warning: FALSE
+#| message: FALSE
+pkgs_needed = c("MASS","ExperimentHub", "tidyverse","glmnet", "RColorBrewer","caret")
+letsinstall = setdiff(pkgs_needed, installed.packages()) 
+if (length(letsinstall) > 0) {
+  for (pkg in letsinstall) {
+    BiocManager::install(pkg, dependencies = TRUE)
+  }
+}
+```
+
+Load packages.
+
+```{r}
+#| label: loadpkgs
+#| eval: !expr (! isTRUE(params$skip_execution))
+#| warning: FALSE
+#| message: FALSE
+library(MASS)
+library(caret)
+library(glmnet)
+library(tidyverse)
+library(RColorBrewer)
+library(ExperimentHub)
+```
+
+## Diabetes data set
+
+The `diabetes` dataset presents three different groups of diabetes patients and 
+five clinical variables measured on them. We will try to use those measured 
+variables to predict the group of a patient.
+
+```{r}
+#| label: diabetes
+#| eval: FALSE
+#| warning: FALSE
+#| message: FALSE
+# load data
+diabetes = read_csv(
+  url("http://web.stanford.edu/class/bios221/data/diabetes.csv"), 
+  col_names = TRUE
+)
+# if download fails with timeout error, try increasing it
+# options(timeout = 1000)
+diabetes
+```
+
+```{r}
+#| label: diabetes_local
+#| eval: !expr (! isTRUE(params$skip_execution))
+#| echo: FALSE
+#| warning: FALSE
+#| message: FALSE
+diabetes = read_csv("diabetes.csv")
+diabetes
+```
+We convert values of `group` column from character into factor. If you are not
+familiar with factors in R, you can read about them
+[here](https://r4ds.hadley.nz/factors.html).  
+
+```{r}
+#| label: factor
+#| eval: !expr (! isTRUE(params$skip_execution))
+# convert group to factor
+diabetes$group <- factor(diabetes$group)
+```
+
+Next we will visualize the data using `ggplot2` package. To plot all variables 
+together, we need to transform the data into a long format, using `gather` 
+function from `tidyr` package.
+
+```{r}
+#| label: ldagroups
+#| eval: !expr (! isTRUE(params$skip_execution))
+
+# transform data to long format
+diabetes.long = pivot_longer(
+  data = diabetes,
+  cols = -c(id, group), 
+  names_to = "variable", 
+  values_to = "value"
+)
+
+# plot distribution of different variables in the data
+ggplot(data = diabetes.long, mapping = aes(x = value, col = group)) +
+  geom_density() + facet_wrap( ~ variable, ncol = 2, scales = "free") 
+```
+
+We see already from the one-dimensional distributions that some of the
+individual variables could potentially predict which group a patient is more 
+likely to belong to. 
+
+::: {.callout-note collapse="false"}
+
+## Question
+
+Which of the variables seem to be most informative for distinguishing the groups?
+
+```{r}
+#| label: informative
+#| eval: !expr (! params$skip_execution & ! params$skip_answers)
+#| echo: !expr (! params$skip_answers)
+cat("Insulin")
+```
+
+:::
+
+Our goal will be to combine variables to get the more accurate predictions.
+
+## Linear discrimination analysis (LDA)
+
+We start with one of the simplest possible discrimination problems. 
+
+We will use two variables, `insulin` and `glutest`, to predict the `group`.
+Our aim is to partition the 2D plane defined by these variables into classes, 
+using class boundaries that are straight lines.
+
+::: {.callout-note collapse="false"}
+
+## Question
+
+It's always a good idea to first visualize the data. Look at how `insulin` and 
+`glutest` are distributed relative to each other by plotting the scatterplot 
+of the two variables and colouring the points by the group.
+
+```{r}
+#| label: scatterdiabetes_code
+#| eval: !expr (! params$skip_execution)
+#| echo: FALSE
+ggdb <- ggplot(diabetes, aes(x = insulin, y = glutest, colour = group)) +
+         geom_point()
+```
+
+```{r}
+# Complete the code 
+# ggdb <- ggplot(..., aes(x = ..., y = ..., colour = ...)) +
+#          geom_point()
+# ggdb
+```
+
+```{r}
+#| label: scatterdiabetes_plot
+#| eval: !expr (! params$skip_execution & ! params$skip_answers)
+#| echo: !expr (! params$skip_answers)
+#| fig.width: 5
+#| fig.height: 4 
+ggdb <- ggplot(diabetes, aes(x = insulin, y = glutest, colour = group)) +
+         geom_point()
+ggdb
+```
+
+:::
+
+We'll start with a method called linear discriminant analysis (LDA). 
+This method is a foundation stone of classification, many of the more 
+complicated (and sometimes more powerful) algorithms are really just 
+generalizations of LDA.
+
+To calculate LDA, we will use the `lda` function from the `MASS` package.
+One way to run this function (and many other models in R) is using the formula 
+notation. To read more about LDA and formula format, check `?lda` and `?formula`.
+
+In the simple form, a formula can look like this: 
+
+`response ~ predictor1 + predictor2 + ... + predictorn`
+
+Here `response` is the variable we want to predict, and `predictor1`, 
+`predictor2`, etc. are the variables we use to make the prediction.
+
+Response and predictors can be vectors of data used in the model.  
+Alternatively, if data argument is specified, they can be (unquoted!) column 
+names of the data that contain the response and predictor values.  
+Yet another alternative is to fit `lda` by providing as parameter `x` a data.frame 
+of predictor variables (with observations as rows and variables as columns), and 
+as parameter `groupping` a corresponding factor of response variables i.e. groups.
+
+Below we show these different ways in which we can fit the LDA model using 
+diabetes data. All the three lines of code are equivalent.
+
+```{r}
+#| label: ldafit
+#| eval: !expr (! isTRUE(params$skip_execution))
+
+# three ways to fit LDA model:
+diabetes_lda <- lda(diabetes$group ~ diabetes$insulin + diabetes$glutest)
+diabetes_lda <- lda(group ~ insulin + glutest, data = diabetes)
+diabetes_lda <- lda(x = diabetes[, c("insulin", "glutest")], grouping = diabetes$group)
+
+# inspect the model
+diabetes_lda
+```
+
+In the shown model summary:  
+- prior probabilities are calculated as the fraction of samples from every group  
+- group means are the means of the variables for each group  
+- coefficients are the coefficients of the linear model  
+- proportion of trace are the proportions of inter-group variance explained  
+
+We can then use the model for prediction.
+
+```{r}
+#| label: ldaresults
+#| eval: !expr (! isTRUE(params$skip_execution))
+# predictions from model
+ghat <- predict(diabetes_lda)$class
+
+# contingency table
+table(predicted = ghat, truth = diabetes$group)
+
+# prediction error
+mean(ghat != diabetes$group)
+```
+
+Now, let's visualize the LDA result. We are going to plot the prediction regions 
+for each of the three groups. We do this by creating a grid of points and using 
+our prediction rule on each of them (note the parameter `newdata` in the 
+`predict()` function now) On top of this, we also plot the class centers. 
+Assembling this visualization requires us to write a bit of code, but don't 
+worry too much if you don't understand it - we do this just to illustrate the 
+concepts.
+
+```{r}
+#| label: plot_lda_results
+#| eval: !expr (! isTRUE(params$skip_execution))
+#| fig.width: 5
+#| fig.height: 4 
+
+# helper function to make 1D grid
+make1Dgrid <- function(x) {
+  # extend the range of x by small fraction on both sides
+  rg <- grDevices::extendrange(x)
+  # generate 100 sequential values within extended range of x
+  seq(from = rg[1], to = rg[2], length.out = 100)
+}
+
+# get all combinations of insulin and glutest in the range of the data
+diabetes_grid <- with(
+  diabetes,
+  expand.grid(
+    insulin = make1Dgrid(insulin),
+    glutest = make1Dgrid(glutest)
+  )
+)
+
+# predictions for the grid values
+diabetes_grid$ghat <- predict(diabetes_lda, newdata = diabetes_grid)$class
+
+# group centers
+centers <- diabetes_lda$means
+
+# plotting on top of the diabetes data scatterplot we generated before
+ggdb + 
+  # we add prediction regions plotted as raster image on top of original points
+  geom_raster(
+    data = diabetes_grid,
+    mapping = aes(x = insulin, y = glutest, fill = ghat),
+    inherit.aes = FALSE, alpha = 0.25, interpolate = TRUE
+  ) +
+  # we add centers as + points
+  geom_point(
+    data = as_tibble(centers),
+    mapping = aes(x = insulin, y = glutest),
+    inherit.aes = FALSE, pch = "+", size = 8
+  ) +
+  scale_x_continuous(expand = c(0, 0)) + 
+  scale_y_continuous(expand = c(0, 0))
+```
+
+::: {.callout-note collapse="false"}
+
+## Question
+
+Instead of trying to predict with 2 variables, fit LDA model with all 5 variables.  
+Get predictions using this new model.  
+Get the confusion table for predictions, and calculate the prediction error.  
+
+```{r}
+#| label: lda5
+#| eval: !expr (! params$skip_execution & ! params$skip_answers)
+#| echo: !expr (! params$skip_answers)
+
+# fit the model
+diabetes_lda5 <- lda(group ~ relwt + glufast + glutest + steady + insulin, data = diabetes)
+
+# predicitons
+ghat5 <- predict(diabetes_lda5)$class
+
+# confusion table
+table(ghat5, diabetes$group)
+
+# error
+mean(ghat5 != diabetes$group)
+```
+
+How did the prediction error change compared to the model with only 2 variables?
+
+```{r}
+#| label: lda5_error
+#| eval: !expr (! params$skip_execution & ! params$skip_answers)
+#| echo: FALSE
+#| results: 'asis'
+cat(
+  "It decreased - the prediction error is almost half compared to what we got with only the insulin and glutest variables."
+)
+```
+
+Based on this, can you tell if the classifier trained with 5 variables is better 
+than the one trained with only 2?
+
+```{r}
+#| label: lda_train_comparison
+#| eval: !expr (! params$skip_execution & ! params$skip_answers)
+#| echo: FALSE
+#| results: 'asis'
+cat(
+  "No, because the errors are computed on the same data that we use for model training, so the model with lower error might actually be overfitting the data."
+)
+```
+
+```{r}
+# Write your code to answer the questions above
+
+# Fit the model
+
+# Make predictions
+
+# Create a confusion matrix
+
+# Calculate the error rate
+
+```
+
+:::
+
+## Cross-validation
+
+Previously we were looking at predictions and classification error on the same 
+data that we used for training the model. This is not the most correct approach, 
+as the model will always perform better on the training data than on the new, 
+unseen data. In extreme cases, the model could fail to learn the trends 
+underlying the data, but instead it simply memorizes the values that it is 
+trained on - this is called overfitting, and is something we want to avoid.
+
+To get a good idea if the model learns well, we need to estimate its performance
+on new data it hasn't seen before. The most simple way to do this, we would to 
+use a fraction of data only for training, and a fraction only for testing. 
+However, by splitting the data only once, our results can be quite affected by 
+how the split happens to fall, especcially if we don't have many observations. 
+Another way to deal with this would be to perform cross validation (CV).  
+
+Below we will look at one version of CV, called leave-one-out cross-validation 
+(LOOCV). In LOOCV, we fit the whole model without one data point and then we 
+predict the label of the left-out point. We know the true label of that data 
+point, and the learning algorithm does not, hence we can get a reasonable 
+estimate of the algorithm's performance on this "new" data.  Then, this process 
+is repeated for each data point separately, and the average error is calculated.
+
+::: {.callout-note collapse="false"}
+
+## Question
+
+Let's write a function that fits `lda` model with LOOCV.
+In the code below, the parameters of the function are described after `@param` 
+keywords, and the `@value` describes what the function should output. 
+Complete the function template provided (replace `...` with code).
+
+```{r}
+#| label: estimate_mcl_loocv_solved
+#| eval: !expr (! isTRUE(params$skip_execution))
+#| echo: !expr (! params$skip_execution & ! params$skip_answers)
+
+#' A function to perform LOOCV
+#' 
+#' @param x data.frame of predictor variables (rows are observations, columns are variables)
+#' @param grouping factor, response variable (length should be the same as nrow(x))
+#' 
+#' @value vector with mean training and test error
+#' 
+estimate_mcl_loocv = function(x, grouping) {
+  # iterate over observations
+  vapply(seq_len(nrow(x)), function(i) {
+    # fit a model with i-th observation left-out
+    fit  = lda(x = x[-i, ], grouping = grouping[-i])
+    # predict on the training data
+    ptrn = predict(fit, newdata = x[-i,, drop = FALSE])$class
+    # predict on the test data i,e, left-out i-th observation
+    ptst = predict(fit, newdata = x[ i,, drop = FALSE])$class
+    # return training and test errors
+    c(
+      train = mean(ptrn != grouping[-i]),
+      test = (ptst != grouping[i])
+    )
+  }, FUN.VALUE = numeric(2)) %>% rowMeans
+}
+```
+
+```{r}
+#| label: estimate_mcl_loocv_template
+#| echo: !expr (params$skip_answers)
+#| eval: FALSE
+
+#' A function to perform LOOCV
+#' 
+#' @param x data.frame of predictor variables (rows are observations, columns are variables)
+#' @param grouping factor, response variable (length should be the same as nrow(x))
+#' 
+#' @value vector with mean training and test error
+#' 
+estimate_mcl_loocv = function(x, grouping) {
+  # iterate over observations
+  vapply(seq_len(nrow(x)), function(i) {
+    # fit a model with i-th observation left-out
+    fit  = lda(x = x[...], grouping = grouping[...])
+    # predict on the training data
+    ptrn = predict(fit, newdata = x[...,, drop = FALSE])$class
+    # predict on the test data i,e, left-out i-th observation
+    ptst = predict(fit, newdata = x[...,, drop = FALSE])$class
+    # return training and test errors
+    c(
+      train = mean(ptrn != grouping[...]),
+      test = (ptst != grouping[...])
+    )
+  }, FUN.VALUE = numeric(2)) %>% rowMeans
+}
+```
+
+:::
+
+::: {.callout-note collapse="false"}
+
+## Question
+
+Now compare again the errors for model trained with only `insulin` and `glutest`, 
+and the model trained with all variables. Which model is better?
+
+```{r}
+#| label: lda_loocv
+#| eval: !expr (! params$skip_execution & ! params$skip_answers)
+#| echo: !expr (! params$skip_answers)
+estimate_mcl_loocv(x = diabetes[, c("insulin", "glutest")], grouping = diabetes$group)
+estimate_mcl_loocv(x = diabetes[, c("insulin", "glutest", "glufast", "relwt", "steady")], grouping = diabetes$group)
+```
+```{r}
+#| label: lda_loocv_error
+#| eval: !expr (! params$skip_execution & ! params$skip_answers)
+#| echo: FALSE
+#| results: 'asis'
+cat(
+  "Both the training and the test error are lower for the model with 5 variables"
+)
+```
+
+```{r}
+# Complete the code 
+# estimate_mcl_loocv(x = diabetes[, ...], grouping = ...)
+# estimate_mcl_loocv(x = diabetes[, ...], grouping = ...)
+```
+
+:::
+
+In the section below you will also see CV used to pick a parameter for LASSO-logistic 
+regression.
+
+## Metagenome data set
+
+Zeller et al. (2014) studied metagenome sequencing data from fecal samples of 
+156 humans that included colorectal cancer patients and tumor-free controls. 
+Their aim was to see whether they could identify biomarkers (presence or 
+abundance of certain taxa) that could help with early tumor detection. The data 
+are available from [Bioconductor](https://www.bioconductor.org) through its 
+`ExperimentHub` service under the identifier EH359.
+
+```{r}
+#| label: colon1
+#| eval: !expr (! isTRUE(params$skip_execution))
+#| message: FALSE
+#| warning: FALSE
+
+library(ExperimentHub)
+
+# get experiments
+eh = ExperimentHub()
+# if you encounter problem, try running
+# eh = ExperimentHub(localHub = TRUE)
+
+# selected experiment
+zeller = eh[["EH361"]]
+
+# inspect ExpressionSet object
+zeller
+
+# Alternatively, read in zeller ExpressionSet as rds file
+# zeller <- readRDS("zeller.rds")
+```
+
+
+`ExpressionSet` contains gene expression data, together with the samples and features information.
+Expression data can be accessed with `exprs()`, sample information with `pData()` (phenotypic data), and feature information with the `fData()` accessors. 
+
+Check sample information for `zeller` dataset.  
+
+```{r}
+#| label: zeller_pData
+#| eval: !expr (! isTRUE(params$skip_execution))
+head(pData(zeller))
+tail(pData(zeller))
+```
+
+Columns of the annotations can be accessed directly by their names, e.g. `zeller$disease`. 
+
+```{r}
+#| label: zeller_pData_disease
+#| eval: !expr (! isTRUE(params$skip_execution))
+table(zeller$disease)
+```
+
+For the following exercises, we will focus only on the normal (`n`) and `cancer` samples, so we will now also sample the `ExpressionSet` object to include only these samples. 
+
+```{r}
+#| label: zeller_subset
+#| eval: !expr (! isTRUE(params$skip_execution))
+zellerNC <- zeller[, zeller$disease %in% c("n", "cancer")]
+```
+
+Notice that feature information in this dataset (`fData(zellerNC)`) is empty. 
+We only have feature names in the expression data.
+
+```{r}
+#| label: zellerpData_end
+#| eval: !expr (! isTRUE(params$skip_execution))
+head(rownames(zellerNC))
+tail(rownames(zellerNC))
+```
+
+As you can see, the features are a mixture of abundance quantifications at 
+different taxonomic levels, from **k**ingdom over **p**hylum to **s**pecies.
+We could select only some of these, but here we continue with all of them.  
+
+Next, let's look at the distribution of some of the features. Here, we show 
+an arbitrary choice of features; in practice, it is helpful to scroll through 
+many such plots quickly to get an impression.
+
+```{r}
+#| label: zellerHist 
+#| eval: !expr (! isTRUE(params$skip_execution))
+
+# convert to data.frame
+tidy_zeller <- as.data.frame(t(exprs(zellerNC)))
+
+# select features to show
+feats <- colnames(tidy_zeller)[1:4]
+
+# histograms for selected features
+for (i in feats) {
+  hist(tidy_zeller[[i]], main = i, xlab = "Abundance")
+}
+
+```
+
+## GLM with L1 regularisation (LASSO)
+
+In the simplest case, we fit model
+
+$$
+\log \frac{P(Y=i\,|\,X=x)}{P(Y=k\,|\,X=x)} = \beta^0_i + \beta_i^\top x
+$$
+
+as follows.
+
+```{r}
+#| label: glmnet
+#| eval: !expr (! isTRUE(params$skip_execution))
+library("glmnet")
+glmfit = glmnet(
+  x = t(exprs(zellerNC)),
+  y = factor(zellerNC$disease),
+  family = "binomial"
+)
+```
+
+A remarkable feature of the `glmnet` function is that it fits the model not 
+only for one choice of $\lambda$, but for all possible $\lambda$s at once. 
+For now, let's look at the prediction performance for, say, $\lambda=0.04$.
+The name of the function parameter is `s`:
+
+```{r}
+#| label: colonPred
+#| eval: !expr (! isTRUE(params$skip_execution))
+pred = predict(glmfit, newx = t(exprs(zellerNC)), type = "class", s = 0.04)
+confusion_table = table(predicted = pred, truth = zellerNC$disease)
+confusion_table
+```
+
+::: {.callout-note collapse="false"}
+
+## Question
+
+What is the true positive rate (TPR, i.e. sensitivity) and true negative rate (TNR, i.e. specificity)?
+Hint: See [Wikipedia](https://en.wikipedia.org/wiki/Sensitivity_and_specificity).
+
+```{r}
+#| label: tpr_tnr
+#| eval: !expr (! params$skip_execution & ! params$skip_answers)
+#| echo: !expr (! params$skip_answers)
+#| results: 'asis'
+
+# TPR
+confusion_table[1,1]/(confusion_table[1,1] + confusion_table[2,1])
+
+# TNR
+confusion_table[2,2]/(confusion_table[2,2] + confusion_table[1,2])
+```
+
+:::
+
+Not bad. But remember that this is on the training data, without 
+cross-validation.  
+
+Let's have a closer look at `glmfit`. The `glmnet` package offers a diagnostic 
+plot that is worth looking at:
+
+```{r}
+#| label: plotglmfit
+#| eval: !expr (! isTRUE(params$skip_execution))
+#| fig.width: 6
+#| fig.height: 6
+plot(glmfit, xvar = "norm", col = RColorBrewer::brewer.pal(12, "Set3"), lwd = sqrt(3))
+```
+
+What is the x-axis? What are the different lines? Check the ``plot.glmnet``
+documentation and look at different `xvar` options.
+
+In particular, we note that as the penalty $\lambda$ increases, the L1 Norm 
+of the coefficients ($\sum |\beta_i|$) shrinks. `glmnet` only shrinks the 
+coefficients corresponding to the variables and not the intercept, however for 
+simplicity our computations (and questions) below also include the intercept 
+(the first coefficient returned from `coef`).
+
+For example as above let's see what fitted coefficients we got for 
+$\lambda = 0.04$:
+
+```{r}
+#| label: fitted_beta
+#| eval: !expr (! isTRUE(params$skip_execution))
+
+# matrix of coefficients with given lambda
+fitted_beta = coef(glmfit, s=0.04)
+dim(fitted_beta)
+
+# L1 norm of coefficients
+sum(abs(fitted_beta))
+```
+
+Let's try with larger $\lambda$:
+
+```{r}
+#| label: coef_lambda
+#| eval: !expr (! isTRUE(params$skip_execution))
+
+# L1 norm of coefficients with given lambda
+sum(abs(coef(glmfit, s=0.1)))
+```
+
+::: {.callout-note collapse="false"}
+
+## Question
+
+For how many different values of $\lambda$ did `glmnet` fit the model using settings as above?
+Inspect the `glmfit` object.
+
+```{r}
+#| label: glmfit_lambda
+#| eval: !expr (! params$skip_execution & ! params$skip_answers)
+#| echo: !expr (! params$skip_answers)
+#| results: 'asis'
+length(glmfit$lambda)
+```
+:::
+
+::: {.callout-note collapse="false"}
+
+## Question
+
+For each of the values of $\lambda$ in the object above, calculate the L1 Norm (as we did above for two values of $\lambda$). 
+Which $\lambda$ most closely corresponds to a L1 norm 6000?
+
+```{r}
+#| label: lambda_6k
+#| eval: !expr (! params$skip_execution & ! params$skip_answers)
+#| echo: !expr (! params$skip_answers)
+#| results: 'asis'
+
+# matrix of coefficients for all lambda
+fitted_beta <- coef(glmfit)
+dim(fitted_beta)
+
+# L1 norm of coefficients for each lambda
+L1Norm <- colSums(abs(fitted_beta))
+
+# which L1 norm is clisest to 6000
+idx_L1Norm_6k <- which.min(abs(L1Norm - 6000))    
+lambda_6k <- glmfit$lambda[idx_L1Norm_6k]    
+lambda_6k
+```
+
+```{r}
+# Hints
+# 1. Use the coef() function on glmfit object to get a matrix of coefficients for 
+# each lambda (fitted_beta)
+# 2. Check the dimensions of the obtained object
+# 3. Calculate the L1Norm using colSums() functions on absolute values of coefficients (L1Norm)
+# 4. Find out which L1 norm is closest to 6000:
+# idx_L1Norm_6k <- which.min(abs(... - 6000))  
+# Extract the corresponding lambda
+# lambda_6k <- glmfit$lambda[...] 
+# lambda_6k
+```
+
+:::
+
+::: {.callout-note collapse="false"}
+
+## Question
+
+How many non-zero coefficients do you get for the $\lambda$ that you found in the previous question?
+
+```{r}
+#| label: lambda_6k_nonzero
+#| eval: !expr (! params$skip_execution & ! params$skip_answers)
+#| echo: !expr (! params$skip_answers)
+#| results: 'asis'
+non0_coeff <- abs(coef(glmfit, s=lambda_6k)) > 0 
+sum(non0_coeff)
+```
+
+```{r}
+# Hints
+# non0_coeff <- abs(coef(..., s=...)) > ...
+# ...(non0_coeff)
+```
+
+:::
+
+To choose the best regularization parameter $\lambda$, we use cross-validation. 
+`cv.glmnet()` implements this.
+
+```{r}
+#| label: colonCV
+#| eval: !expr (! isTRUE(params$skip_execution))
+set.seed(0xdada2)
+cvglmfit = cv.glmnet(
+  x = t(exprs(zellerNC)),
+  y = factor(zellerNC$disease),
+  family = "binomial"
+)
+
+# deviation for different lambdas
+plot(cvglmfit)
+```
+
+We can access the optimal value with:
+
+```{r}
+#| label: lambda.min 
+#| eval: !expr (! isTRUE(params$skip_execution))
+
+cvglmfit$lambda.min
+
+```
+
+As this value results from finding a minimum in an estimated curve, it turns out 
+that it is often too small, i.e., that the implied penalization is too weak. 
+A heuristic recommended by the authors of the `glmnet` package is to use a 
+somewhat larger value instead, namely the largest value of $\lambda$ such that
+the performance measure is within 1 standard error of the minimum.
+
+```{r}
+#| label: lambda.1se 
+#| eval: !expr (! isTRUE(params$skip_execution))
+
+cvglmfit$lambda.1se
+
+```
+
+::: {.callout-note collapse="false"}
+
+## Question
+
+How does the confusion table look like for $\lambda$ = `lambda.1se`?
+Report the top left element of the confusion table
+(i.e. number of correctly classified cancer samples). 
+Hint: Use function `predict`.
+
+```{r}
+#| label: preds.1se
+#| eval: !expr (! params$skip_execution & ! params$skip_answers)
+#| echo: !expr (! params$skip_answers)
+
+# predictions
+preds_1se <- predict(
+  glmfit,
+  newx = t(exprs(zellerNC)),
+  s = cvglmfit$lambda.1se,
+  type = "class"
+)
+
+# confusion table
+table(predicted = preds_1se, truth = zellerNC$disease)
+```
+```{r}
+# Hints 
+# preds_1se <- predict(
+#   glmfit,
+#   newx = t(exprs(zellerNC)),
+#   s = ...,
+#   type = "class"
+# )
+# 
+# # confusion table
+# table(predicted = ..., truth = zellerNC$disease)
+```
+
+
+:::
+
+::: {.callout-note collapse="false"}
+
+## Question
+
+What features drive the classification (at $\lambda$ = `lambda.1se` chosen by cross-validation with the 1 standard error rule)?
+Report the top one (the one with the largest absolute value of its coefficient).
+
+```{r}
+#| label: idx_largest_beta
+#| eval: !expr (! params$skip_execution & ! params$skip_answers)
+#| echo: !expr (! params$skip_answers)
+#| results: 'asis'
+# coefficients with selected beta
+coeffs <- coef(glmfit, s=cvglmfit$lambda.1se)
+# top coefficient
+idx_largest_beta <- which.max(abs(as.numeric(coeffs)))
+rownames(coef(glmfit))[idx_largest_beta]
+```
+
+```{r}
+# # Hints 
+# # coefficients with selected beta
+# coeffs <- coef(..., s=...)
+# # top coefficient
+# idx_largest_beta <- which.max(abs(as.numeric(...)))
+# rownames(coef(glmfit))[...]
+```
+
+:::
+
+## Method hacking
+
+We encountered p-value hacking. A similar phenomenon exists in statistical 
+learning: given a dataset, we explore various different methods of preprocessing 
+(such as normalization, outlier detection, transformation, feature selection), 
+try out different machine learning algorithms and tune their parameters until 
+we are content with the result. The measured accuracy is likely to be too 
+optimistic, i.e., will not generalize to a new dataset. Embedding as many of 
+our methodical choices into a computational formalism and having an outer 
+cross-validation loop (not to be confused with the inner loop that does the 
+parameter tuning) will ameliorate the problem. But is unlikely to address it 
+completely, since not all our choices can be formalized.
+
+The gold standard remains validation on truly unseen data. In addition, it is
+never a bad thing if the classifier is not a black box but can be interpreted 
+in terms of domain knowledge. Finally, report not just summary statistics, 
+such as misclassification rates, but lay open the complete computational 
+workflow, so that anyone (including your future self) can convince themselves
+of the robustness of the result or of the influence of the preprocessing, 
+model selection and tuning choices.
+
+After this word of caution, have a look at the `caret` package. It contains 
+[a large number of machine learning methods](https://topepo.github.io/caret/available-models.html)
+with an common interface. 
+
+```{r}
+#| label: caret1
+#| eval: !expr (! isTRUE(params$skip_execution))
+#| message: FALSE
+library("caret")
+caretMethods = names(getModelInfo())
+head(caretMethods, 8)
+```
+
+::: {.callout-note collapse="false"}
+
+## Question
+
+How many methods does `caret` currently include?
+
+```{r}
+#| label: caretMethods
+#| eval: !expr (! params$skip_execution & ! params$skip_answers)
+#| echo: !expr (! params$skip_answers)
+#| results: 'asis'
+length(caretMethods)
+```
+
+:::
+
+## Session info
+
+```{r}
+#| label: sessionInfo
+#| eval: !expr (! isTRUE(params$skip_execution))
+sessionInfo()
+```

@@ -1,0 +1,422 @@
+---
+title: "Data and Randomness"
+author: "Michael Love"
+date: "July 19, 2025"
+license: "CC-BY"
+format: 
+  html:
+    toc: true 
+    code-fold: false
+    code-tools: true
+    embed-resources: true
+    highlight-style: github
+    code-line-numbers: false 
+params:
+  skip_execution: false
+  skip_answers: true
+---
+
+```{r}
+#| label: initialize
+#| echo: FALSE
+knitr::opts_chunk$set(echo = TRUE, fig.width=7, fig.height=5) 
+```
+
+## Introduction
+
+*Estimation* is a part of data analysis, where we attempt to summarize information about the world into a concise format. You can think of it as a form of *compression*, where we take a dataset, potentially large, and summarize it with a few numbers. For example, we may have a dataset of numbers: {`r set.seed(1); round(rnorm(5), 1)`}, and we may want to summarize these numbers with the average value and maybe also the spread. For example, the average of these values is $\hat{\mu} =$ `r set.seed(1); mean(round(rnorm(5), 1))`. We use the Greek letter mu for mean and the "hat" on top indicates that we estimated something from data.
+
+Still, we aren't solely interested in this particular set of numbers, but in the average or mean of the values if we were to keep collecting data without end. This number is $\mu$. The set of data values we observe is a *random* set. It is representative of a *data generating process*. We aim to produce useful summaries of information about the data generating process, via the random dataset that we observe. We can compute $\hat{\mu}$, but as all data is finite, we will never be able to compute or observe $\mu$ in an experiment. A simple diagram:
+
+![Diagram of data generating process and data.](data_generating.png){width="400"}
+
+In this document, we will explore how randomness and sample design inform statistical estimation, in particular what behavior can be expected from estimators for things like the mean and variance. I start with a review of functions like `lapply`, `sapply`, and `replicate` that are useful for simulating datasets of different size and type.
+
+Here I use random data simulations to:
+
+-   generate samples from the Normal distribution, where we know the parameters exactly
+-   estimate the mean of the distribution from samples of different size
+-   examine the spread of these estimates, how close are they to the true value
+-   compare the estimates' variance to aspects of the study
+-   estimate the variance of the data and consider the distrubtion of this estimate as well
+
+In the above list of tasks, you can think of "distribution" = data generating process.
+
+While experiments and data help us to understand biological phenomena, simulations help to understand statistical concepts -- one can directly observe and quantify the behavior of estimators under controlled conditions where the true underlying parameters are known.And they help us consider how estimates are random and have distributions as they are functions of data.
+
+I use the word "estimate" to refer to a particular computed value from data. An "estimator" is a formula, e.g. $\frac{1}{n} \sum_{i=1}^{n} x_i$, the mean of the sample. Another estimator is the median (the middle value, when the data is ranked in order). The mean and the median are both estimators for $\mu$, the thing which we want to estimate.
+
+## Key functions
+
+First review these two basic R functions, `lapply` and `sapply`.
+
+`lapply` iterates over a list and gives back a list. Hence we get back results in the positions `$a`, `$b`, `$c` separately after calling `lapply`:
+
+```{r}
+my_list <- list(a = 1, b = 1:5, c = 1:10)
+my_list
+lapply(X = my_list, FUN = \(x) 2 * x) # iterate over list
+```
+
+The syntax `\(x) ...` means, here I define a function of `x`...
+
+We can leave off the argument names `X` and `FUN`.
+
+`sapply` reduces to a vector or matrix depending on the size of the output of `FUN`:
+
+```{r}
+sapply(my_list, \(x) sum(x))
+sapply(my_list, \(x) c(sum = sum(x), prod = prod(x)))
+```
+
+Note that, for the first line, we can reduce the code to just:
+
+```{r}
+sapply(my_list, sum)
+```
+
+Also we will use the function `replicate`, which is helpful for generating many simulations:
+
+```{r}
+set.seed(3)
+replicate(n=5, expr = { rnorm(n=1) * 10 + 3 })
+```
+
+The above is just for demonstration, we could get the same result with:
+
+```{r}
+set.seed(3)
+rnorm(n=5, mean=3, sd=10)
+```
+
+**Note:** `set.seed` is for setting the _random seed_ in an R script. Doing this ensures we can get the same stream of random numbers a second time, which is important for interpreting results of simulations, for computational reproducibility. The number we put inside the function is not important, just saving it so that one can reproduce the same random numbers again. It is also important that `set.seed` is called _outside_ of any loop, lest we generate the same simulation many times, which is typically not what we want to do.
+
+## Build a simulator
+
+Ok, now use R's `rnorm()` function to simulate random samples from a Normal distribution with the two parameters `mean` and `sd`.
+
+Consider estimating the mean of the distribution.
+
+```{r}
+set.seed(5)
+# these 'n' represent sample sizes
+n_values <- c(5, 10, 50, 100, 1000)
+true_mean <- 5
+true_sd <- 1
+# estimate means for one simulation per 'n'
+est_means <- sapply(n_values, \(n) {
+  mean( rnorm(n, mean = true_mean, sd = true_sd) )
+})
+data.frame(n = n_values, est_means)
+```
+
+::: {.callout-note collapse="false"}
+## Question
+
+What do you notice about these estimates? Are they close to the true mean of `r true_mean`?
+:::
+
+## Estimating the mean
+
+Now we will start running more than one simulation at a time. This will allow us to get a better picture of how close the estimates fall from the true value, if we were to repeat the identical experiment again and again. We can vary different aspects of the "experiment", e.g. the sample size.
+
+Let's start by writing a function that has 4 arguments: the sample size `n`, the number of times to repeat the simulation `nreps`, and the mean and standard deviation of the data generating process, i.e. of the Normal distribution we use to make the data.
+
+### Across sample size
+
+```{r}
+simulate_estimating_means <- \(n, nreps, mean, sd) {
+  replicate(nreps, {
+    mean( rnorm(n=n, mean=mean, sd=sd) )
+  })
+}
+```
+
+For example, run four simulations, each one an experiment of size n=100:
+
+```{r}
+simulate_estimating_means(n = 100, nreps = 4, mean = -3, sd = 1)
+```
+
+It's more useful if we do this inside of an `lapply`. That will allow us to change one setting of the experiment at a time. 
+
+Below we run 1000 simulations, per unique value of `n`, the sample size.
+
+```{r}
+n_values <- c(5, 10, 50, 100, 1000)
+true_mean <- 5
+true_sd <- 1
+nreps <- 1000 # how many simulations
+est_means <- lapply(
+  n_values,
+  simulate_estimating_means,
+  nreps=nreps,
+  mean=true_mean,
+  sd=true_sd
+)
+```
+
+::: {.callout-note collapse="false"}
+## Question
+
+A R syntax question: why do we need to put the last three arguments above?
+:::
+
+We get back from `lapply` a list of estimated means. Let's peek into these results:
+
+```{r}
+length(est_means)
+head(est_means[[1]])
+head(est_means[[5]])
+```
+
+Let's give this list some names, which will help with plotting.
+
+We can see the spread with a boxplot. Setting `range=0` includes all the data in the whiskers (otherwise, some data far from the interquartile range are drawn as circles).
+
+```{r box_means_by_n}
+names(est_means) <- paste0("n=", n_values)
+boxplot(
+  est_means,
+  range = 0, # no 'outliers'
+  main = "estimated means over sample size",
+  xlab = paste0("simulation sample size (",nreps," per sim.)")
+) 
+```
+
+To emphasize the difference between these sample sizes, and the precision of our estimates, focus on n=5 (red) and n=100 (blue). The estimates are much closer to the true value with 20x higher sample size.
+
+```{r}
+plot(
+  density(est_means[["n=5"]]),
+  col = "firebrick",
+  lwd = 2,
+  ylim = c(0, 5),
+  main = "n=5 vs n=100, spread of mean estimates",
+  xlab = "mean estimates",
+  yaxt = "n", ylab=""
+)
+lines(
+  density(est_means[["n=100"]]),
+  col = "dodgerblue",
+  lwd = 2
+)
+abline(v=true_mean, lwd=2, lty=2, col="grey")
+```
+
+An estimated mean 0.5 above or below the true value is often happening for n=5, but very rarely for n=100. We can compute this for our set of simulations:
+
+```{r}
+table(abs(est_means[["n=5"]] - true_mean) > 0.5)
+table(abs(est_means[["n=100"]] - true_mean) > 0.5)
+```
+
+Let's look at the _mean_ and _variance_ of our _estimates_. Note for a moment that this is one level above computing the _mean_ and _variance_ of the _data_. First start with the mean of the estimates:
+
+```{r}
+(mean_of_means <- sapply(est_means, mean))
+```
+
+We would hope the mean of the estimates is close to the true value. In fact, we have a guarantee that as `nreps` grows, the mean of the estimates will converge to the true value. In statistics, we write this, for example for our experiments with sample size of 5:
+
+$$
+E(\hat{\mu}_{n=5}) = \mu
+$$
+
+We can write:
+
+$$
+E(\hat{\mu}_{n=5}) - \mu = 0
+$$
+
+The bias of $\hat{\mu}$ (left hand side) is zero, or $\hat{\mu}$ is "unbiased".
+
+However, their variances are pretty different, and do not converge to the same value if we increase `nreps`:
+
+```{r}
+var_of_means <- sapply(est_means, var)
+round(var_of_means, 4)
+```
+
+We we might expect, the variability of the estimates is highest when we have few samples. Let's take a look at this on the log scale. We plot the variances in black, and the variances we expect from statistical theory in blue. The relationship for this data is simply $n^{-1}$.
+
+```{r plot_var_means_by_n}
+plot(n_values, var_of_means, type="b", log="xy", main="variance over n")
+# theoretical variance:
+points(n_values, 1/n_values, type="b", col="blue")
+```
+
+This may seem obvious, but we can confirm that this means the standard deviation is decreasing by $n^{-1/2}$.
+
+If we want to decrease the standard deviation of our estimate by 2 fold, we need to increase the sample size by 4 fold.
+
+```{r plot_sd_means_by_n}
+plot(n_values, sqrt(var_of_means), type="b", log="xy", main="SD over n")
+# theoretical variance:
+points(n_values, 1/sqrt(n_values), type="b", col="blue")
+```
+
+### Across variance of the data
+
+Having seen how the variance of our estimates depend on the sample size, let's also quickly see how they depend on the distribution of the data.
+
+We will write a new simulator function, which has first argument `var`, the variance of the data:
+
+```{r}
+simulate_estimating_means_2 <- \(var, nreps, n, mean) {
+  replicate(nreps, {
+    mean(rnorm(n=n, mean=mean, sd=sqrt(var)))
+  })
+}
+```
+
+Run this simulation for five values of variance:
+
+```{r}
+n = 1000
+var_values <- 1:5
+est_means <- lapply(
+  var_values,
+  simulate_estimating_means_2,
+  nreps=nreps,
+  n=n,
+  mean=true_mean
+)
+```
+
+As expected, the variance of the estimate increases with the variance of the data:
+
+```{r box_means_by_var}
+names(est_means) <- paste0("var=", var_values)
+boxplot(
+  est_means,
+  range = 0,
+  main = "estimated means over data variance",
+  xlab = "data variance"
+)
+```
+
+The variance of the estimate is simply linear with the variance of the data:
+
+```{r plot_var_means_by_var}
+var_of_means <- sapply(est_means, var)
+plot(
+  var_values,
+  var_of_means,
+  type = "b",
+  main = "estimate variance over data variance",
+  xlab = "data variance"
+)
+# theoretical variance:
+points(var_values, var_values / n, type = "b", col = "blue")
+```
+
+### Detection power
+
+Statistical power for testing is essentially asking if our estimate is away from a particular value (say 0, or some other experimentally-motivated value) relative to the variance of our estimate. 
+
+We can demonstrate this with a simple example, asking if our estimate of the mean is far from a threshold value.
+
+Let's set up our simulator with different sample sizes, from 2 to 100.
+
+```{r}
+# is mean greater than a number?
+n_values <- c(2,5,1:10*10)
+est_means <- lapply(
+  n_values,
+  simulate_estimating_means,
+  nreps=nreps,
+  mean=true_mean,
+  sd=true_sd
+)
+```
+
+We compute power (also called "sensitivity"), by asking how often our estimate will be far from the threshold value. It makes sense to define "far" by a value derived from the _estimate variance_. That way, we are seeing if we are farther away from a value that would be expected given that the estimate we are computing has a given spread.
+
+We will tally below how often the mean is 2 times the standard deviation of our estimate away from the threshold. 
+
+::: {.callout-note collapse="false"}
+## Question
+
+Are we computing or estimating power?
+:::
+
+
+```{r plot_detected_by_n}
+est_sd <- sqrt(1/n_values) # theoretical estimate SD
+thr <- 4.5 # some threshold
+detected <- sapply(seq_along(est_means), {
+  \(i) mean(est_means[[i]] > 2 * est_sd[i] + thr)
+  })
+plot(n_values, detected, type="b", log="x", 
+     main="power over sample size")
+abline(h = 0.5, lwd=2, lty=2, col="grey")
+```
+
+::: {.callout-note collapse="false"}
+## Question
+
+Above we used the _theoretical variance_ of the estimate, which we could compute because we knew that the true variance of the data was 1. In reality what would we need to do in such a setting?
+:::
+
+In many experiments, we don't specify what kind of an effect size would be interesting. We often just compare some effect to 0 (a null hypothesis of "no effect"). This often works in practice, especially with experiments with low to moderate sample size (say n=3 replicates per group), because the estimate variance is much larger than the different between 0 and a truly biologically relevant value.
+
+However, with large sample size, and high replicate correlation, we may need to motivate a non-zero effect size of interest, or risk many or even the majority of times detecting an "interesting" difference from 0.
+
+This has been discussed in the RNA-seq literature, including the DESeq2 paper.
+
+## Estimating variance
+
+We conclude this note by repeating the above simulator, but this time using it to estimate the _variance_ of data. We change the last line of our simulator function to compute `var`:
+
+```{r}
+simulate_estimating_vars <- \(n, nreps, mean, sd) {
+  replicate(nreps, {
+    var( rnorm(n=n, mean=mean, sd=sd) )
+  })
+}
+```
+
+And we iterate over a number of sample sizes:
+
+```{r}
+true_sd <- 2
+n_values <- c(3, 5, 10, 50, 100)
+est_vars <- lapply(
+  n_values,
+  simulate_estimating_vars,
+  nreps=nreps,
+  mean=true_mean,
+  sd=true_sd
+)
+```
+
+Note how large the estimated variances can be when n=3. We don't have very stable estimates of the variance until much higher than n=10.
+
+These are the (squared) values that we would need to use in the detection context above, as we wouldn't have the true variance of the data to compute the standard deviation of the estimate of the mean.
+
+```{r box_vars_by_n}
+names(est_vars) <- paste0("n=", n_values)
+boxplot(
+  est_vars,
+  range = 0,
+  main = "estimated variance over sample size",
+  xlab = "simulation sample size"
+)
+```
+
+As before, we can explore the mean and variance of the estimates, now of the _variance_ estimates.
+
+```{r plot_vars_by_n}
+(mean_of_vars <- sapply(est_vars, mean))
+(var_of_vars <- sapply(est_vars, var))
+plot(n_values, var_of_vars, type="b", log="xy")
+# theoretical variance:
+points(n_values, 2 * true_sd^4 / (n_values - 1), type="b", col="blue")
+```
+
+## Session info
+
+```{r}
+sessionInfo()
+```
