@@ -2326,7 +2326,6 @@ window.Quarto = {
   </ul></li>
   <li><a href="#hierarchical-clustering" id="toc-hierarchical-clustering" class="nav-link" data-scroll-target="#hierarchical-clustering">Hierarchical clustering</a></li>
   <li><a href="#k-means" id="toc-k-means" class="nav-link" data-scroll-target="#k-means">K means</a></li>
-  <li><a href="#session-info" id="toc-session-info" class="nav-link" data-scroll-target="#session-info">Session info</a></li>
   </ul>
 </nav>
 </div>
@@ -2719,46 +2718,6 @@ Question
 </div>
 </div>
 <p>Within sum of squares (wss) statistic, we see that the last substantial decrease of the statistic occurres before <span class="math inline">\(k=3\)</span>, and for values <span class="math inline">\(k=4,5,6,\dots\)</span> the quantity ‘levels-off’. In practice, we would choose <span class="math inline">\(k=3\)</span>, a value happening at the ‘elbow’ of the plot (elbow-rule).</p>
-</section>
-<section id="session-info" class="level1">
-<h1>Session info</h1>
-<div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>R version 4.5.1 (2025-06-13)
-Platform: aarch64-apple-darwin20
-Running under: macOS Sonoma 14.7.2
-
-Matrix products: default
-BLAS:   /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/lib/libRblas.0.dylib 
-LAPACK: /Library/Frameworks/R.framework/Versions/4.5-arm64/Resources/lib/libRlapack.dylib;  LAPACK version 3.12.1
-
-locale:
-[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
-
-time zone: Europe/Uzhgorod
-tzcode source: internal
-
-attached base packages:
-[1] stats     graphics  grDevices utils     datasets  methods   base     
-
-other attached packages:
- [1] lubridate_1.9.4  forcats_1.0.0    stringr_1.5.1    dplyr_1.1.4     
- [5] purrr_1.1.0      readr_2.1.5      tidyr_1.3.1      tibble_3.3.0    
- [9] tidyverse_2.0.0  ggfortify_0.4.18 ggplot2_3.5.2    pheatmap_1.0.13 
-
-loaded via a namespace (and not attached):
- [1] gtable_0.3.6       jsonlite_2.0.0     compiler_4.5.1     tidyselect_1.2.1  
- [5] gridExtra_2.3      scales_1.4.0       yaml_2.3.10        fastmap_1.2.0     
- [9] R6_2.6.1           labeling_0.4.3     generics_0.1.4     knitr_1.50        
-[13] htmlwidgets_1.6.4  tzdb_0.5.0         pillar_1.11.0      RColorBrewer_1.1-3
-[17] rlang_1.1.6        stringi_1.8.7      xfun_0.52          timechange_0.3.0  
-[21] cli_3.6.5          withr_3.0.2        magrittr_2.0.3     digest_0.6.37     
-[25] grid_4.5.1         hms_1.1.3          lifecycle_1.0.4    vctrs_0.6.5       
-[29] evaluate_1.0.4     glue_1.8.0         farver_2.1.2       rmarkdown_2.29    
-[33] tools_4.5.1        pkgconfig_2.0.3    htmltools_0.5.8.1 </code></pre>
-</div>
-</div>
 <!-- -->
 
 </section>
@@ -3215,532 +3174,531 @@ loaded via a namespace (and not attached):
     }
   });
   </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class>
-<div class="sourceCode" id="cb21" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> &quot;Clustering&quot;</span></span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span><span class="co"> &quot;Bio Data Science^3 faculty&quot;</span></span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> &quot;July 19 - August 2, 2025&quot;</span></span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span></span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="co">  html:</span></span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="co">    code-fold: false</span></span>
-<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="co">    code-tools: true</span></span>
-<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a><span class="co">    embed-resources: true</span></span>
-<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a><span class="co">    highlight-style: github</span></span>
-<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a><span class="co">    toc: true</span></span>
-<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a><span class="co">    code-line-numbers: false</span></span>
-<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a><span class="an">params:</span></span>
-<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a><span class="co">  answers:    false</span></span>
-<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a><span class="co">  simplified: false</span></span>
-<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: initialize</span></span>
-<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: FALSE</span></span>
-<span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a><span class="co">#| include: FALSE</span></span>
-<span id="cb21-24"><a href="#cb21-24" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="st">&quot;scipen&quot;</span><span class="ot">=</span><span class="dv">100</span>, <span class="st">&quot;digits&quot;</span><span class="ot">=</span><span class="dv">4</span>)</span>
-<span id="cb21-25"><a href="#cb21-25" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span>opts_chunk<span class="sc">$</span><span class="fu">set</span>(</span>
-<span id="cb21-26"><a href="#cb21-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">eval  =</span> params<span class="sc">$</span>answers,</span>
-<span id="cb21-27"><a href="#cb21-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">echo  =</span> params<span class="sc">$</span>answers,</span>
-<span id="cb21-28"><a href="#cb21-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">message =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb21-29"><a href="#cb21-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">warning =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb21-30"><a href="#cb21-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">fig.width=</span><span class="dv">15</span>, <span class="at">fig.height=</span><span class="dv">8</span>, <span class="at">fig.align=</span><span class="st">&quot;center&quot;</span>, <span class="at">fig.pos=</span><span class="st">&quot;h&quot;</span></span>
-<span id="cb21-31"><a href="#cb21-31" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb21-32"><a href="#cb21-32" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">533</span>)</span>
-<span id="cb21-33"><a href="#cb21-33" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb21-34"><a href="#cb21-34" aria-hidden="true" tabindex="-1"></a><span class="fu"># Preamble</span></span>
-<span id="cb21-35"><a href="#cb21-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-36"><a href="#cb21-36" aria-hidden="true" tabindex="-1"></a><span class="fu">## Goal</span></span>
-<span id="cb21-37"><a href="#cb21-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-38"><a href="#cb21-38" aria-hidden="true" tabindex="-1"></a>In this lab we will learn the basics of clustering. The methods we will</span>
-<span id="cb21-39"><a href="#cb21-39" aria-hidden="true" tabindex="-1"></a>cover include hierarchical clustering, K means and density clustering.</span>
-<span id="cb21-40"><a href="#cb21-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-41"><a href="#cb21-41" aria-hidden="true" tabindex="-1"></a><span class="fu">## Dependencies</span></span>
-<span id="cb21-42"><a href="#cb21-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-43"><a href="#cb21-43" aria-hidden="true" tabindex="-1"></a><span class="in">```{r }</span></span>
-<span id="cb21-44"><a href="#cb21-44" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb21-45"><a href="#cb21-45" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb21-46"><a href="#cb21-46" aria-hidden="true" tabindex="-1"></a><span class="co"># load required packages</span></span>
-<span id="cb21-47"><a href="#cb21-47" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pheatmap)</span>
-<span id="cb21-48"><a href="#cb21-48" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggfortify)</span>
-<span id="cb21-49"><a href="#cb21-49" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb21-50"><a href="#cb21-50" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb21-51"><a href="#cb21-51" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-52"><a href="#cb21-52" aria-hidden="true" tabindex="-1"></a><span class="fu">## Data retrieval</span></span>
-<span id="cb21-53"><a href="#cb21-53" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-54"><a href="#cb21-54" aria-hidden="true" tabindex="-1"></a>The Morder data are gene expression measurements for 156 genes on T cells</span>
-<span id="cb21-55"><a href="#cb21-55" aria-hidden="true" tabindex="-1"></a>of 3 types (naïve, effector, memory) from 10 patients (Holmes et al. 2005).</span>
-<span id="cb21-56"><a href="#cb21-56" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-57"><a href="#cb21-57" aria-hidden="true" tabindex="-1"></a>Here we load the <span class="in">`Morder`</span> <span class="in">`data.frame`</span> from the online directory.</span>
-<span id="cb21-58"><a href="#cb21-58" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-59"><a href="#cb21-59" aria-hidden="true" tabindex="-1"></a><span class="in">```{r }</span></span>
-<span id="cb21-60"><a href="#cb21-60" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: loadDataWeb</span></span>
-<span id="cb21-61"><a href="#cb21-61" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb21-62"><a href="#cb21-62" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb21-63"><a href="#cb21-63" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="fu">url</span>(<span class="st">&quot;http://web.stanford.edu/class/bios221/data/Morder.RData&quot;</span>))</span>
-<span id="cb21-64"><a href="#cb21-64" aria-hidden="true" tabindex="-1"></a><span class="co"># if download fails with timeout</span></span>
-<span id="cb21-65"><a href="#cb21-65" aria-hidden="true" tabindex="-1"></a><span class="co"># error, try increasing it via:</span></span>
-<span id="cb21-66"><a href="#cb21-66" aria-hidden="true" tabindex="-1"></a><span class="co"># options(timeout = 1000)</span></span>
-<span id="cb21-67"><a href="#cb21-67" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb21-68"><a href="#cb21-68" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-69"><a href="#cb21-69" aria-hidden="true" tabindex="-1"></a>If you downloaded the file before, you can load it from the local directory.</span>
-<span id="cb21-70"><a href="#cb21-70" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-71"><a href="#cb21-71" aria-hidden="true" tabindex="-1"></a><span class="in">```{r }</span></span>
-<span id="cb21-72"><a href="#cb21-72" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: loadDataLoc</span></span>
-<span id="cb21-73"><a href="#cb21-73" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb21-74"><a href="#cb21-74" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb21-75"><a href="#cb21-75" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;Morder.RData&quot;</span>)</span>
-<span id="cb21-76"><a href="#cb21-76" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb21-77"><a href="#cb21-77" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-78"><a href="#cb21-78" aria-hidden="true" tabindex="-1"></a><span class="fu"># Hierarchical clustering</span></span>
-<span id="cb21-79"><a href="#cb21-79" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-80"><a href="#cb21-80" aria-hidden="true" tabindex="-1"></a>::: {.callout-note collapse=&quot;false&quot;}</span>
-<span id="cb21-81"><a href="#cb21-81" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-82"><a href="#cb21-82" aria-hidden="true" tabindex="-1"></a><span class="fu">## Question</span></span>
-<span id="cb21-83"><a href="#cb21-83" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-84"><a href="#cb21-84" aria-hidden="true" tabindex="-1"></a>Inspect the data. How many samples of each T cell type</span>
-<span id="cb21-85"><a href="#cb21-85" aria-hidden="true" tabindex="-1"></a>(naïve, effector, memory) are there in the data?</span>
-<span id="cb21-86"><a href="#cb21-86" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-87"><a href="#cb21-87" aria-hidden="true" tabindex="-1"></a><span class="in">```{r }</span></span>
-<span id="cb21-88"><a href="#cb21-88" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: questionCellTypesHint</span></span>
-<span id="cb21-89"><a href="#cb21-89" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb21-90"><a href="#cb21-90" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: !expr params$simplified</span></span>
-<span id="cb21-91"><a href="#cb21-91" aria-hidden="true" tabindex="-1"></a><span class="co"># Fill in the blanks to complete the code and answer the question above</span></span>
-<span id="cb21-92"><a href="#cb21-92" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-93"><a href="#cb21-93" aria-hidden="true" tabindex="-1"></a><span class="fu">________</span>(Morder) <span class="sc">|&gt;</span></span>
-<span id="cb21-94"><a href="#cb21-94" aria-hidden="true" tabindex="-1"></a>  stringr<span class="sc">::</span><span class="fu">___________</span>(<span class="st">&quot;_&quot;</span>, _) <span class="sc">|&gt;</span></span>
-<span id="cb21-95"><a href="#cb21-95" aria-hidden="true" tabindex="-1"></a>  <span class="fu">_____</span>()</span>
-<span id="cb21-96"><a href="#cb21-96" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-97"><a href="#cb21-97" aria-hidden="true" tabindex="-1"></a><span class="co"># Hints:</span></span>
-<span id="cb21-98"><a href="#cb21-98" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. What function extracts the row names?</span></span>
-<span id="cb21-99"><a href="#cb21-99" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. What function splits the string, and which position (number) corresponds</span></span>
-<span id="cb21-100"><a href="#cb21-100" aria-hidden="true" tabindex="-1"></a><span class="co"># to the name of a cell type?</span></span>
-<span id="cb21-101"><a href="#cb21-101" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. What function creates a frequency table from a vector?</span></span>
-<span id="cb21-102"><a href="#cb21-102" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb21-103"><a href="#cb21-103" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-106"><a href="#cb21-106" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb21-107"><a href="#cb21-107" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: questionCellTypesSolution</span></span>
-<span id="cb21-108"><a href="#cb21-108" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(Morder) <span class="sc">|&gt;</span></span>
-<span id="cb21-109"><a href="#cb21-109" aria-hidden="true" tabindex="-1"></a>  stringr<span class="sc">::</span><span class="fu">str_split_i</span>(<span class="st">&quot;_&quot;</span>, <span class="dv">2</span>) <span class="sc">|&gt;</span></span>
-<span id="cb21-110"><a href="#cb21-110" aria-hidden="true" tabindex="-1"></a>  <span class="fu">table</span>()</span>
-<span id="cb21-111"><a href="#cb21-111" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb21-112"><a href="#cb21-112" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-113"><a href="#cb21-113" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb21-114"><a href="#cb21-114" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-115"><a href="#cb21-115" aria-hidden="true" tabindex="-1"></a>In base R the function to perform hierarchical clustering is <span class="in">`hclust`</span>.</span>
-<span id="cb21-116"><a href="#cb21-116" aria-hidden="true" tabindex="-1"></a>To cluster the genes with hierarchical clustering you first need</span>
-<span id="cb21-117"><a href="#cb21-117" aria-hidden="true" tabindex="-1"></a>to compute a distance matrix storing all pairwise (gene-to-gene)</span>
-<span id="cb21-118"><a href="#cb21-118" aria-hidden="true" tabindex="-1"></a>dissimilarities. This is how to do it:</span>
-<span id="cb21-119"><a href="#cb21-119" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-122"><a href="#cb21-122" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb21-123"><a href="#cb21-123" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: hclustGenes</span></span>
-<span id="cb21-124"><a href="#cb21-124" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb21-125"><a href="#cb21-125" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb21-126"><a href="#cb21-126" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig.width: 18</span></span>
-<span id="cb21-127"><a href="#cb21-127" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig.height: 8</span></span>
-<span id="cb21-128"><a href="#cb21-128" aria-hidden="true" tabindex="-1"></a><span class="co"># distance calculation</span></span>
-<span id="cb21-129"><a href="#cb21-129" aria-hidden="true" tabindex="-1"></a>D <span class="ot">=</span> <span class="fu">dist</span>(<span class="fu">t</span>(Morder))</span>
-<span id="cb21-130"><a href="#cb21-130" aria-hidden="true" tabindex="-1"></a><span class="co"># clustering</span></span>
-<span id="cb21-131"><a href="#cb21-131" aria-hidden="true" tabindex="-1"></a>gene_clust <span class="ot">=</span> <span class="fu">hclust</span>(<span class="at">d =</span> D)</span>
-<span id="cb21-132"><a href="#cb21-132" aria-hidden="true" tabindex="-1"></a><span class="co"># plot dendrogram</span></span>
-<span id="cb21-133"><a href="#cb21-133" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(gene_clust)</span>
-<span id="cb21-134"><a href="#cb21-134" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb21-135"><a href="#cb21-135" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-136"><a href="#cb21-136" aria-hidden="true" tabindex="-1"></a>::: {.callout-note collapse=&quot;false&quot;}</span>
-<span id="cb21-137"><a href="#cb21-137" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-138"><a href="#cb21-138" aria-hidden="true" tabindex="-1"></a><span class="fu">## Question</span></span>
-<span id="cb21-139"><a href="#cb21-139" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-140"><a href="#cb21-140" aria-hidden="true" tabindex="-1"></a>Why in the provided code the input to <span class="in">`dist`</span> function is <span class="in">`t(Morder)`</span>?</span>
-<span id="cb21-141"><a href="#cb21-141" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-144"><a href="#cb21-144" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb21-145"><a href="#cb21-145" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: questionTranspose</span></span>
-<span id="cb21-146"><a href="#cb21-146" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb21-147"><a href="#cb21-147" aria-hidden="true" tabindex="-1"></a><span class="co">#| results: &#39;asis&#39;</span></span>
-<span id="cb21-148"><a href="#cb21-148" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(</span>
-<span id="cb21-149"><a href="#cb21-149" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Because `dist` computes distances between rows, we need to use `t` to transposes the expression matrix Morder, so that we cluster genes, and not samples.&quot;</span></span>
-<span id="cb21-150"><a href="#cb21-150" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb21-151"><a href="#cb21-151" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb21-152"><a href="#cb21-152" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-153"><a href="#cb21-153" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb21-154"><a href="#cb21-154" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-155"><a href="#cb21-155" aria-hidden="true" tabindex="-1"></a>In hierarchical clustering, one needs to choose the method</span>
-<span id="cb21-156"><a href="#cb21-156" aria-hidden="true" tabindex="-1"></a>for agglomerating the clusters. By default <span class="in">`hclust`</span>,</span>
-<span id="cb21-157"><a href="#cb21-157" aria-hidden="true" tabindex="-1"></a>uses a &quot;complete&quot; linkage method (see <span class="in">`?hclust`</span> for info).</span>
-<span id="cb21-158"><a href="#cb21-158" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-159"><a href="#cb21-159" aria-hidden="true" tabindex="-1"></a>::: {.callout-note collapse=&quot;false&quot;}</span>
-<span id="cb21-160"><a href="#cb21-160" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-161"><a href="#cb21-161" aria-hidden="true" tabindex="-1"></a><span class="fu">## Question</span></span>
-<span id="cb21-162"><a href="#cb21-162" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-163"><a href="#cb21-163" aria-hidden="true" tabindex="-1"></a>Redo hierarchical clustering with the <span class="in">`ward.D2`</span> method and plot the dendrogram.</span>
-<span id="cb21-164"><a href="#cb21-164" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-165"><a href="#cb21-165" aria-hidden="true" tabindex="-1"></a><span class="in">```{r }</span></span>
-<span id="cb21-166"><a href="#cb21-166" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: hclustGenesWard.D2Hint</span></span>
-<span id="cb21-167"><a href="#cb21-167" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb21-168"><a href="#cb21-168" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: !expr params$simplified</span></span>
-<span id="cb21-169"><a href="#cb21-169" aria-hidden="true" tabindex="-1"></a><span class="co"># Fill in the blanks to complete the code and answer the question above</span></span>
-<span id="cb21-170"><a href="#cb21-170" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-171"><a href="#cb21-171" aria-hidden="true" tabindex="-1"></a>gene_clust_wd2 <span class="ot">=</span> <span class="fu">______</span>(<span class="at">d =</span> <span class="fu">____</span>(<span class="fu">_</span>(______)), <span class="at">______ =</span> <span class="st">&quot;_______&quot;</span>)</span>
-<span id="cb21-172"><a href="#cb21-172" aria-hidden="true" tabindex="-1"></a><span class="fu">____</span>(gene_clust_wd2)</span>
-<span id="cb21-173"><a href="#cb21-173" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-174"><a href="#cb21-174" aria-hidden="true" tabindex="-1"></a><span class="co"># Hints:</span></span>
-<span id="cb21-175"><a href="#cb21-175" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span>
-<span id="cb21-176"><a href="#cb21-176" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb21-177"><a href="#cb21-177" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-180"><a href="#cb21-180" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb21-181"><a href="#cb21-181" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: hclustGenesWard.D2Solution</span></span>
-<span id="cb21-182"><a href="#cb21-182" aria-hidden="true" tabindex="-1"></a>gene_clust_wd2 <span class="ot">=</span> <span class="fu">hclust</span>(<span class="at">d =</span> <span class="fu">dist</span>(<span class="fu">t</span>(Morder)), <span class="at">method =</span> <span class="st">&quot;ward.D2&quot;</span>)</span>
-<span id="cb21-183"><a href="#cb21-183" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(gene_clust_wd2)</span>
-<span id="cb21-184"><a href="#cb21-184" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb21-185"><a href="#cb21-185" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-186"><a href="#cb21-186" aria-hidden="true" tabindex="-1"></a>Notice that the values on the y axis of hclust dendrogram changed.</span>
-<span id="cb21-187"><a href="#cb21-187" aria-hidden="true" tabindex="-1"></a>What do they correspond to?</span>
-<span id="cb21-188"><a href="#cb21-188" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-191"><a href="#cb21-191" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb21-192"><a href="#cb21-192" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: hclust_genes_ward.D2_dend</span></span>
-<span id="cb21-193"><a href="#cb21-193" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb21-194"><a href="#cb21-194" aria-hidden="true" tabindex="-1"></a><span class="co">#| results: &#39;asis&#39;</span></span>
-<span id="cb21-195"><a href="#cb21-195" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(</span>
-<span id="cb21-196"><a href="#cb21-196" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Distance between clusters, according to agglomeration method choice.&quot;</span></span>
-<span id="cb21-197"><a href="#cb21-197" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb21-198"><a href="#cb21-198" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb21-199"><a href="#cb21-199" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-200"><a href="#cb21-200" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb21-201"><a href="#cb21-201" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-202"><a href="#cb21-202" aria-hidden="true" tabindex="-1"></a>Note that in the <span class="in">`hclust`</span> there are the <span class="in">`ward.D`</span> and <span class="in">`ward.D2`</span> methods available.</span>
-<span id="cb21-203"><a href="#cb21-203" aria-hidden="true" tabindex="-1"></a>Please call <span class="in">`?hclust`</span> to read about the difference between the two methods.</span>
-<span id="cb21-204"><a href="#cb21-204" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-205"><a href="#cb21-205" aria-hidden="true" tabindex="-1"></a>Next, instead of clustering genes, we will apply</span>
-<span id="cb21-206"><a href="#cb21-206" aria-hidden="true" tabindex="-1"></a>hierarchical clustering for samples (observations).</span>
-<span id="cb21-207"><a href="#cb21-207" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-208"><a href="#cb21-208" aria-hidden="true" tabindex="-1"></a>::: {.callout-note collapse=&quot;false&quot;}</span>
-<span id="cb21-209"><a href="#cb21-209" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-210"><a href="#cb21-210" aria-hidden="true" tabindex="-1"></a><span class="fu">## Question</span></span>
-<span id="cb21-211"><a href="#cb21-211" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-212"><a href="#cb21-212" aria-hidden="true" tabindex="-1"></a>Use dist and hclust (with default linkage method) to cluster samples.</span>
-<span id="cb21-213"><a href="#cb21-213" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-214"><a href="#cb21-214" aria-hidden="true" tabindex="-1"></a><span class="in">```{r }</span></span>
-<span id="cb21-215"><a href="#cb21-215" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: hclustSamplesHint</span></span>
-<span id="cb21-216"><a href="#cb21-216" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb21-217"><a href="#cb21-217" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: !expr params$simplified</span></span>
-<span id="cb21-218"><a href="#cb21-218" aria-hidden="true" tabindex="-1"></a><span class="co"># Fill in the blanks to complete the code and answer the question above</span></span>
-<span id="cb21-219"><a href="#cb21-219" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-220"><a href="#cb21-220" aria-hidden="true" tabindex="-1"></a>D_samples <span class="ot">=</span> <span class="fu">____</span>(______)</span>
-<span id="cb21-221"><a href="#cb21-221" aria-hidden="true" tabindex="-1"></a>sample_clust <span class="ot">=</span> <span class="fu">______</span>(<span class="at">_ =</span> D_samples)</span>
-<span id="cb21-222"><a href="#cb21-222" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-223"><a href="#cb21-223" aria-hidden="true" tabindex="-1"></a><span class="co"># Hints:</span></span>
-<span id="cb21-224"><a href="#cb21-224" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Do we need to transpose the matrix?</span></span>
-<span id="cb21-225"><a href="#cb21-225" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb21-226"><a href="#cb21-226" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-229"><a href="#cb21-229" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb21-230"><a href="#cb21-230" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: hclustSamplesSolution</span></span>
-<span id="cb21-231"><a href="#cb21-231" aria-hidden="true" tabindex="-1"></a><span class="co"># we don&#39;t transpose the matrix now (samples are rows)</span></span>
-<span id="cb21-232"><a href="#cb21-232" aria-hidden="true" tabindex="-1"></a>D_samples <span class="ot">=</span> <span class="fu">dist</span>(Morder)</span>
-<span id="cb21-233"><a href="#cb21-233" aria-hidden="true" tabindex="-1"></a>sample_clust <span class="ot">=</span> <span class="fu">hclust</span>(<span class="at">d =</span> D_samples)</span>
-<span id="cb21-234"><a href="#cb21-234" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb21-235"><a href="#cb21-235" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-236"><a href="#cb21-236" aria-hidden="true" tabindex="-1"></a>How many clusters of samples are there at the dendrogram height of 12?</span>
-<span id="cb21-237"><a href="#cb21-237" aria-hidden="true" tabindex="-1"></a>Hint: the <span class="in">`abline()`</span> and <span class="in">`cutree()`</span> functions might be helpful.</span>
-<span id="cb21-238"><a href="#cb21-238" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-239"><a href="#cb21-239" aria-hidden="true" tabindex="-1"></a><span class="in">```{r }</span></span>
-<span id="cb21-240"><a href="#cb21-240" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: hclustSamplesAblineHint</span></span>
-<span id="cb21-241"><a href="#cb21-241" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb21-242"><a href="#cb21-242" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: !expr params$simplified</span></span>
-<span id="cb21-243"><a href="#cb21-243" aria-hidden="true" tabindex="-1"></a><span class="co"># Fill in the blanks to complete the code and answer the question above</span></span>
-<span id="cb21-244"><a href="#cb21-244" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-245"><a href="#cb21-245" aria-hidden="true" tabindex="-1"></a><span class="fu">____</span>(sample_clust)</span>
-<span id="cb21-246"><a href="#cb21-246" aria-hidden="true" tabindex="-1"></a><span class="fu">______</span>(<span class="at">a=</span><span class="dv">12</span>, <span class="at">b=</span><span class="dv">0</span>, <span class="at">col=</span><span class="st">&quot;blue&quot;</span>)</span>
-<span id="cb21-247"><a href="#cb21-247" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-248"><a href="#cb21-248" aria-hidden="true" tabindex="-1"></a>clusts <span class="ot">&lt;-</span> <span class="fu">______</span>(sample_clust, <span class="at">_ =</span> __)</span>
-<span id="cb21-249"><a href="#cb21-249" aria-hidden="true" tabindex="-1"></a><span class="fu">_____</span>(clusts)</span>
-<span id="cb21-250"><a href="#cb21-250" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-251"><a href="#cb21-251" aria-hidden="true" tabindex="-1"></a><span class="co"># Hints:</span></span>
-<span id="cb21-252"><a href="#cb21-252" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span>
-<span id="cb21-253"><a href="#cb21-253" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb21-254"><a href="#cb21-254" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-257"><a href="#cb21-257" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb21-258"><a href="#cb21-258" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: hclustSamplesAblineSolution</span></span>
-<span id="cb21-259"><a href="#cb21-259" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sample_clust)</span>
-<span id="cb21-260"><a href="#cb21-260" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">a=</span><span class="dv">12</span>, <span class="at">b=</span><span class="dv">0</span>, <span class="at">col=</span><span class="st">&quot;blue&quot;</span>)</span>
-<span id="cb21-261"><a href="#cb21-261" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-262"><a href="#cb21-262" aria-hidden="true" tabindex="-1"></a>clusts <span class="ot">&lt;-</span> <span class="fu">cutree</span>(sample_clust, <span class="at">h =</span> <span class="dv">12</span>)</span>
-<span id="cb21-263"><a href="#cb21-263" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(clusts)</span>
-<span id="cb21-264"><a href="#cb21-264" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb21-265"><a href="#cb21-265" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-268"><a href="#cb21-268" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb21-269"><a href="#cb21-269" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: hclustSamplesAblineAnswer</span></span>
-<span id="cb21-270"><a href="#cb21-270" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb21-271"><a href="#cb21-271" aria-hidden="true" tabindex="-1"></a><span class="co">#| results: &#39;asis&#39;</span></span>
-<span id="cb21-272"><a href="#cb21-272" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(</span>
-<span id="cb21-273"><a href="#cb21-273" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;We see %g clusters at the height of 12&quot;</span>,</span>
-<span id="cb21-274"><a href="#cb21-274" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cutree</span>(sample_clust, <span class="at">h=</span><span class="dv">12</span>) <span class="sc">|&gt;</span> <span class="fu">unique</span>() <span class="sc">|&gt;</span> <span class="fu">length</span>()</span>
-<span id="cb21-275"><a href="#cb21-275" aria-hidden="true" tabindex="-1"></a>))</span>
-<span id="cb21-276"><a href="#cb21-276" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb21-277"><a href="#cb21-277" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-278"><a href="#cb21-278" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb21-279"><a href="#cb21-279" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-280"><a href="#cb21-280" aria-hidden="true" tabindex="-1"></a>Now that you know how to perform hierarchical clustering,</span>
-<span id="cb21-281"><a href="#cb21-281" aria-hidden="true" tabindex="-1"></a>use <span class="in">`pheatmap`</span> to generate a heatmap with clustered rows and columns.</span>
-<span id="cb21-282"><a href="#cb21-282" aria-hidden="true" tabindex="-1"></a>Below, we do some extra work compared to the default parameters to make</span>
-<span id="cb21-283"><a href="#cb21-283" aria-hidden="true" tabindex="-1"></a>sure that 0 is in the center of the color scale, and use beautiful colors.</span>
-<span id="cb21-284"><a href="#cb21-284" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-287"><a href="#cb21-287" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb21-288"><a href="#cb21-288" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: pheatmap</span></span>
-<span id="cb21-289"><a href="#cb21-289" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb21-290"><a href="#cb21-290" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb21-291"><a href="#cb21-291" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig.height: 6</span></span>
-<span id="cb21-292"><a href="#cb21-292" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig.width: 10</span></span>
-<span id="cb21-293"><a href="#cb21-293" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;pheatmap&quot;</span>)</span>
-<span id="cb21-294"><a href="#cb21-294" aria-hidden="true" tabindex="-1"></a>mycolors <span class="ot">=</span> <span class="fu">colorRampPalette</span>(<span class="fu">c</span>(<span class="st">&quot;#FFD800&quot;</span>, <span class="st">&quot;#0056B9&quot;</span>))(<span class="dv">100</span>)</span>
-<span id="cb21-295"><a href="#cb21-295" aria-hidden="true" tabindex="-1"></a><span class="fu">pheatmap</span>(</span>
-<span id="cb21-296"><a href="#cb21-296" aria-hidden="true" tabindex="-1"></a>  <span class="at">mat =</span> Morder,</span>
-<span id="cb21-297"><a href="#cb21-297" aria-hidden="true" tabindex="-1"></a>  <span class="at">fontsize_col =</span> <span class="dv">5</span>, <span class="at">fontsize_row =</span> <span class="dv">10</span>,</span>
-<span id="cb21-298"><a href="#cb21-298" aria-hidden="true" tabindex="-1"></a>  <span class="at">color =</span> mycolors,</span>
-<span id="cb21-299"><a href="#cb21-299" aria-hidden="true" tabindex="-1"></a>  <span class="at">breaks =</span> <span class="fu">max</span>(<span class="fu">abs</span>(Morder)) <span class="sc">*</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="sc">+</span><span class="dv">1</span>, <span class="at">length.out =</span> <span class="fu">length</span>(mycolors) <span class="sc">+</span> <span class="dv">1</span>)</span>
-<span id="cb21-300"><a href="#cb21-300" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb21-301"><a href="#cb21-301" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb21-302"><a href="#cb21-302" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-303"><a href="#cb21-303" aria-hidden="true" tabindex="-1"></a>::: {.callout-note collapse=&quot;false&quot;}</span>
-<span id="cb21-304"><a href="#cb21-304" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-305"><a href="#cb21-305" aria-hidden="true" tabindex="-1"></a><span class="fu">## Question</span></span>
-<span id="cb21-306"><a href="#cb21-306" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-307"><a href="#cb21-307" aria-hidden="true" tabindex="-1"></a>What type of distance and which clustering method does</span>
-<span id="cb21-308"><a href="#cb21-308" aria-hidden="true" tabindex="-1"></a><span class="in">`pheatmap`</span> use by default for clustering rows and columns?</span>
-<span id="cb21-309"><a href="#cb21-309" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-312"><a href="#cb21-312" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb21-313"><a href="#cb21-313" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: pheatmapDefaultDistanceSolution</span></span>
-<span id="cb21-314"><a href="#cb21-314" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb21-315"><a href="#cb21-315" aria-hidden="true" tabindex="-1"></a><span class="co">#| results: &#39;asis&#39;</span></span>
-<span id="cb21-316"><a href="#cb21-316" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(</span>
-<span id="cb21-317"><a href="#cb21-317" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Euclidean distance and complete linkage clustering (see `?pheatmap`)&quot;</span></span>
-<span id="cb21-318"><a href="#cb21-318" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb21-319"><a href="#cb21-319" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb21-320"><a href="#cb21-320" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-321"><a href="#cb21-321" aria-hidden="true" tabindex="-1"></a>Note that these are default values for <span class="in">`dist`</span> and <span class="in">`hclust`</span>, too.</span>
-<span id="cb21-322"><a href="#cb21-322" aria-hidden="true" tabindex="-1"></a>Look at how clustering heatmap changes if you use different</span>
-<span id="cb21-323"><a href="#cb21-323" aria-hidden="true" tabindex="-1"></a>distance and clustering methods (e.g. &#39;ward.D2&#39;).</span>
-<span id="cb21-324"><a href="#cb21-324" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-325"><a href="#cb21-325" aria-hidden="true" tabindex="-1"></a><span class="in">```{r }</span></span>
-<span id="cb21-326"><a href="#cb21-326" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: pheatmapWd2Hint</span></span>
-<span id="cb21-327"><a href="#cb21-327" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb21-328"><a href="#cb21-328" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: !expr params$simplified</span></span>
-<span id="cb21-329"><a href="#cb21-329" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig.height: 6</span></span>
-<span id="cb21-330"><a href="#cb21-330" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig.width: 10</span></span>
-<span id="cb21-331"><a href="#cb21-331" aria-hidden="true" tabindex="-1"></a><span class="co"># Fill in the blanks to complete the code and answer the question above</span></span>
-<span id="cb21-332"><a href="#cb21-332" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-333"><a href="#cb21-333" aria-hidden="true" tabindex="-1"></a><span class="co"># cluster genes</span></span>
-<span id="cb21-334"><a href="#cb21-334" aria-hidden="true" tabindex="-1"></a>gene_clust_wd2 <span class="ot">=</span> <span class="fu">______</span>(<span class="at">_ =</span> <span class="fu">____</span>(<span class="fu">_</span>(______)), <span class="at">______ =</span> <span class="st">&quot;_______&quot;</span>)</span>
-<span id="cb21-335"><a href="#cb21-335" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-336"><a href="#cb21-336" aria-hidden="true" tabindex="-1"></a><span class="co"># cluster samples</span></span>
-<span id="cb21-337"><a href="#cb21-337" aria-hidden="true" tabindex="-1"></a>sample_clust_wd2 <span class="ot">=</span> <span class="fu">______</span>(<span class="at">_ =</span> <span class="fu">____</span>(______), <span class="at">______ =</span> <span class="st">&quot;_______&quot;</span>)</span>
-<span id="cb21-338"><a href="#cb21-338" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-339"><a href="#cb21-339" aria-hidden="true" tabindex="-1"></a><span class="co"># order expression matrix by clustering results</span></span>
-<span id="cb21-340"><a href="#cb21-340" aria-hidden="true" tabindex="-1"></a>Morder_clustered <span class="ot">=</span> Morder[sample_clust_wd2<span class="sc">$</span>order, gene_clust_wd2<span class="sc">$</span>order]</span>
-<span id="cb21-341"><a href="#cb21-341" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-342"><a href="#cb21-342" aria-hidden="true" tabindex="-1"></a><span class="co"># we use pre-computed clustering, so we need to specify that pheatmap should not</span></span>
-<span id="cb21-343"><a href="#cb21-343" aria-hidden="true" tabindex="-1"></a><span class="co"># re-cluster the input data</span></span>
-<span id="cb21-344"><a href="#cb21-344" aria-hidden="true" tabindex="-1"></a><span class="fu">pheatmap</span>(</span>
-<span id="cb21-345"><a href="#cb21-345" aria-hidden="true" tabindex="-1"></a>  <span class="at">mat =</span> ________________,</span>
-<span id="cb21-346"><a href="#cb21-346" aria-hidden="true" tabindex="-1"></a>  <span class="at">cluster_rows =</span> <span class="cn">FALSE</span>, <span class="at">cluster_cols =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb21-347"><a href="#cb21-347" aria-hidden="true" tabindex="-1"></a>  <span class="at">fontsize_col =</span> <span class="dv">5</span>, <span class="at">fontsize_row =</span> <span class="dv">10</span>,</span>
-<span id="cb21-348"><a href="#cb21-348" aria-hidden="true" tabindex="-1"></a>  <span class="at">color =</span> mycolors,</span>
-<span id="cb21-349"><a href="#cb21-349" aria-hidden="true" tabindex="-1"></a>  <span class="at">breaks =</span> <span class="fu">max</span>(<span class="fu">abs</span>(Morder)) <span class="sc">*</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="sc">+</span><span class="dv">1</span>, <span class="at">length.out =</span> <span class="fu">length</span>(mycolors) <span class="sc">+</span> <span class="dv">1</span>)</span>
-<span id="cb21-350"><a href="#cb21-350" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb21-351"><a href="#cb21-351" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-352"><a href="#cb21-352" aria-hidden="true" tabindex="-1"></a><span class="co"># Hints:</span></span>
-<span id="cb21-353"><a href="#cb21-353" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span>
-<span id="cb21-354"><a href="#cb21-354" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb21-355"><a href="#cb21-355" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-358"><a href="#cb21-358" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb21-359"><a href="#cb21-359" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: pheatmapWd2Solution</span></span>
-<span id="cb21-360"><a href="#cb21-360" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig.height: 6</span></span>
-<span id="cb21-361"><a href="#cb21-361" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig.width: 10</span></span>
-<span id="cb21-362"><a href="#cb21-362" aria-hidden="true" tabindex="-1"></a><span class="co"># cluster genes</span></span>
-<span id="cb21-363"><a href="#cb21-363" aria-hidden="true" tabindex="-1"></a>gene_clust_wd2 <span class="ot">=</span> <span class="fu">hclust</span>(<span class="at">d =</span> <span class="fu">dist</span>(<span class="fu">t</span>(Morder)), <span class="at">method =</span> <span class="st">&quot;ward.D2&quot;</span>)</span>
-<span id="cb21-364"><a href="#cb21-364" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-365"><a href="#cb21-365" aria-hidden="true" tabindex="-1"></a><span class="co"># cluster samples</span></span>
-<span id="cb21-366"><a href="#cb21-366" aria-hidden="true" tabindex="-1"></a>sample_clust_wd2 <span class="ot">=</span> <span class="fu">hclust</span>(<span class="at">d =</span> <span class="fu">dist</span>(Morder), <span class="at">method =</span> <span class="st">&quot;ward.D2&quot;</span>)</span>
-<span id="cb21-367"><a href="#cb21-367" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-368"><a href="#cb21-368" aria-hidden="true" tabindex="-1"></a><span class="co"># order expression matrix by clustering results</span></span>
-<span id="cb21-369"><a href="#cb21-369" aria-hidden="true" tabindex="-1"></a>Morder_clustered <span class="ot">=</span> Morder[sample_clust_wd2<span class="sc">$</span>order, gene_clust_wd2<span class="sc">$</span>order]</span>
-<span id="cb21-370"><a href="#cb21-370" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-371"><a href="#cb21-371" aria-hidden="true" tabindex="-1"></a><span class="co"># we use pre-computed clustering, so we need to specify that pheatmap should not</span></span>
-<span id="cb21-372"><a href="#cb21-372" aria-hidden="true" tabindex="-1"></a><span class="co"># re-cluster the input data</span></span>
-<span id="cb21-373"><a href="#cb21-373" aria-hidden="true" tabindex="-1"></a><span class="fu">pheatmap</span>(</span>
-<span id="cb21-374"><a href="#cb21-374" aria-hidden="true" tabindex="-1"></a>  <span class="at">mat =</span> Morder_clustered,</span>
-<span id="cb21-375"><a href="#cb21-375" aria-hidden="true" tabindex="-1"></a>  <span class="at">cluster_rows =</span> <span class="cn">FALSE</span>, <span class="at">cluster_cols =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb21-376"><a href="#cb21-376" aria-hidden="true" tabindex="-1"></a>  <span class="at">fontsize_col =</span> <span class="dv">5</span>, <span class="at">fontsize_row =</span> <span class="dv">10</span>,</span>
-<span id="cb21-377"><a href="#cb21-377" aria-hidden="true" tabindex="-1"></a>  <span class="at">color =</span> mycolors,</span>
-<span id="cb21-378"><a href="#cb21-378" aria-hidden="true" tabindex="-1"></a>  <span class="at">breaks =</span> <span class="fu">max</span>(<span class="fu">abs</span>(Morder)) <span class="sc">*</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="sc">+</span><span class="dv">1</span>, <span class="at">length.out =</span> <span class="fu">length</span>(mycolors) <span class="sc">+</span> <span class="dv">1</span>)</span>
-<span id="cb21-379"><a href="#cb21-379" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb21-380"><a href="#cb21-380" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb21-381"><a href="#cb21-381" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-382"><a href="#cb21-382" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb21-383"><a href="#cb21-383" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-384"><a href="#cb21-384" aria-hidden="true" tabindex="-1"></a><span class="fu"># K means</span></span>
-<span id="cb21-385"><a href="#cb21-385" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-386"><a href="#cb21-386" aria-hidden="true" tabindex="-1"></a>Next we will do k-means clustering on the same dataset.</span>
-<span id="cb21-387"><a href="#cb21-387" aria-hidden="true" tabindex="-1"></a>First thing we need to do is select the number of clusters.</span>
-<span id="cb21-388"><a href="#cb21-388" aria-hidden="true" tabindex="-1"></a>In this dataset, we expect to have three clusters (naïve, effector, memory T cells).</span>
-<span id="cb21-389"><a href="#cb21-389" aria-hidden="true" tabindex="-1"></a>We will use the <span class="in">`kmeans`</span> function to cluster the data into 3 groups.</span>
-<span id="cb21-390"><a href="#cb21-390" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-393"><a href="#cb21-393" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb21-394"><a href="#cb21-394" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: kmeans</span></span>
-<span id="cb21-395"><a href="#cb21-395" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb21-396"><a href="#cb21-396" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb21-397"><a href="#cb21-397" aria-hidden="true" tabindex="-1"></a><span class="co"># convert to data.frame</span></span>
-<span id="cb21-398"><a href="#cb21-398" aria-hidden="true" tabindex="-1"></a>Morder_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(Morder)</span>
-<span id="cb21-399"><a href="#cb21-399" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-400"><a href="#cb21-400" aria-hidden="true" tabindex="-1"></a><span class="co"># add cell type  column - wee will use this for plotting</span></span>
-<span id="cb21-401"><a href="#cb21-401" aria-hidden="true" tabindex="-1"></a>Morder_df<span class="sc">$</span>cell_type <span class="ot">&lt;-</span> stringr<span class="sc">::</span><span class="fu">str_extract</span>(<span class="fu">rownames</span>(Morder), <span class="st">&quot;EFF|MEM|NAI&quot;</span>)</span>
-<span id="cb21-402"><a href="#cb21-402" aria-hidden="true" tabindex="-1"></a>Morder_df<span class="sc">$</span>condition <span class="ot">&lt;-</span> stringr<span class="sc">::</span><span class="fu">str_extract</span>(<span class="fu">rownames</span>(Morder), <span class="st">&quot;HEA|MEL&quot;</span>)</span>
-<span id="cb21-403"><a href="#cb21-403" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-404"><a href="#cb21-404" aria-hidden="true" tabindex="-1"></a><span class="co"># k means</span></span>
-<span id="cb21-405"><a href="#cb21-405" aria-hidden="true" tabindex="-1"></a><span class="co">#set.seed(1234) # already set in the preamble</span></span>
-<span id="cb21-406"><a href="#cb21-406" aria-hidden="true" tabindex="-1"></a>km <span class="ot">&lt;-</span> <span class="fu">kmeans</span>(<span class="at">x =</span> Morder[, <span class="sc">-</span><span class="fu">match</span>(<span class="fu">c</span>(<span class="st">&quot;cell_type&quot;</span>,<span class="st">&quot;condition&quot;</span>), <span class="fu">colnames</span>(Morder_df))], <span class="at">centers =</span> <span class="dv">3</span>)</span>
-<span id="cb21-407"><a href="#cb21-407" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-408"><a href="#cb21-408" aria-hidden="true" tabindex="-1"></a><span class="co"># we can visualize the results</span></span>
-<span id="cb21-409"><a href="#cb21-409" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(km, Morder_df, <span class="at">frame =</span> <span class="cn">TRUE</span>, <span class="at">size =</span> <span class="dv">4</span>, <span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span> <span class="fu">coord_equal</span>()</span>
-<span id="cb21-410"><a href="#cb21-410" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb21-411"><a href="#cb21-411" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-412"><a href="#cb21-412" aria-hidden="true" tabindex="-1"></a>::: {.callout-note collapse=&quot;false&quot;}</span>
-<span id="cb21-413"><a href="#cb21-413" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-414"><a href="#cb21-414" aria-hidden="true" tabindex="-1"></a><span class="fu">## Question</span></span>
-<span id="cb21-415"><a href="#cb21-415" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-416"><a href="#cb21-416" aria-hidden="true" tabindex="-1"></a>Check how different cell types are distributed in the three clusters,</span>
-<span id="cb21-417"><a href="#cb21-417" aria-hidden="true" tabindex="-1"></a>i.e. are the samples clustering by the cell types?</span>
-<span id="cb21-418"><a href="#cb21-418" aria-hidden="true" tabindex="-1"></a>Hint: use &quot;shape&quot; argument of the <span class="in">`autoplot`</span> function to indicate cell types.</span>
-<span id="cb21-419"><a href="#cb21-419" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-420"><a href="#cb21-420" aria-hidden="true" tabindex="-1"></a><span class="in">```{r }</span></span>
-<span id="cb21-421"><a href="#cb21-421" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: kmeansCellTypesHint</span></span>
-<span id="cb21-422"><a href="#cb21-422" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb21-423"><a href="#cb21-423" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: !expr params$simplified</span></span>
-<span id="cb21-424"><a href="#cb21-424" aria-hidden="true" tabindex="-1"></a><span class="co"># Fill in the blanks to complete the code and answer the question above</span></span>
-<span id="cb21-425"><a href="#cb21-425" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-426"><a href="#cb21-426" aria-hidden="true" tabindex="-1"></a><span class="fu">________</span>(km, Morder_df, <span class="at">frame =</span> <span class="cn">TRUE</span>,  <span class="at">_____ =</span> <span class="st">&quot;_________&quot;</span>, <span class="at">size =</span> <span class="dv">4</span>, <span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span> <span class="fu">coord_equal</span>()</span>
-<span id="cb21-427"><a href="#cb21-427" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-428"><a href="#cb21-428" aria-hidden="true" tabindex="-1"></a><span class="co"># Hints:</span></span>
-<span id="cb21-429"><a href="#cb21-429" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span>
-<span id="cb21-430"><a href="#cb21-430" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb21-431"><a href="#cb21-431" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-434"><a href="#cb21-434" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb21-435"><a href="#cb21-435" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: kmeansCellTypesSolution</span></span>
-<span id="cb21-436"><a href="#cb21-436" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-437"><a href="#cb21-437" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(km, Morder_df, <span class="at">frame =</span> <span class="cn">TRUE</span>,  <span class="at">shape =</span> <span class="st">&quot;cell_type&quot;</span>, <span class="at">size =</span> <span class="dv">4</span>, <span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span> <span class="fu">coord_equal</span>()</span>
-<span id="cb21-438"><a href="#cb21-438" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb21-439"><a href="#cb21-439" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-440"><a href="#cb21-440" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb21-441"><a href="#cb21-441" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-442"><a href="#cb21-442" aria-hidden="true" tabindex="-1"></a>::: {.callout-note collapse=&quot;false&quot;}</span>
-<span id="cb21-443"><a href="#cb21-443" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-444"><a href="#cb21-444" aria-hidden="true" tabindex="-1"></a><span class="fu">## Question</span></span>
-<span id="cb21-445"><a href="#cb21-445" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-446"><a href="#cb21-446" aria-hidden="true" tabindex="-1"></a>Notice that one cluster contains samples from different cell types.</span>
-<span id="cb21-447"><a href="#cb21-447" aria-hidden="true" tabindex="-1"></a>If you repeat k means with k=4, do they separate?</span>
-<span id="cb21-448"><a href="#cb21-448" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-449"><a href="#cb21-449" aria-hidden="true" tabindex="-1"></a><span class="in">```{r }</span></span>
-<span id="cb21-450"><a href="#cb21-450" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: kmeans4Hint</span></span>
-<span id="cb21-451"><a href="#cb21-451" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb21-452"><a href="#cb21-452" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: !expr params$simplified</span></span>
-<span id="cb21-453"><a href="#cb21-453" aria-hidden="true" tabindex="-1"></a><span class="co"># Fill in the blanks to complete the code and answer the question above</span></span>
-<span id="cb21-454"><a href="#cb21-454" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-455"><a href="#cb21-455" aria-hidden="true" tabindex="-1"></a>km <span class="ot">&lt;-</span> <span class="fu">kmeans</span>(<span class="at">x =</span> Morder_df[, <span class="sc">-</span><span class="fu">match</span>(<span class="fu">c</span>(<span class="st">&quot;cell_type&quot;</span>,<span class="st">&quot;condition&quot;</span>), <span class="fu">colnames</span>(Morder_df))], <span class="at">_______ =</span> _)</span>
-<span id="cb21-456"><a href="#cb21-456" aria-hidden="true" tabindex="-1"></a><span class="co"># plot</span></span>
-<span id="cb21-457"><a href="#cb21-457" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(km, Morder_df, <span class="at">frame =</span> <span class="cn">TRUE</span>, <span class="at">_____ =</span> <span class="st">&quot;_________&quot;</span>, <span class="at">size =</span> <span class="dv">4</span>, <span class="at">alpha =</span> <span class="fl">0.6</span>)</span>
-<span id="cb21-458"><a href="#cb21-458" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-459"><a href="#cb21-459" aria-hidden="true" tabindex="-1"></a><span class="co"># Hints:</span></span>
-<span id="cb21-460"><a href="#cb21-460" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span>
-<span id="cb21-461"><a href="#cb21-461" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb21-462"><a href="#cb21-462" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-465"><a href="#cb21-465" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb21-466"><a href="#cb21-466" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: kmeans4Solution</span></span>
-<span id="cb21-467"><a href="#cb21-467" aria-hidden="true" tabindex="-1"></a><span class="co"># k means</span></span>
-<span id="cb21-468"><a href="#cb21-468" aria-hidden="true" tabindex="-1"></a>km <span class="ot">&lt;-</span> <span class="fu">kmeans</span>(<span class="at">x =</span> Morder_df[, <span class="sc">-</span><span class="fu">match</span>(<span class="fu">c</span>(<span class="st">&quot;cell_type&quot;</span>,<span class="st">&quot;condition&quot;</span>), <span class="fu">colnames</span>(Morder_df))], <span class="at">centers =</span> <span class="dv">4</span>)</span>
-<span id="cb21-469"><a href="#cb21-469" aria-hidden="true" tabindex="-1"></a><span class="co"># plot</span></span>
-<span id="cb21-470"><a href="#cb21-470" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(km, Morder_df, <span class="at">frame =</span> <span class="cn">TRUE</span>, <span class="at">shape =</span> <span class="st">&quot;cell_type&quot;</span>, <span class="at">size =</span> <span class="dv">4</span>, <span class="at">alpha =</span> <span class="fl">0.6</span>)</span>
-<span id="cb21-471"><a href="#cb21-471" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb21-472"><a href="#cb21-472" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-473"><a href="#cb21-473" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb21-474"><a href="#cb21-474" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-475"><a href="#cb21-475" aria-hidden="true" tabindex="-1"></a>::: {.callout-note collapse=&quot;false&quot;}</span>
-<span id="cb21-476"><a href="#cb21-476" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-477"><a href="#cb21-477" aria-hidden="true" tabindex="-1"></a><span class="fu">## Question</span></span>
-<span id="cb21-478"><a href="#cb21-478" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-479"><a href="#cb21-479" aria-hidden="true" tabindex="-1"></a>The data are coming from two conditions: healthy and melanoma. Repeat k-means</span>
-<span id="cb21-480"><a href="#cb21-480" aria-hidden="true" tabindex="-1"></a>clustering with k=2 and see if the clusters now correspond to these conditions?</span>
-<span id="cb21-481"><a href="#cb21-481" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-482"><a href="#cb21-482" aria-hidden="true" tabindex="-1"></a><span class="in">```{r }</span></span>
-<span id="cb21-483"><a href="#cb21-483" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: kmeans2Hint</span></span>
-<span id="cb21-484"><a href="#cb21-484" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
-<span id="cb21-485"><a href="#cb21-485" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: !expr params$simplified</span></span>
-<span id="cb21-486"><a href="#cb21-486" aria-hidden="true" tabindex="-1"></a><span class="co"># Fill in the blanks to complete the code and answer the question above</span></span>
-<span id="cb21-487"><a href="#cb21-487" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-488"><a href="#cb21-488" aria-hidden="true" tabindex="-1"></a>km <span class="ot">&lt;-</span> <span class="fu">kmeans</span>(<span class="at">x =</span> Morder_df[, <span class="sc">-</span><span class="fu">match</span>(<span class="fu">c</span>(<span class="st">&quot;cell_type&quot;</span>,<span class="st">&quot;condition&quot;</span>), <span class="fu">colnames</span>(Morder_df))], <span class="at">_______ =</span> _)</span>
-<span id="cb21-489"><a href="#cb21-489" aria-hidden="true" tabindex="-1"></a><span class="co"># plot</span></span>
-<span id="cb21-490"><a href="#cb21-490" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(km, Morder_df, <span class="at">frame =</span> <span class="cn">TRUE</span>, <span class="at">_____ =</span> <span class="st">&quot;_________&quot;</span>, <span class="at">size =</span> <span class="dv">4</span>, <span class="at">alpha =</span> <span class="fl">0.6</span>)</span>
-<span id="cb21-491"><a href="#cb21-491" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-492"><a href="#cb21-492" aria-hidden="true" tabindex="-1"></a><span class="co"># Hints:</span></span>
-<span id="cb21-493"><a href="#cb21-493" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span>
-<span id="cb21-494"><a href="#cb21-494" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb21-495"><a href="#cb21-495" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-498"><a href="#cb21-498" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb21-499"><a href="#cb21-499" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: kmeans2Solution</span></span>
-<span id="cb21-500"><a href="#cb21-500" aria-hidden="true" tabindex="-1"></a><span class="co"># k means</span></span>
-<span id="cb21-501"><a href="#cb21-501" aria-hidden="true" tabindex="-1"></a>km <span class="ot">&lt;-</span> <span class="fu">kmeans</span>(<span class="at">x =</span> Morder[, <span class="sc">-</span><span class="fu">match</span>(<span class="fu">c</span>(<span class="st">&quot;cell_type&quot;</span>,<span class="st">&quot;condition&quot;</span>), <span class="fu">colnames</span>(Morder_df))], <span class="at">centers =</span> <span class="dv">2</span>)</span>
-<span id="cb21-502"><a href="#cb21-502" aria-hidden="true" tabindex="-1"></a><span class="co"># plot</span></span>
-<span id="cb21-503"><a href="#cb21-503" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(km, Morder_df, <span class="at">frame =</span> <span class="cn">TRUE</span>, <span class="at">shape =</span> <span class="st">&quot;condition&quot;</span>, <span class="at">size =</span> <span class="dv">4</span>, <span class="at">alpha =</span> <span class="fl">0.6</span>)</span>
-<span id="cb21-504"><a href="#cb21-504" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb21-505"><a href="#cb21-505" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-506"><a href="#cb21-506" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb21-507"><a href="#cb21-507" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-508"><a href="#cb21-508" aria-hidden="true" tabindex="-1"></a>Choosing the number of clusters for k-means is important and at the same time</span>
-<span id="cb21-509"><a href="#cb21-509" aria-hidden="true" tabindex="-1"></a>not trivial, because usually we don&#39;t know the number of clusters in the data</span>
-<span id="cb21-510"><a href="#cb21-510" aria-hidden="true" tabindex="-1"></a>_a priori_.</span>
-<span id="cb21-511"><a href="#cb21-511" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-512"><a href="#cb21-512" aria-hidden="true" tabindex="-1"></a>How can we choose appropriate value of <span class="in">`k`</span>?</span>
-<span id="cb21-513"><a href="#cb21-513" aria-hidden="true" tabindex="-1"></a>One way to choose the number of clusters is to use of the &quot;wss&quot;</span>
-<span id="cb21-514"><a href="#cb21-514" aria-hidden="true" tabindex="-1"></a>(within sum of squares) statistic.</span>
-<span id="cb21-515"><a href="#cb21-515" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-516"><a href="#cb21-516" aria-hidden="true" tabindex="-1"></a><span class="in">`kmeans()`</span> function reports wss for every cluster in the results (check</span>
-<span id="cb21-517"><a href="#cb21-517" aria-hidden="true" tabindex="-1"></a><span class="in">`km$withinss`</span>). Here we implement the function that computes the wss statistic</span>
-<span id="cb21-518"><a href="#cb21-518" aria-hidden="true" tabindex="-1"></a>for different number of clusters in kmeans.</span>
-<span id="cb21-519"><a href="#cb21-519" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-522"><a href="#cb21-522" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb21-523"><a href="#cb21-523" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: wssPlot</span></span>
-<span id="cb21-524"><a href="#cb21-524" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb21-525"><a href="#cb21-525" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb21-526"><a href="#cb21-526" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig.width: 6</span></span>
-<span id="cb21-527"><a href="#cb21-527" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig.height: 6</span></span>
-<span id="cb21-528"><a href="#cb21-528" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-529"><a href="#cb21-529" aria-hidden="true" tabindex="-1"></a>wssplot <span class="ot">&lt;-</span> <span class="cf">function</span>(data, <span class="at">nc=</span><span class="dv">10</span>, <span class="at">seed=</span><span class="dv">533</span>){</span>
-<span id="cb21-530"><a href="#cb21-530" aria-hidden="true" tabindex="-1"></a>  wss <span class="ot">&lt;-</span> (<span class="fu">nrow</span>(data)<span class="sc">-</span><span class="dv">1</span>)<span class="sc">*</span><span class="fu">sum</span>(<span class="fu">apply</span>(data,<span class="dv">2</span>,var))</span>
-<span id="cb21-531"><a href="#cb21-531" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(wss)</span>
-<span id="cb21-532"><a href="#cb21-532" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span>nc){</span>
-<span id="cb21-533"><a href="#cb21-533" aria-hidden="true" tabindex="-1"></a>    <span class="fu">set.seed</span>(seed)</span>
-<span id="cb21-534"><a href="#cb21-534" aria-hidden="true" tabindex="-1"></a>    wss[i] <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">kmeans</span>(data, <span class="at">centers=</span>i)<span class="sc">$</span>withinss)}</span>
-<span id="cb21-535"><a href="#cb21-535" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot</span>(<span class="dv">1</span><span class="sc">:</span>nc, wss, <span class="at">type=</span><span class="st">&quot;b&quot;</span>, <span class="at">xlab=</span><span class="st">&quot;Number of Clusters&quot;</span>,</span>
-<span id="cb21-536"><a href="#cb21-536" aria-hidden="true" tabindex="-1"></a>       <span class="at">ylab=</span><span class="st">&quot;Within groups sum of squares&quot;</span>)</span>
-<span id="cb21-537"><a href="#cb21-537" aria-hidden="true" tabindex="-1"></a>  wss</span>
-<span id="cb21-538"><a href="#cb21-538" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb21-539"><a href="#cb21-539" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb21-540"><a href="#cb21-540" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-541"><a href="#cb21-541" aria-hidden="true" tabindex="-1"></a>Inspect how <span class="in">`wss`</span> looks for different number of clusters in our <span class="in">`Morder`</span> data.</span>
-<span id="cb21-542"><a href="#cb21-542" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-545"><a href="#cb21-545" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb21-546"><a href="#cb21-546" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb21-547"><a href="#cb21-547" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb21-548"><a href="#cb21-548" aria-hidden="true" tabindex="-1"></a><span class="fu">wssplot</span>(Morder)</span>
-<span id="cb21-549"><a href="#cb21-549" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb21-550"><a href="#cb21-550" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-551"><a href="#cb21-551" aria-hidden="true" tabindex="-1"></a>Within sum of squares (wss) statistic, we see that the last substantial decrease of the</span>
-<span id="cb21-552"><a href="#cb21-552" aria-hidden="true" tabindex="-1"></a>statistic occurres before $k=3$, and for values $k=4,5,6,\dots$ the quantity &#39;levels-off&#39;.</span>
-<span id="cb21-553"><a href="#cb21-553" aria-hidden="true" tabindex="-1"></a>In practice, we would choose $k=3$, a value happening at the &#39;elbow&#39; of the plot (elbow-rule).</span>
-<span id="cb21-554"><a href="#cb21-554" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-555"><a href="#cb21-555" aria-hidden="true" tabindex="-1"></a><span class="fu"># Session info</span></span>
-<span id="cb21-556"><a href="#cb21-556" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-559"><a href="#cb21-559" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb21-560"><a href="#cb21-560" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: sessionInfo</span></span>
-<span id="cb21-561"><a href="#cb21-561" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
-<span id="cb21-562"><a href="#cb21-562" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb21-563"><a href="#cb21-563" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span>
-<span id="cb21-564"><a href="#cb21-564" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<div class="sourceCode" id="cb19" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> &quot;Clustering&quot;</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span><span class="co"> &quot;Bio Data Science^3 faculty&quot;</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> &quot;July 19 - August 2, 2025&quot;</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="co">  html:</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="co">    code-fold: false</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="co">    code-tools: true</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a><span class="co">    embed-resources: true</span></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a><span class="co">    highlight-style: github</span></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a><span class="co">    toc: true</span></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a><span class="co">    code-line-numbers: false</span></span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a><span class="an">params:</span></span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a><span class="co">  answers:    false</span></span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a><span class="co">  simplified: false</span></span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a><span class="co">  sessioninfo: false</span></span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: initialize</span></span>
+<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: FALSE</span></span>
+<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a><span class="co">#| include: FALSE</span></span>
+<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="st">&quot;scipen&quot;</span><span class="ot">=</span><span class="dv">100</span>, <span class="st">&quot;digits&quot;</span><span class="ot">=</span><span class="dv">4</span>)</span>
+<span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span>opts_chunk<span class="sc">$</span><span class="fu">set</span>(</span>
+<span id="cb19-27"><a href="#cb19-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">eval  =</span> params<span class="sc">$</span>answers,</span>
+<span id="cb19-28"><a href="#cb19-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">echo  =</span> params<span class="sc">$</span>answers,</span>
+<span id="cb19-29"><a href="#cb19-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">message =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb19-30"><a href="#cb19-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">warning =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb19-31"><a href="#cb19-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">fig.width=</span><span class="dv">15</span>, <span class="at">fig.height=</span><span class="dv">8</span>, <span class="at">fig.align=</span><span class="st">&quot;center&quot;</span>, <span class="at">fig.pos=</span><span class="st">&quot;h&quot;</span></span>
+<span id="cb19-32"><a href="#cb19-32" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb19-33"><a href="#cb19-33" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">533</span>)</span>
+<span id="cb19-34"><a href="#cb19-34" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-35"><a href="#cb19-35" aria-hidden="true" tabindex="-1"></a><span class="fu"># Preamble</span></span>
+<span id="cb19-36"><a href="#cb19-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-37"><a href="#cb19-37" aria-hidden="true" tabindex="-1"></a><span class="fu">## Goal</span></span>
+<span id="cb19-38"><a href="#cb19-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-39"><a href="#cb19-39" aria-hidden="true" tabindex="-1"></a>In this lab we will learn the basics of clustering. The methods we will</span>
+<span id="cb19-40"><a href="#cb19-40" aria-hidden="true" tabindex="-1"></a>cover include hierarchical clustering, K means and density clustering.</span>
+<span id="cb19-41"><a href="#cb19-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-42"><a href="#cb19-42" aria-hidden="true" tabindex="-1"></a><span class="fu">## Dependencies</span></span>
+<span id="cb19-43"><a href="#cb19-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-44"><a href="#cb19-44" aria-hidden="true" tabindex="-1"></a><span class="in">```{r }</span></span>
+<span id="cb19-45"><a href="#cb19-45" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb19-46"><a href="#cb19-46" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb19-47"><a href="#cb19-47" aria-hidden="true" tabindex="-1"></a><span class="co"># load required packages</span></span>
+<span id="cb19-48"><a href="#cb19-48" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pheatmap)</span>
+<span id="cb19-49"><a href="#cb19-49" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggfortify)</span>
+<span id="cb19-50"><a href="#cb19-50" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb19-51"><a href="#cb19-51" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-52"><a href="#cb19-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-53"><a href="#cb19-53" aria-hidden="true" tabindex="-1"></a><span class="fu">## Data retrieval</span></span>
+<span id="cb19-54"><a href="#cb19-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-55"><a href="#cb19-55" aria-hidden="true" tabindex="-1"></a>The Morder data are gene expression measurements for 156 genes on T cells</span>
+<span id="cb19-56"><a href="#cb19-56" aria-hidden="true" tabindex="-1"></a>of 3 types (naïve, effector, memory) from 10 patients (Holmes et al. 2005).</span>
+<span id="cb19-57"><a href="#cb19-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-58"><a href="#cb19-58" aria-hidden="true" tabindex="-1"></a>Here we load the <span class="in">`Morder`</span> <span class="in">`data.frame`</span> from the online directory.</span>
+<span id="cb19-59"><a href="#cb19-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-60"><a href="#cb19-60" aria-hidden="true" tabindex="-1"></a><span class="in">```{r }</span></span>
+<span id="cb19-61"><a href="#cb19-61" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: loadDataWeb</span></span>
+<span id="cb19-62"><a href="#cb19-62" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb19-63"><a href="#cb19-63" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb19-64"><a href="#cb19-64" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="fu">url</span>(<span class="st">&quot;http://web.stanford.edu/class/bios221/data/Morder.RData&quot;</span>))</span>
+<span id="cb19-65"><a href="#cb19-65" aria-hidden="true" tabindex="-1"></a><span class="co"># if download fails with timeout</span></span>
+<span id="cb19-66"><a href="#cb19-66" aria-hidden="true" tabindex="-1"></a><span class="co"># error, try increasing it via:</span></span>
+<span id="cb19-67"><a href="#cb19-67" aria-hidden="true" tabindex="-1"></a><span class="co"># options(timeout = 1000)</span></span>
+<span id="cb19-68"><a href="#cb19-68" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-69"><a href="#cb19-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-70"><a href="#cb19-70" aria-hidden="true" tabindex="-1"></a>If you downloaded the file before, you can load it from the local directory.</span>
+<span id="cb19-71"><a href="#cb19-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-72"><a href="#cb19-72" aria-hidden="true" tabindex="-1"></a><span class="in">```{r }</span></span>
+<span id="cb19-73"><a href="#cb19-73" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: loadDataLoc</span></span>
+<span id="cb19-74"><a href="#cb19-74" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb19-75"><a href="#cb19-75" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb19-76"><a href="#cb19-76" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;Morder.RData&quot;</span>)</span>
+<span id="cb19-77"><a href="#cb19-77" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-78"><a href="#cb19-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-79"><a href="#cb19-79" aria-hidden="true" tabindex="-1"></a><span class="fu"># Hierarchical clustering</span></span>
+<span id="cb19-80"><a href="#cb19-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-81"><a href="#cb19-81" aria-hidden="true" tabindex="-1"></a>::: {.callout-note collapse=&quot;false&quot;}</span>
+<span id="cb19-82"><a href="#cb19-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-83"><a href="#cb19-83" aria-hidden="true" tabindex="-1"></a><span class="fu">## Question</span></span>
+<span id="cb19-84"><a href="#cb19-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-85"><a href="#cb19-85" aria-hidden="true" tabindex="-1"></a>Inspect the data. How many samples of each T cell type</span>
+<span id="cb19-86"><a href="#cb19-86" aria-hidden="true" tabindex="-1"></a>(naïve, effector, memory) are there in the data?</span>
+<span id="cb19-87"><a href="#cb19-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-88"><a href="#cb19-88" aria-hidden="true" tabindex="-1"></a><span class="in">```{r }</span></span>
+<span id="cb19-89"><a href="#cb19-89" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: questionCellTypesHint</span></span>
+<span id="cb19-90"><a href="#cb19-90" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb19-91"><a href="#cb19-91" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: !expr params$simplified</span></span>
+<span id="cb19-92"><a href="#cb19-92" aria-hidden="true" tabindex="-1"></a><span class="co"># Fill in the blanks to complete the code and answer the question above</span></span>
+<span id="cb19-93"><a href="#cb19-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-94"><a href="#cb19-94" aria-hidden="true" tabindex="-1"></a><span class="fu">________</span>(Morder) <span class="sc">|&gt;</span></span>
+<span id="cb19-95"><a href="#cb19-95" aria-hidden="true" tabindex="-1"></a>  stringr<span class="sc">::</span><span class="fu">___________</span>(<span class="st">&quot;_&quot;</span>, _) <span class="sc">|&gt;</span></span>
+<span id="cb19-96"><a href="#cb19-96" aria-hidden="true" tabindex="-1"></a>  <span class="fu">_____</span>()</span>
+<span id="cb19-97"><a href="#cb19-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-98"><a href="#cb19-98" aria-hidden="true" tabindex="-1"></a><span class="co"># Hints:</span></span>
+<span id="cb19-99"><a href="#cb19-99" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. What function extracts the row names?</span></span>
+<span id="cb19-100"><a href="#cb19-100" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. What function splits the string, and which position (number) corresponds</span></span>
+<span id="cb19-101"><a href="#cb19-101" aria-hidden="true" tabindex="-1"></a><span class="co"># to the name of a cell type?</span></span>
+<span id="cb19-102"><a href="#cb19-102" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. What function creates a frequency table from a vector?</span></span>
+<span id="cb19-103"><a href="#cb19-103" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-104"><a href="#cb19-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-107"><a href="#cb19-107" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-108"><a href="#cb19-108" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: questionCellTypesSolution</span></span>
+<span id="cb19-109"><a href="#cb19-109" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(Morder) <span class="sc">|&gt;</span></span>
+<span id="cb19-110"><a href="#cb19-110" aria-hidden="true" tabindex="-1"></a>  stringr<span class="sc">::</span><span class="fu">str_split_i</span>(<span class="st">&quot;_&quot;</span>, <span class="dv">2</span>) <span class="sc">|&gt;</span></span>
+<span id="cb19-111"><a href="#cb19-111" aria-hidden="true" tabindex="-1"></a>  <span class="fu">table</span>()</span>
+<span id="cb19-112"><a href="#cb19-112" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-113"><a href="#cb19-113" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-114"><a href="#cb19-114" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb19-115"><a href="#cb19-115" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-116"><a href="#cb19-116" aria-hidden="true" tabindex="-1"></a>In base R the function to perform hierarchical clustering is <span class="in">`hclust`</span>.</span>
+<span id="cb19-117"><a href="#cb19-117" aria-hidden="true" tabindex="-1"></a>To cluster the genes with hierarchical clustering you first need</span>
+<span id="cb19-118"><a href="#cb19-118" aria-hidden="true" tabindex="-1"></a>to compute a distance matrix storing all pairwise (gene-to-gene)</span>
+<span id="cb19-119"><a href="#cb19-119" aria-hidden="true" tabindex="-1"></a>dissimilarities. This is how to do it:</span>
+<span id="cb19-120"><a href="#cb19-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-123"><a href="#cb19-123" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-124"><a href="#cb19-124" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: hclustGenes</span></span>
+<span id="cb19-125"><a href="#cb19-125" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb19-126"><a href="#cb19-126" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb19-127"><a href="#cb19-127" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig.width: 18</span></span>
+<span id="cb19-128"><a href="#cb19-128" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig.height: 8</span></span>
+<span id="cb19-129"><a href="#cb19-129" aria-hidden="true" tabindex="-1"></a><span class="co"># distance calculation</span></span>
+<span id="cb19-130"><a href="#cb19-130" aria-hidden="true" tabindex="-1"></a>D <span class="ot">=</span> <span class="fu">dist</span>(<span class="fu">t</span>(Morder))</span>
+<span id="cb19-131"><a href="#cb19-131" aria-hidden="true" tabindex="-1"></a><span class="co"># clustering</span></span>
+<span id="cb19-132"><a href="#cb19-132" aria-hidden="true" tabindex="-1"></a>gene_clust <span class="ot">=</span> <span class="fu">hclust</span>(<span class="at">d =</span> D)</span>
+<span id="cb19-133"><a href="#cb19-133" aria-hidden="true" tabindex="-1"></a><span class="co"># plot dendrogram</span></span>
+<span id="cb19-134"><a href="#cb19-134" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(gene_clust)</span>
+<span id="cb19-135"><a href="#cb19-135" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-136"><a href="#cb19-136" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-137"><a href="#cb19-137" aria-hidden="true" tabindex="-1"></a>::: {.callout-note collapse=&quot;false&quot;}</span>
+<span id="cb19-138"><a href="#cb19-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-139"><a href="#cb19-139" aria-hidden="true" tabindex="-1"></a><span class="fu">## Question</span></span>
+<span id="cb19-140"><a href="#cb19-140" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-141"><a href="#cb19-141" aria-hidden="true" tabindex="-1"></a>Why in the provided code the input to <span class="in">`dist`</span> function is <span class="in">`t(Morder)`</span>?</span>
+<span id="cb19-142"><a href="#cb19-142" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-145"><a href="#cb19-145" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-146"><a href="#cb19-146" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: questionTranspose</span></span>
+<span id="cb19-147"><a href="#cb19-147" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb19-148"><a href="#cb19-148" aria-hidden="true" tabindex="-1"></a><span class="co">#| results: &#39;asis&#39;</span></span>
+<span id="cb19-149"><a href="#cb19-149" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(</span>
+<span id="cb19-150"><a href="#cb19-150" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Because `dist` computes distances between rows, we need to use `t` to transposes the expression matrix Morder, so that we cluster genes, and not samples.&quot;</span></span>
+<span id="cb19-151"><a href="#cb19-151" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb19-152"><a href="#cb19-152" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-153"><a href="#cb19-153" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-154"><a href="#cb19-154" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb19-155"><a href="#cb19-155" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-156"><a href="#cb19-156" aria-hidden="true" tabindex="-1"></a>In hierarchical clustering, one needs to choose the method</span>
+<span id="cb19-157"><a href="#cb19-157" aria-hidden="true" tabindex="-1"></a>for agglomerating the clusters. By default <span class="in">`hclust`</span>,</span>
+<span id="cb19-158"><a href="#cb19-158" aria-hidden="true" tabindex="-1"></a>uses a &quot;complete&quot; linkage method (see <span class="in">`?hclust`</span> for info).</span>
+<span id="cb19-159"><a href="#cb19-159" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-160"><a href="#cb19-160" aria-hidden="true" tabindex="-1"></a>::: {.callout-note collapse=&quot;false&quot;}</span>
+<span id="cb19-161"><a href="#cb19-161" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-162"><a href="#cb19-162" aria-hidden="true" tabindex="-1"></a><span class="fu">## Question</span></span>
+<span id="cb19-163"><a href="#cb19-163" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-164"><a href="#cb19-164" aria-hidden="true" tabindex="-1"></a>Redo hierarchical clustering with the <span class="in">`ward.D2`</span> method and plot the dendrogram.</span>
+<span id="cb19-165"><a href="#cb19-165" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-166"><a href="#cb19-166" aria-hidden="true" tabindex="-1"></a><span class="in">```{r }</span></span>
+<span id="cb19-167"><a href="#cb19-167" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: hclustGenesWard.D2Hint</span></span>
+<span id="cb19-168"><a href="#cb19-168" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb19-169"><a href="#cb19-169" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: !expr params$simplified</span></span>
+<span id="cb19-170"><a href="#cb19-170" aria-hidden="true" tabindex="-1"></a><span class="co"># Fill in the blanks to complete the code and answer the question above</span></span>
+<span id="cb19-171"><a href="#cb19-171" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-172"><a href="#cb19-172" aria-hidden="true" tabindex="-1"></a>gene_clust_wd2 <span class="ot">=</span> <span class="fu">______</span>(<span class="at">d =</span> <span class="fu">____</span>(<span class="fu">_</span>(______)), <span class="at">______ =</span> <span class="st">&quot;_______&quot;</span>)</span>
+<span id="cb19-173"><a href="#cb19-173" aria-hidden="true" tabindex="-1"></a><span class="fu">____</span>(gene_clust_wd2)</span>
+<span id="cb19-174"><a href="#cb19-174" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-175"><a href="#cb19-175" aria-hidden="true" tabindex="-1"></a><span class="co"># Hints:</span></span>
+<span id="cb19-176"><a href="#cb19-176" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span>
+<span id="cb19-177"><a href="#cb19-177" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-178"><a href="#cb19-178" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-181"><a href="#cb19-181" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-182"><a href="#cb19-182" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: hclustGenesWard.D2Solution</span></span>
+<span id="cb19-183"><a href="#cb19-183" aria-hidden="true" tabindex="-1"></a>gene_clust_wd2 <span class="ot">=</span> <span class="fu">hclust</span>(<span class="at">d =</span> <span class="fu">dist</span>(<span class="fu">t</span>(Morder)), <span class="at">method =</span> <span class="st">&quot;ward.D2&quot;</span>)</span>
+<span id="cb19-184"><a href="#cb19-184" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(gene_clust_wd2)</span>
+<span id="cb19-185"><a href="#cb19-185" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-186"><a href="#cb19-186" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-187"><a href="#cb19-187" aria-hidden="true" tabindex="-1"></a>Notice that the values on the y axis of hclust dendrogram changed.</span>
+<span id="cb19-188"><a href="#cb19-188" aria-hidden="true" tabindex="-1"></a>What do they correspond to?</span>
+<span id="cb19-189"><a href="#cb19-189" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-192"><a href="#cb19-192" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-193"><a href="#cb19-193" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: hclust_genes_ward.D2_dend</span></span>
+<span id="cb19-194"><a href="#cb19-194" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb19-195"><a href="#cb19-195" aria-hidden="true" tabindex="-1"></a><span class="co">#| results: &#39;asis&#39;</span></span>
+<span id="cb19-196"><a href="#cb19-196" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(</span>
+<span id="cb19-197"><a href="#cb19-197" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Distance between clusters, according to agglomeration method choice.&quot;</span></span>
+<span id="cb19-198"><a href="#cb19-198" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb19-199"><a href="#cb19-199" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-200"><a href="#cb19-200" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-201"><a href="#cb19-201" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb19-202"><a href="#cb19-202" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-203"><a href="#cb19-203" aria-hidden="true" tabindex="-1"></a>Note that in the <span class="in">`hclust`</span> there are the <span class="in">`ward.D`</span> and <span class="in">`ward.D2`</span> methods available.</span>
+<span id="cb19-204"><a href="#cb19-204" aria-hidden="true" tabindex="-1"></a>Please call <span class="in">`?hclust`</span> to read about the difference between the two methods.</span>
+<span id="cb19-205"><a href="#cb19-205" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-206"><a href="#cb19-206" aria-hidden="true" tabindex="-1"></a>Next, instead of clustering genes, we will apply</span>
+<span id="cb19-207"><a href="#cb19-207" aria-hidden="true" tabindex="-1"></a>hierarchical clustering for samples (observations).</span>
+<span id="cb19-208"><a href="#cb19-208" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-209"><a href="#cb19-209" aria-hidden="true" tabindex="-1"></a>::: {.callout-note collapse=&quot;false&quot;}</span>
+<span id="cb19-210"><a href="#cb19-210" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-211"><a href="#cb19-211" aria-hidden="true" tabindex="-1"></a><span class="fu">## Question</span></span>
+<span id="cb19-212"><a href="#cb19-212" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-213"><a href="#cb19-213" aria-hidden="true" tabindex="-1"></a>Use dist and hclust (with default linkage method) to cluster samples.</span>
+<span id="cb19-214"><a href="#cb19-214" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-215"><a href="#cb19-215" aria-hidden="true" tabindex="-1"></a><span class="in">```{r }</span></span>
+<span id="cb19-216"><a href="#cb19-216" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: hclustSamplesHint</span></span>
+<span id="cb19-217"><a href="#cb19-217" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb19-218"><a href="#cb19-218" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: !expr params$simplified</span></span>
+<span id="cb19-219"><a href="#cb19-219" aria-hidden="true" tabindex="-1"></a><span class="co"># Fill in the blanks to complete the code and answer the question above</span></span>
+<span id="cb19-220"><a href="#cb19-220" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-221"><a href="#cb19-221" aria-hidden="true" tabindex="-1"></a>D_samples <span class="ot">=</span> <span class="fu">____</span>(______)</span>
+<span id="cb19-222"><a href="#cb19-222" aria-hidden="true" tabindex="-1"></a>sample_clust <span class="ot">=</span> <span class="fu">______</span>(<span class="at">_ =</span> D_samples)</span>
+<span id="cb19-223"><a href="#cb19-223" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-224"><a href="#cb19-224" aria-hidden="true" tabindex="-1"></a><span class="co"># Hints:</span></span>
+<span id="cb19-225"><a href="#cb19-225" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Do we need to transpose the matrix?</span></span>
+<span id="cb19-226"><a href="#cb19-226" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-227"><a href="#cb19-227" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-230"><a href="#cb19-230" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-231"><a href="#cb19-231" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: hclustSamplesSolution</span></span>
+<span id="cb19-232"><a href="#cb19-232" aria-hidden="true" tabindex="-1"></a><span class="co"># we don&#39;t transpose the matrix now (samples are rows)</span></span>
+<span id="cb19-233"><a href="#cb19-233" aria-hidden="true" tabindex="-1"></a>D_samples <span class="ot">=</span> <span class="fu">dist</span>(Morder)</span>
+<span id="cb19-234"><a href="#cb19-234" aria-hidden="true" tabindex="-1"></a>sample_clust <span class="ot">=</span> <span class="fu">hclust</span>(<span class="at">d =</span> D_samples)</span>
+<span id="cb19-235"><a href="#cb19-235" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-236"><a href="#cb19-236" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-237"><a href="#cb19-237" aria-hidden="true" tabindex="-1"></a>How many clusters of samples are there at the dendrogram height of 12?</span>
+<span id="cb19-238"><a href="#cb19-238" aria-hidden="true" tabindex="-1"></a>Hint: the <span class="in">`abline()`</span> and <span class="in">`cutree()`</span> functions might be helpful.</span>
+<span id="cb19-239"><a href="#cb19-239" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-240"><a href="#cb19-240" aria-hidden="true" tabindex="-1"></a><span class="in">```{r }</span></span>
+<span id="cb19-241"><a href="#cb19-241" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: hclustSamplesAblineHint</span></span>
+<span id="cb19-242"><a href="#cb19-242" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb19-243"><a href="#cb19-243" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: !expr params$simplified</span></span>
+<span id="cb19-244"><a href="#cb19-244" aria-hidden="true" tabindex="-1"></a><span class="co"># Fill in the blanks to complete the code and answer the question above</span></span>
+<span id="cb19-245"><a href="#cb19-245" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-246"><a href="#cb19-246" aria-hidden="true" tabindex="-1"></a><span class="fu">____</span>(sample_clust)</span>
+<span id="cb19-247"><a href="#cb19-247" aria-hidden="true" tabindex="-1"></a><span class="fu">______</span>(<span class="at">a=</span><span class="dv">12</span>, <span class="at">b=</span><span class="dv">0</span>, <span class="at">col=</span><span class="st">&quot;blue&quot;</span>)</span>
+<span id="cb19-248"><a href="#cb19-248" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-249"><a href="#cb19-249" aria-hidden="true" tabindex="-1"></a>clusts <span class="ot">&lt;-</span> <span class="fu">______</span>(sample_clust, <span class="at">_ =</span> __)</span>
+<span id="cb19-250"><a href="#cb19-250" aria-hidden="true" tabindex="-1"></a><span class="fu">_____</span>(clusts)</span>
+<span id="cb19-251"><a href="#cb19-251" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-252"><a href="#cb19-252" aria-hidden="true" tabindex="-1"></a><span class="co"># Hints:</span></span>
+<span id="cb19-253"><a href="#cb19-253" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span>
+<span id="cb19-254"><a href="#cb19-254" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-255"><a href="#cb19-255" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-258"><a href="#cb19-258" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-259"><a href="#cb19-259" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: hclustSamplesAblineSolution</span></span>
+<span id="cb19-260"><a href="#cb19-260" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sample_clust)</span>
+<span id="cb19-261"><a href="#cb19-261" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">a=</span><span class="dv">12</span>, <span class="at">b=</span><span class="dv">0</span>, <span class="at">col=</span><span class="st">&quot;blue&quot;</span>)</span>
+<span id="cb19-262"><a href="#cb19-262" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-263"><a href="#cb19-263" aria-hidden="true" tabindex="-1"></a>clusts <span class="ot">&lt;-</span> <span class="fu">cutree</span>(sample_clust, <span class="at">h =</span> <span class="dv">12</span>)</span>
+<span id="cb19-264"><a href="#cb19-264" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(clusts)</span>
+<span id="cb19-265"><a href="#cb19-265" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-266"><a href="#cb19-266" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-269"><a href="#cb19-269" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-270"><a href="#cb19-270" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: hclustSamplesAblineAnswer</span></span>
+<span id="cb19-271"><a href="#cb19-271" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb19-272"><a href="#cb19-272" aria-hidden="true" tabindex="-1"></a><span class="co">#| results: &#39;asis&#39;</span></span>
+<span id="cb19-273"><a href="#cb19-273" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">sprintf</span>(</span>
+<span id="cb19-274"><a href="#cb19-274" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;We see %g clusters at the height of 12&quot;</span>,</span>
+<span id="cb19-275"><a href="#cb19-275" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cutree</span>(sample_clust, <span class="at">h=</span><span class="dv">12</span>) <span class="sc">|&gt;</span> <span class="fu">unique</span>() <span class="sc">|&gt;</span> <span class="fu">length</span>()</span>
+<span id="cb19-276"><a href="#cb19-276" aria-hidden="true" tabindex="-1"></a>))</span>
+<span id="cb19-277"><a href="#cb19-277" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-278"><a href="#cb19-278" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-279"><a href="#cb19-279" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb19-280"><a href="#cb19-280" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-281"><a href="#cb19-281" aria-hidden="true" tabindex="-1"></a>Now that you know how to perform hierarchical clustering,</span>
+<span id="cb19-282"><a href="#cb19-282" aria-hidden="true" tabindex="-1"></a>use <span class="in">`pheatmap`</span> to generate a heatmap with clustered rows and columns.</span>
+<span id="cb19-283"><a href="#cb19-283" aria-hidden="true" tabindex="-1"></a>Below, we do some extra work compared to the default parameters to make</span>
+<span id="cb19-284"><a href="#cb19-284" aria-hidden="true" tabindex="-1"></a>sure that 0 is in the center of the color scale, and use beautiful colors.</span>
+<span id="cb19-285"><a href="#cb19-285" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-288"><a href="#cb19-288" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-289"><a href="#cb19-289" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: pheatmap</span></span>
+<span id="cb19-290"><a href="#cb19-290" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb19-291"><a href="#cb19-291" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb19-292"><a href="#cb19-292" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig.height: 6</span></span>
+<span id="cb19-293"><a href="#cb19-293" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig.width: 10</span></span>
+<span id="cb19-294"><a href="#cb19-294" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;pheatmap&quot;</span>)</span>
+<span id="cb19-295"><a href="#cb19-295" aria-hidden="true" tabindex="-1"></a>mycolors <span class="ot">=</span> <span class="fu">colorRampPalette</span>(<span class="fu">c</span>(<span class="st">&quot;#FFD800&quot;</span>, <span class="st">&quot;#0056B9&quot;</span>))(<span class="dv">100</span>)</span>
+<span id="cb19-296"><a href="#cb19-296" aria-hidden="true" tabindex="-1"></a><span class="fu">pheatmap</span>(</span>
+<span id="cb19-297"><a href="#cb19-297" aria-hidden="true" tabindex="-1"></a>  <span class="at">mat =</span> Morder,</span>
+<span id="cb19-298"><a href="#cb19-298" aria-hidden="true" tabindex="-1"></a>  <span class="at">fontsize_col =</span> <span class="dv">5</span>, <span class="at">fontsize_row =</span> <span class="dv">10</span>,</span>
+<span id="cb19-299"><a href="#cb19-299" aria-hidden="true" tabindex="-1"></a>  <span class="at">color =</span> mycolors,</span>
+<span id="cb19-300"><a href="#cb19-300" aria-hidden="true" tabindex="-1"></a>  <span class="at">breaks =</span> <span class="fu">max</span>(<span class="fu">abs</span>(Morder)) <span class="sc">*</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="sc">+</span><span class="dv">1</span>, <span class="at">length.out =</span> <span class="fu">length</span>(mycolors) <span class="sc">+</span> <span class="dv">1</span>)</span>
+<span id="cb19-301"><a href="#cb19-301" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb19-302"><a href="#cb19-302" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-303"><a href="#cb19-303" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-304"><a href="#cb19-304" aria-hidden="true" tabindex="-1"></a>::: {.callout-note collapse=&quot;false&quot;}</span>
+<span id="cb19-305"><a href="#cb19-305" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-306"><a href="#cb19-306" aria-hidden="true" tabindex="-1"></a><span class="fu">## Question</span></span>
+<span id="cb19-307"><a href="#cb19-307" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-308"><a href="#cb19-308" aria-hidden="true" tabindex="-1"></a>What type of distance and which clustering method does</span>
+<span id="cb19-309"><a href="#cb19-309" aria-hidden="true" tabindex="-1"></a><span class="in">`pheatmap`</span> use by default for clustering rows and columns?</span>
+<span id="cb19-310"><a href="#cb19-310" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-313"><a href="#cb19-313" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-314"><a href="#cb19-314" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: pheatmapDefaultDistanceSolution</span></span>
+<span id="cb19-315"><a href="#cb19-315" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb19-316"><a href="#cb19-316" aria-hidden="true" tabindex="-1"></a><span class="co">#| results: &#39;asis&#39;</span></span>
+<span id="cb19-317"><a href="#cb19-317" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(</span>
+<span id="cb19-318"><a href="#cb19-318" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Euclidean distance and complete linkage clustering (see `?pheatmap`)&quot;</span></span>
+<span id="cb19-319"><a href="#cb19-319" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb19-320"><a href="#cb19-320" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-321"><a href="#cb19-321" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-322"><a href="#cb19-322" aria-hidden="true" tabindex="-1"></a>Note that these are default values for <span class="in">`dist`</span> and <span class="in">`hclust`</span>, too.</span>
+<span id="cb19-323"><a href="#cb19-323" aria-hidden="true" tabindex="-1"></a>Look at how clustering heatmap changes if you use different</span>
+<span id="cb19-324"><a href="#cb19-324" aria-hidden="true" tabindex="-1"></a>distance and clustering methods (e.g. &#39;ward.D2&#39;).</span>
+<span id="cb19-325"><a href="#cb19-325" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-326"><a href="#cb19-326" aria-hidden="true" tabindex="-1"></a><span class="in">```{r }</span></span>
+<span id="cb19-327"><a href="#cb19-327" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: pheatmapWd2Hint</span></span>
+<span id="cb19-328"><a href="#cb19-328" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb19-329"><a href="#cb19-329" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: !expr params$simplified</span></span>
+<span id="cb19-330"><a href="#cb19-330" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig.height: 6</span></span>
+<span id="cb19-331"><a href="#cb19-331" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig.width: 10</span></span>
+<span id="cb19-332"><a href="#cb19-332" aria-hidden="true" tabindex="-1"></a><span class="co"># Fill in the blanks to complete the code and answer the question above</span></span>
+<span id="cb19-333"><a href="#cb19-333" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-334"><a href="#cb19-334" aria-hidden="true" tabindex="-1"></a><span class="co"># cluster genes</span></span>
+<span id="cb19-335"><a href="#cb19-335" aria-hidden="true" tabindex="-1"></a>gene_clust_wd2 <span class="ot">=</span> <span class="fu">______</span>(<span class="at">_ =</span> <span class="fu">____</span>(<span class="fu">_</span>(______)), <span class="at">______ =</span> <span class="st">&quot;_______&quot;</span>)</span>
+<span id="cb19-336"><a href="#cb19-336" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-337"><a href="#cb19-337" aria-hidden="true" tabindex="-1"></a><span class="co"># cluster samples</span></span>
+<span id="cb19-338"><a href="#cb19-338" aria-hidden="true" tabindex="-1"></a>sample_clust_wd2 <span class="ot">=</span> <span class="fu">______</span>(<span class="at">_ =</span> <span class="fu">____</span>(______), <span class="at">______ =</span> <span class="st">&quot;_______&quot;</span>)</span>
+<span id="cb19-339"><a href="#cb19-339" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-340"><a href="#cb19-340" aria-hidden="true" tabindex="-1"></a><span class="co"># order expression matrix by clustering results</span></span>
+<span id="cb19-341"><a href="#cb19-341" aria-hidden="true" tabindex="-1"></a>Morder_clustered <span class="ot">=</span> Morder[sample_clust_wd2<span class="sc">$</span>order, gene_clust_wd2<span class="sc">$</span>order]</span>
+<span id="cb19-342"><a href="#cb19-342" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-343"><a href="#cb19-343" aria-hidden="true" tabindex="-1"></a><span class="co"># we use pre-computed clustering, so we need to specify that pheatmap should not</span></span>
+<span id="cb19-344"><a href="#cb19-344" aria-hidden="true" tabindex="-1"></a><span class="co"># re-cluster the input data</span></span>
+<span id="cb19-345"><a href="#cb19-345" aria-hidden="true" tabindex="-1"></a><span class="fu">pheatmap</span>(</span>
+<span id="cb19-346"><a href="#cb19-346" aria-hidden="true" tabindex="-1"></a>  <span class="at">mat =</span> ________________,</span>
+<span id="cb19-347"><a href="#cb19-347" aria-hidden="true" tabindex="-1"></a>  <span class="at">cluster_rows =</span> <span class="cn">FALSE</span>, <span class="at">cluster_cols =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb19-348"><a href="#cb19-348" aria-hidden="true" tabindex="-1"></a>  <span class="at">fontsize_col =</span> <span class="dv">5</span>, <span class="at">fontsize_row =</span> <span class="dv">10</span>,</span>
+<span id="cb19-349"><a href="#cb19-349" aria-hidden="true" tabindex="-1"></a>  <span class="at">color =</span> mycolors,</span>
+<span id="cb19-350"><a href="#cb19-350" aria-hidden="true" tabindex="-1"></a>  <span class="at">breaks =</span> <span class="fu">max</span>(<span class="fu">abs</span>(Morder)) <span class="sc">*</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="sc">+</span><span class="dv">1</span>, <span class="at">length.out =</span> <span class="fu">length</span>(mycolors) <span class="sc">+</span> <span class="dv">1</span>)</span>
+<span id="cb19-351"><a href="#cb19-351" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb19-352"><a href="#cb19-352" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-353"><a href="#cb19-353" aria-hidden="true" tabindex="-1"></a><span class="co"># Hints:</span></span>
+<span id="cb19-354"><a href="#cb19-354" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span>
+<span id="cb19-355"><a href="#cb19-355" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-356"><a href="#cb19-356" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-359"><a href="#cb19-359" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-360"><a href="#cb19-360" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: pheatmapWd2Solution</span></span>
+<span id="cb19-361"><a href="#cb19-361" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig.height: 6</span></span>
+<span id="cb19-362"><a href="#cb19-362" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig.width: 10</span></span>
+<span id="cb19-363"><a href="#cb19-363" aria-hidden="true" tabindex="-1"></a><span class="co"># cluster genes</span></span>
+<span id="cb19-364"><a href="#cb19-364" aria-hidden="true" tabindex="-1"></a>gene_clust_wd2 <span class="ot">=</span> <span class="fu">hclust</span>(<span class="at">d =</span> <span class="fu">dist</span>(<span class="fu">t</span>(Morder)), <span class="at">method =</span> <span class="st">&quot;ward.D2&quot;</span>)</span>
+<span id="cb19-365"><a href="#cb19-365" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-366"><a href="#cb19-366" aria-hidden="true" tabindex="-1"></a><span class="co"># cluster samples</span></span>
+<span id="cb19-367"><a href="#cb19-367" aria-hidden="true" tabindex="-1"></a>sample_clust_wd2 <span class="ot">=</span> <span class="fu">hclust</span>(<span class="at">d =</span> <span class="fu">dist</span>(Morder), <span class="at">method =</span> <span class="st">&quot;ward.D2&quot;</span>)</span>
+<span id="cb19-368"><a href="#cb19-368" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-369"><a href="#cb19-369" aria-hidden="true" tabindex="-1"></a><span class="co"># order expression matrix by clustering results</span></span>
+<span id="cb19-370"><a href="#cb19-370" aria-hidden="true" tabindex="-1"></a>Morder_clustered <span class="ot">=</span> Morder[sample_clust_wd2<span class="sc">$</span>order, gene_clust_wd2<span class="sc">$</span>order]</span>
+<span id="cb19-371"><a href="#cb19-371" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-372"><a href="#cb19-372" aria-hidden="true" tabindex="-1"></a><span class="co"># we use pre-computed clustering, so we need to specify that pheatmap should not</span></span>
+<span id="cb19-373"><a href="#cb19-373" aria-hidden="true" tabindex="-1"></a><span class="co"># re-cluster the input data</span></span>
+<span id="cb19-374"><a href="#cb19-374" aria-hidden="true" tabindex="-1"></a><span class="fu">pheatmap</span>(</span>
+<span id="cb19-375"><a href="#cb19-375" aria-hidden="true" tabindex="-1"></a>  <span class="at">mat =</span> Morder_clustered,</span>
+<span id="cb19-376"><a href="#cb19-376" aria-hidden="true" tabindex="-1"></a>  <span class="at">cluster_rows =</span> <span class="cn">FALSE</span>, <span class="at">cluster_cols =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb19-377"><a href="#cb19-377" aria-hidden="true" tabindex="-1"></a>  <span class="at">fontsize_col =</span> <span class="dv">5</span>, <span class="at">fontsize_row =</span> <span class="dv">10</span>,</span>
+<span id="cb19-378"><a href="#cb19-378" aria-hidden="true" tabindex="-1"></a>  <span class="at">color =</span> mycolors,</span>
+<span id="cb19-379"><a href="#cb19-379" aria-hidden="true" tabindex="-1"></a>  <span class="at">breaks =</span> <span class="fu">max</span>(<span class="fu">abs</span>(Morder)) <span class="sc">*</span> <span class="fu">seq</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="sc">+</span><span class="dv">1</span>, <span class="at">length.out =</span> <span class="fu">length</span>(mycolors) <span class="sc">+</span> <span class="dv">1</span>)</span>
+<span id="cb19-380"><a href="#cb19-380" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb19-381"><a href="#cb19-381" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-382"><a href="#cb19-382" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-383"><a href="#cb19-383" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb19-384"><a href="#cb19-384" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-385"><a href="#cb19-385" aria-hidden="true" tabindex="-1"></a><span class="fu"># K means</span></span>
+<span id="cb19-386"><a href="#cb19-386" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-387"><a href="#cb19-387" aria-hidden="true" tabindex="-1"></a>Next we will do k-means clustering on the same dataset.</span>
+<span id="cb19-388"><a href="#cb19-388" aria-hidden="true" tabindex="-1"></a>First thing we need to do is select the number of clusters.</span>
+<span id="cb19-389"><a href="#cb19-389" aria-hidden="true" tabindex="-1"></a>In this dataset, we expect to have three clusters (naïve, effector, memory T cells).</span>
+<span id="cb19-390"><a href="#cb19-390" aria-hidden="true" tabindex="-1"></a>We will use the <span class="in">`kmeans`</span> function to cluster the data into 3 groups.</span>
+<span id="cb19-391"><a href="#cb19-391" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-394"><a href="#cb19-394" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-395"><a href="#cb19-395" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: kmeans</span></span>
+<span id="cb19-396"><a href="#cb19-396" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb19-397"><a href="#cb19-397" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb19-398"><a href="#cb19-398" aria-hidden="true" tabindex="-1"></a><span class="co"># convert to data.frame</span></span>
+<span id="cb19-399"><a href="#cb19-399" aria-hidden="true" tabindex="-1"></a>Morder_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(Morder)</span>
+<span id="cb19-400"><a href="#cb19-400" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-401"><a href="#cb19-401" aria-hidden="true" tabindex="-1"></a><span class="co"># add cell type  column - wee will use this for plotting</span></span>
+<span id="cb19-402"><a href="#cb19-402" aria-hidden="true" tabindex="-1"></a>Morder_df<span class="sc">$</span>cell_type <span class="ot">&lt;-</span> stringr<span class="sc">::</span><span class="fu">str_extract</span>(<span class="fu">rownames</span>(Morder), <span class="st">&quot;EFF|MEM|NAI&quot;</span>)</span>
+<span id="cb19-403"><a href="#cb19-403" aria-hidden="true" tabindex="-1"></a>Morder_df<span class="sc">$</span>condition <span class="ot">&lt;-</span> stringr<span class="sc">::</span><span class="fu">str_extract</span>(<span class="fu">rownames</span>(Morder), <span class="st">&quot;HEA|MEL&quot;</span>)</span>
+<span id="cb19-404"><a href="#cb19-404" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-405"><a href="#cb19-405" aria-hidden="true" tabindex="-1"></a><span class="co"># k means</span></span>
+<span id="cb19-406"><a href="#cb19-406" aria-hidden="true" tabindex="-1"></a><span class="co">#set.seed(1234) # already set in the preamble</span></span>
+<span id="cb19-407"><a href="#cb19-407" aria-hidden="true" tabindex="-1"></a>km <span class="ot">&lt;-</span> <span class="fu">kmeans</span>(<span class="at">x =</span> Morder[, <span class="sc">-</span><span class="fu">match</span>(<span class="fu">c</span>(<span class="st">&quot;cell_type&quot;</span>,<span class="st">&quot;condition&quot;</span>), <span class="fu">colnames</span>(Morder_df))], <span class="at">centers =</span> <span class="dv">3</span>)</span>
+<span id="cb19-408"><a href="#cb19-408" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-409"><a href="#cb19-409" aria-hidden="true" tabindex="-1"></a><span class="co"># we can visualize the results</span></span>
+<span id="cb19-410"><a href="#cb19-410" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(km, Morder_df, <span class="at">frame =</span> <span class="cn">TRUE</span>, <span class="at">size =</span> <span class="dv">4</span>, <span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span> <span class="fu">coord_equal</span>()</span>
+<span id="cb19-411"><a href="#cb19-411" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-412"><a href="#cb19-412" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-413"><a href="#cb19-413" aria-hidden="true" tabindex="-1"></a>::: {.callout-note collapse=&quot;false&quot;}</span>
+<span id="cb19-414"><a href="#cb19-414" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-415"><a href="#cb19-415" aria-hidden="true" tabindex="-1"></a><span class="fu">## Question</span></span>
+<span id="cb19-416"><a href="#cb19-416" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-417"><a href="#cb19-417" aria-hidden="true" tabindex="-1"></a>Check how different cell types are distributed in the three clusters,</span>
+<span id="cb19-418"><a href="#cb19-418" aria-hidden="true" tabindex="-1"></a>i.e. are the samples clustering by the cell types?</span>
+<span id="cb19-419"><a href="#cb19-419" aria-hidden="true" tabindex="-1"></a>Hint: use &quot;shape&quot; argument of the <span class="in">`autoplot`</span> function to indicate cell types.</span>
+<span id="cb19-420"><a href="#cb19-420" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-421"><a href="#cb19-421" aria-hidden="true" tabindex="-1"></a><span class="in">```{r }</span></span>
+<span id="cb19-422"><a href="#cb19-422" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: kmeansCellTypesHint</span></span>
+<span id="cb19-423"><a href="#cb19-423" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb19-424"><a href="#cb19-424" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: !expr params$simplified</span></span>
+<span id="cb19-425"><a href="#cb19-425" aria-hidden="true" tabindex="-1"></a><span class="co"># Fill in the blanks to complete the code and answer the question above</span></span>
+<span id="cb19-426"><a href="#cb19-426" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-427"><a href="#cb19-427" aria-hidden="true" tabindex="-1"></a><span class="fu">________</span>(km, Morder_df, <span class="at">frame =</span> <span class="cn">TRUE</span>,  <span class="at">_____ =</span> <span class="st">&quot;_________&quot;</span>, <span class="at">size =</span> <span class="dv">4</span>, <span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span> <span class="fu">coord_equal</span>()</span>
+<span id="cb19-428"><a href="#cb19-428" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-429"><a href="#cb19-429" aria-hidden="true" tabindex="-1"></a><span class="co"># Hints:</span></span>
+<span id="cb19-430"><a href="#cb19-430" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span>
+<span id="cb19-431"><a href="#cb19-431" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-432"><a href="#cb19-432" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-435"><a href="#cb19-435" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-436"><a href="#cb19-436" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: kmeansCellTypesSolution</span></span>
+<span id="cb19-437"><a href="#cb19-437" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-438"><a href="#cb19-438" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(km, Morder_df, <span class="at">frame =</span> <span class="cn">TRUE</span>,  <span class="at">shape =</span> <span class="st">&quot;cell_type&quot;</span>, <span class="at">size =</span> <span class="dv">4</span>, <span class="at">alpha =</span> <span class="fl">0.6</span>) <span class="sc">+</span> <span class="fu">coord_equal</span>()</span>
+<span id="cb19-439"><a href="#cb19-439" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-440"><a href="#cb19-440" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-441"><a href="#cb19-441" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb19-442"><a href="#cb19-442" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-443"><a href="#cb19-443" aria-hidden="true" tabindex="-1"></a>::: {.callout-note collapse=&quot;false&quot;}</span>
+<span id="cb19-444"><a href="#cb19-444" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-445"><a href="#cb19-445" aria-hidden="true" tabindex="-1"></a><span class="fu">## Question</span></span>
+<span id="cb19-446"><a href="#cb19-446" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-447"><a href="#cb19-447" aria-hidden="true" tabindex="-1"></a>Notice that one cluster contains samples from different cell types.</span>
+<span id="cb19-448"><a href="#cb19-448" aria-hidden="true" tabindex="-1"></a>If you repeat k means with k=4, do they separate?</span>
+<span id="cb19-449"><a href="#cb19-449" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-450"><a href="#cb19-450" aria-hidden="true" tabindex="-1"></a><span class="in">```{r }</span></span>
+<span id="cb19-451"><a href="#cb19-451" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: kmeans4Hint</span></span>
+<span id="cb19-452"><a href="#cb19-452" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb19-453"><a href="#cb19-453" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: !expr params$simplified</span></span>
+<span id="cb19-454"><a href="#cb19-454" aria-hidden="true" tabindex="-1"></a><span class="co"># Fill in the blanks to complete the code and answer the question above</span></span>
+<span id="cb19-455"><a href="#cb19-455" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-456"><a href="#cb19-456" aria-hidden="true" tabindex="-1"></a>km <span class="ot">&lt;-</span> <span class="fu">kmeans</span>(<span class="at">x =</span> Morder_df[, <span class="sc">-</span><span class="fu">match</span>(<span class="fu">c</span>(<span class="st">&quot;cell_type&quot;</span>,<span class="st">&quot;condition&quot;</span>), <span class="fu">colnames</span>(Morder_df))], <span class="at">_______ =</span> _)</span>
+<span id="cb19-457"><a href="#cb19-457" aria-hidden="true" tabindex="-1"></a><span class="co"># plot</span></span>
+<span id="cb19-458"><a href="#cb19-458" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(km, Morder_df, <span class="at">frame =</span> <span class="cn">TRUE</span>, <span class="at">_____ =</span> <span class="st">&quot;_________&quot;</span>, <span class="at">size =</span> <span class="dv">4</span>, <span class="at">alpha =</span> <span class="fl">0.6</span>)</span>
+<span id="cb19-459"><a href="#cb19-459" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-460"><a href="#cb19-460" aria-hidden="true" tabindex="-1"></a><span class="co"># Hints:</span></span>
+<span id="cb19-461"><a href="#cb19-461" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span>
+<span id="cb19-462"><a href="#cb19-462" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-463"><a href="#cb19-463" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-466"><a href="#cb19-466" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-467"><a href="#cb19-467" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: kmeans4Solution</span></span>
+<span id="cb19-468"><a href="#cb19-468" aria-hidden="true" tabindex="-1"></a><span class="co"># k means</span></span>
+<span id="cb19-469"><a href="#cb19-469" aria-hidden="true" tabindex="-1"></a>km <span class="ot">&lt;-</span> <span class="fu">kmeans</span>(<span class="at">x =</span> Morder_df[, <span class="sc">-</span><span class="fu">match</span>(<span class="fu">c</span>(<span class="st">&quot;cell_type&quot;</span>,<span class="st">&quot;condition&quot;</span>), <span class="fu">colnames</span>(Morder_df))], <span class="at">centers =</span> <span class="dv">4</span>)</span>
+<span id="cb19-470"><a href="#cb19-470" aria-hidden="true" tabindex="-1"></a><span class="co"># plot</span></span>
+<span id="cb19-471"><a href="#cb19-471" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(km, Morder_df, <span class="at">frame =</span> <span class="cn">TRUE</span>, <span class="at">shape =</span> <span class="st">&quot;cell_type&quot;</span>, <span class="at">size =</span> <span class="dv">4</span>, <span class="at">alpha =</span> <span class="fl">0.6</span>)</span>
+<span id="cb19-472"><a href="#cb19-472" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-473"><a href="#cb19-473" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-474"><a href="#cb19-474" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb19-475"><a href="#cb19-475" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-476"><a href="#cb19-476" aria-hidden="true" tabindex="-1"></a>::: {.callout-note collapse=&quot;false&quot;}</span>
+<span id="cb19-477"><a href="#cb19-477" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-478"><a href="#cb19-478" aria-hidden="true" tabindex="-1"></a><span class="fu">## Question</span></span>
+<span id="cb19-479"><a href="#cb19-479" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-480"><a href="#cb19-480" aria-hidden="true" tabindex="-1"></a>The data are coming from two conditions: healthy and melanoma. Repeat k-means</span>
+<span id="cb19-481"><a href="#cb19-481" aria-hidden="true" tabindex="-1"></a>clustering with k=2 and see if the clusters now correspond to these conditions?</span>
+<span id="cb19-482"><a href="#cb19-482" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-483"><a href="#cb19-483" aria-hidden="true" tabindex="-1"></a><span class="in">```{r }</span></span>
+<span id="cb19-484"><a href="#cb19-484" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: kmeans2Hint</span></span>
+<span id="cb19-485"><a href="#cb19-485" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: false</span></span>
+<span id="cb19-486"><a href="#cb19-486" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: !expr params$simplified</span></span>
+<span id="cb19-487"><a href="#cb19-487" aria-hidden="true" tabindex="-1"></a><span class="co"># Fill in the blanks to complete the code and answer the question above</span></span>
+<span id="cb19-488"><a href="#cb19-488" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-489"><a href="#cb19-489" aria-hidden="true" tabindex="-1"></a>km <span class="ot">&lt;-</span> <span class="fu">kmeans</span>(<span class="at">x =</span> Morder_df[, <span class="sc">-</span><span class="fu">match</span>(<span class="fu">c</span>(<span class="st">&quot;cell_type&quot;</span>,<span class="st">&quot;condition&quot;</span>), <span class="fu">colnames</span>(Morder_df))], <span class="at">_______ =</span> _)</span>
+<span id="cb19-490"><a href="#cb19-490" aria-hidden="true" tabindex="-1"></a><span class="co"># plot</span></span>
+<span id="cb19-491"><a href="#cb19-491" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(km, Morder_df, <span class="at">frame =</span> <span class="cn">TRUE</span>, <span class="at">_____ =</span> <span class="st">&quot;_________&quot;</span>, <span class="at">size =</span> <span class="dv">4</span>, <span class="at">alpha =</span> <span class="fl">0.6</span>)</span>
+<span id="cb19-492"><a href="#cb19-492" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-493"><a href="#cb19-493" aria-hidden="true" tabindex="-1"></a><span class="co"># Hints:</span></span>
+<span id="cb19-494"><a href="#cb19-494" aria-hidden="true" tabindex="-1"></a><span class="co"># ...</span></span>
+<span id="cb19-495"><a href="#cb19-495" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-496"><a href="#cb19-496" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-499"><a href="#cb19-499" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-500"><a href="#cb19-500" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: kmeans2Solution</span></span>
+<span id="cb19-501"><a href="#cb19-501" aria-hidden="true" tabindex="-1"></a><span class="co"># k means</span></span>
+<span id="cb19-502"><a href="#cb19-502" aria-hidden="true" tabindex="-1"></a>km <span class="ot">&lt;-</span> <span class="fu">kmeans</span>(<span class="at">x =</span> Morder[, <span class="sc">-</span><span class="fu">match</span>(<span class="fu">c</span>(<span class="st">&quot;cell_type&quot;</span>,<span class="st">&quot;condition&quot;</span>), <span class="fu">colnames</span>(Morder_df))], <span class="at">centers =</span> <span class="dv">2</span>)</span>
+<span id="cb19-503"><a href="#cb19-503" aria-hidden="true" tabindex="-1"></a><span class="co"># plot</span></span>
+<span id="cb19-504"><a href="#cb19-504" aria-hidden="true" tabindex="-1"></a><span class="fu">autoplot</span>(km, Morder_df, <span class="at">frame =</span> <span class="cn">TRUE</span>, <span class="at">shape =</span> <span class="st">&quot;condition&quot;</span>, <span class="at">size =</span> <span class="dv">4</span>, <span class="at">alpha =</span> <span class="fl">0.6</span>)</span>
+<span id="cb19-505"><a href="#cb19-505" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-506"><a href="#cb19-506" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-507"><a href="#cb19-507" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb19-508"><a href="#cb19-508" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-509"><a href="#cb19-509" aria-hidden="true" tabindex="-1"></a>Choosing the number of clusters for k-means is important and at the same time</span>
+<span id="cb19-510"><a href="#cb19-510" aria-hidden="true" tabindex="-1"></a>not trivial, because usually we don&#39;t know the number of clusters in the data</span>
+<span id="cb19-511"><a href="#cb19-511" aria-hidden="true" tabindex="-1"></a>_a priori_.</span>
+<span id="cb19-512"><a href="#cb19-512" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-513"><a href="#cb19-513" aria-hidden="true" tabindex="-1"></a>How can we choose appropriate value of <span class="in">`k`</span>?</span>
+<span id="cb19-514"><a href="#cb19-514" aria-hidden="true" tabindex="-1"></a>One way to choose the number of clusters is to use of the &quot;wss&quot;</span>
+<span id="cb19-515"><a href="#cb19-515" aria-hidden="true" tabindex="-1"></a>(within sum of squares) statistic.</span>
+<span id="cb19-516"><a href="#cb19-516" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-517"><a href="#cb19-517" aria-hidden="true" tabindex="-1"></a><span class="in">`kmeans()`</span> function reports wss for every cluster in the results (check</span>
+<span id="cb19-518"><a href="#cb19-518" aria-hidden="true" tabindex="-1"></a><span class="in">`km$withinss`</span>). Here we implement the function that computes the wss statistic</span>
+<span id="cb19-519"><a href="#cb19-519" aria-hidden="true" tabindex="-1"></a>for different number of clusters in kmeans.</span>
+<span id="cb19-520"><a href="#cb19-520" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-523"><a href="#cb19-523" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-524"><a href="#cb19-524" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: wssPlot</span></span>
+<span id="cb19-525"><a href="#cb19-525" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb19-526"><a href="#cb19-526" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb19-527"><a href="#cb19-527" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig.width: 6</span></span>
+<span id="cb19-528"><a href="#cb19-528" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig.height: 6</span></span>
+<span id="cb19-529"><a href="#cb19-529" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-530"><a href="#cb19-530" aria-hidden="true" tabindex="-1"></a>wssplot <span class="ot">&lt;-</span> <span class="cf">function</span>(data, <span class="at">nc=</span><span class="dv">10</span>, <span class="at">seed=</span><span class="dv">533</span>){</span>
+<span id="cb19-531"><a href="#cb19-531" aria-hidden="true" tabindex="-1"></a>  wss <span class="ot">&lt;-</span> (<span class="fu">nrow</span>(data)<span class="sc">-</span><span class="dv">1</span>)<span class="sc">*</span><span class="fu">sum</span>(<span class="fu">apply</span>(data,<span class="dv">2</span>,var))</span>
+<span id="cb19-532"><a href="#cb19-532" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(wss)</span>
+<span id="cb19-533"><a href="#cb19-533" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">2</span><span class="sc">:</span>nc){</span>
+<span id="cb19-534"><a href="#cb19-534" aria-hidden="true" tabindex="-1"></a>    <span class="fu">set.seed</span>(seed)</span>
+<span id="cb19-535"><a href="#cb19-535" aria-hidden="true" tabindex="-1"></a>    wss[i] <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">kmeans</span>(data, <span class="at">centers=</span>i)<span class="sc">$</span>withinss)}</span>
+<span id="cb19-536"><a href="#cb19-536" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot</span>(<span class="dv">1</span><span class="sc">:</span>nc, wss, <span class="at">type=</span><span class="st">&quot;b&quot;</span>, <span class="at">xlab=</span><span class="st">&quot;Number of Clusters&quot;</span>,</span>
+<span id="cb19-537"><a href="#cb19-537" aria-hidden="true" tabindex="-1"></a>       <span class="at">ylab=</span><span class="st">&quot;Within groups sum of squares&quot;</span>)</span>
+<span id="cb19-538"><a href="#cb19-538" aria-hidden="true" tabindex="-1"></a>  wss</span>
+<span id="cb19-539"><a href="#cb19-539" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb19-540"><a href="#cb19-540" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-541"><a href="#cb19-541" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-542"><a href="#cb19-542" aria-hidden="true" tabindex="-1"></a>Inspect how <span class="in">`wss`</span> looks for different number of clusters in our <span class="in">`Morder`</span> data.</span>
+<span id="cb19-543"><a href="#cb19-543" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-546"><a href="#cb19-546" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-547"><a href="#cb19-547" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: true</span></span>
+<span id="cb19-548"><a href="#cb19-548" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb19-549"><a href="#cb19-549" aria-hidden="true" tabindex="-1"></a><span class="fu">wssplot</span>(Morder)</span>
+<span id="cb19-550"><a href="#cb19-550" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb19-551"><a href="#cb19-551" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-552"><a href="#cb19-552" aria-hidden="true" tabindex="-1"></a>Within sum of squares (wss) statistic, we see that the last substantial decrease of the</span>
+<span id="cb19-553"><a href="#cb19-553" aria-hidden="true" tabindex="-1"></a>statistic occurres before $k=3$, and for values $k=4,5,6,\dots$ the quantity &#39;levels-off&#39;.</span>
+<span id="cb19-554"><a href="#cb19-554" aria-hidden="true" tabindex="-1"></a>In practice, we would choose $k=3$, a value happening at the &#39;elbow&#39; of the plot (elbow-rule).</span>
+<span id="cb19-555"><a href="#cb19-555" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-558"><a href="#cb19-558" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb19-559"><a href="#cb19-559" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: sessionInfo</span></span>
+<span id="cb19-560"><a href="#cb19-560" aria-hidden="true" tabindex="-1"></a><span class="co">#| eval: !expr params$sessioninfo</span></span>
+<span id="cb19-561"><a href="#cb19-561" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: !expr params$sessioninfo</span></span>
+<span id="cb19-562"><a href="#cb19-562" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span>
+<span id="cb19-563"><a href="#cb19-563" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 </code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
