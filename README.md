@@ -1,7 +1,7 @@
-# UBDS3-2025
+# UBDS3-2025 Statistics source
 If you are a student, who was very curious - well done smart ass, you have all the solutions, but please keep it as our secret :)
 
-This repository contains teaching material for the R statistical course of the Ukrainian Biological Data Science Summer School 2025
+This repository contains teaching material for the R statistical course of the Ukrainian Biological Data Science Summer School 2025.
 
 ## Contents
 
@@ -18,7 +18,27 @@ This repository contains teaching material for the R statistical course of the U
 
 ## For faculty members
 
-Run bash script `render.sh` to get `html` files for your labs. For usage run `./render.sh`.
+### Git hook
+
+The repo has git hook for automated source rendering and pushing them to the `master` branch once you commit any `*.qmd` files.
+
+To activate the hook, add the following `git` config:
+
+```bash
+git config --local core.hooksPath .githooks/
+```
+
+### Render.sh script
+
+The script `render.sh` can be used for batch processing multiple sources, it required `quarto-cli` binaries installed and a path to your `R_HOME` (see below). For usage run `./render.sh`.
+
+Hook can automate source rendering with setting env variable, i.e.
+
+```
+export RENDER_AUTO=true # use `unset RENDER_AUTO` to disable automatic rendering
+```
+
+It is advised to run the `render.sh` script manually before using it in the hook to check whether `quarto` is working properly.
 
 Make sure to have proper `R_HOME` variable, for macOS with RStudio (latest) is `R_HOME=/Library/Frameworks/R.framework/Resources`
 
