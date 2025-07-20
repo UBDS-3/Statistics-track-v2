@@ -1,0 +1,76 @@
+---
+title: "Lab name"
+author: "Your Name"
+date: today
+format:
+  html:
+    code-fold: false
+    code-tools: true
+    embed-resources: true
+    highlight-style: github
+    toc: true
+    code-line-numbers: false
+---
+
+```{r}
+#| label: initialize
+#| echo: FALSE
+#| include: FALSE
+options("scipen"=100, "digits"=4)
+knitr::opts_chunk$set(
+  message = FALSE,
+  warning = FALSE,
+  echo = TRUE,
+  eval = TRUE,
+  fig.width=6, fig.height=4, fig.align="center", fig.pos="h"
+)
+set.seed(533)
+```
+
+# Intro
+
+Use this file as a template for your answers, copy this file to the lab you are working on, for example inside `labs/testings/`, and name it `answers.qmd`. Change all the tags in `<some text>` as well as lab name and author (in the beginning of the file) with your own.
+
+The `quarto` files (the format you are currently working on) uses markdown, to know what markdown is see this quick guide: [link](https://commonmark.org/help/)
+
+Additionally, `quarto` has code block to execute `R` code, like here:
+
+```{r example}
+# This is a comment
+print("hello world!") # <- and this is the command
+```
+
+To add new block use `{r <name>}` part in the heading, where `<name>` is the name of the block, the block name should be unique.
+
+Thats's it! Now look into the opened `html` file and do the tasks in the code blocks. Then run your code block to execute the commands and do the tasks.
+
+# Template
+
+Use this template to do your questions:
+
+```{r}
+# Put here required packages to load them, example:
+# Use this code block only once in your file
+library(ggplot2)
+library(tibble)
+```
+
+## Task `<number>`
+
+::: {.callout-note collapse="false"}
+
+1. Put your question here
+
+```{r <answer_number>}
+
+# Put your code here
+
+```
+
+> Put your answer here
+
+2. Put your next question if you have multiple questions...
+
+:::
+
+
