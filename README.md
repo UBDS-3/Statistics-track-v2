@@ -22,10 +22,11 @@ This repository contains teaching material for the R statistical course of the U
 
 The repo has `git hook` for automated source rendering and pushing them to the `master` branch once you commit any `*.qmd` files.
 
-To activate the hook, add the following `git` config:
+To activate the hook, add the the hook to `.git/hooks/` directory:
 
 ```bash
-git config --local core.hooksPath .githooks/
+# on repo root
+cp .githooks/post-commit .git/hooks/
 ```
 
 ### Render.sh script
