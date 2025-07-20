@@ -20,7 +20,7 @@ This repository contains teaching material for the R statistical course of the U
 
 ### Git hook
 
-The repo has git hook for automated source rendering and pushing them to the `master` branch once you commit any `*.qmd` files.
+The repo has `git hook` for automated source rendering and pushing them to the `master` branch once you commit any `*.qmd` files.
 
 To activate the hook, add the following `git` config:
 
