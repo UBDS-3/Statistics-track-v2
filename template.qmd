@@ -73,4 +73,9 @@ library(tibble)
 
 :::
 
+# Session info
+
+```{r sessionInfo}
+sessionInfo()
+```
 
