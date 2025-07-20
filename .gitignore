@@ -1,4 +1,4 @@
-# Ignore .qmd files, until the end of the week1
+# Ignore .qmd files in the labs directory, until the end of the week1
 /labs/**/*.qmd
 
 # Ignore rendered solutions for now
