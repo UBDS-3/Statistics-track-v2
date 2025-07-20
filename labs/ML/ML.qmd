@@ -13,6 +13,7 @@ format:
 params:
   answers:    true
   simplified: true
+  sessioninfo: false
 ---
 
 ```{r}
@@ -1006,11 +1007,9 @@ length(caretMethods)
 
 :::
 
-## Session info
-
 ```{r}
 #| label: sessionInfo
-#| eval: true
-#| echo: true
+#| eval: !expr params$sessioninfo
+#| echo: !expr params$sessioninfo
 sessionInfo()
 ```

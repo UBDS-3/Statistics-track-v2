@@ -13,6 +13,7 @@ format:
 params:
   answers:    false
   simplified: false
+  sessioninfo: false
 ---
 
 ```{r}
@@ -458,11 +459,9 @@ Based on the `table()` output comparing your and previous cluster assignments, a
 
 :::
 
-# Session info
-
 ```{r}
 #| label: sessionInfo
-#| echo: true
-#| eval: true
+#| eval: !expr params$sessioninfo
+#| echo: !expr params$sessioninfo
 sessionInfo()
 ```

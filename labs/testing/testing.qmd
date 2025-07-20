@@ -13,6 +13,7 @@ format:
 params:
   answers:    false
   simplified: false
+  sessioninfo: false
 ---
 
 ```{r}
@@ -1137,11 +1138,9 @@ ggplot(tibble(pvalue), aes(x = pvalue)) +
   geom_histogram(binwidth = 0.01, fill = "#0056B9", boundary = 0)
 ```
 
-# Session info
-
 ```{r}
 #| label: sessionInfo
-#| eval: true
-#| echo: true
+#| eval: !expr params$sessioninfo
+#| echo: !expr params$sessioninfo
 sessionInfo()
 ```

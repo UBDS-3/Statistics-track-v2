@@ -1,95 +1,70 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -uo pipefail
 
 ALL_TYPES=(solved simplified default)
 ALL_LABS=(testing exploratory clustering omics ML regression randomness multivariate)
+DEFAULT_ONLY_LABS=(exploratory regression randomness)
 
 usage() {
-  echo "Usage: $(basename "$0") --type TYPE --lab LAB
+  echo "Usage: $(basename "$0") --type <type|all> [--lab <labs|all>]
 
-  Accepted options:
-    --type: solved|simplified|default|all
-    --lab: testing|exploratory|clustering|omics|ML|regression|randomness|multivariate|all"
+  Available options:
+    type: solved simplified default
+    labs: testing exploratory clustering omics ML regression randomness multivariate"
 }
 
-# Labs that must be rendered only in default mode
-DEFAULT_ONLY_LABS=(exploratory regression randomness)   # add more names as needed
-
-die() { echo "Error: $*" >&2; exit 1; }
-
+die() { echo "Error: $*" >&2; usage; exit 1; }
 [[ $# -eq 0 ]] && { usage; exit 1; }
 
-TYPE= LAB=
+types=() labs=()
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --type) TYPE="$2"; shift 2 ;;
-    --lab)  LAB="$2";  shift 2 ;;
+    --type) shift; while [[ $# -gt 0 && $1 != --* ]]; do types+=("$1"); shift; done ;;
+    --lab)  shift; while [[ $# -gt 0 && $1 != --* ]]; do labs+=("$1");  shift; done ;;
     *) die "Unknown option $1" ;;
   esac
 done
-[[ -z $TYPE || -z $LAB ]] && die "Both --type and --lab are required"
+[[ ${#types[@]} -eq 0 ]] && die "--type needs at least one value"
 
-expand() {
-  local val=$1; shift
-  local -n all=$1
-  [[ $val == all ]] && printf '%s\n' "${all[@]}" || {
-    for v in "${all[@]}"; do [[ $v == "$val" ]] && { echo "$val"; return; }; done
-    die "Invalid value $val"
-  }
+valid_or_die() { local v=$1; shift; local -n arr=$1;
+  [[ " ${arr[*]} " == *" $v "* ]] || die "Invalid value $v"
 }
-types=($(expand "$TYPE" ALL_TYPES))
-labs=($(expand "$LAB" ALL_LABS))
+expand() { local -n ref=$1 full=$2
+  [[ ${ref[*]} == *all* ]] && ref=("${full[@]}")
+  for v in "${ref[@]}"; do valid_or_die "$v" full; done
+}
+expand types ALL_TYPES
+[[ ${#labs[@]} -eq 0 ]] && labs=("${ALL_LABS[@]}")
+expand labs ALL_LABS
 
 render() {
-  local lab=$1 type=$2
-  local qmd=labs/$lab/$lab.qmd
-  [[ -f $qmd ]] || die "Missing $qmd"
+  local qmd=$1
+  local type=$2
+  local base=${qmd%.qmd}
+  local html="${base}.html"
 
   echo "Rendering $qmd ($type)"
-  case $type in
-    solved)
-      quarto render "$qmd" -P answers:true
-      ;;
-    simplified)
-      quarto render "$qmd" -P simplified:true
-      ;;
-    default)
-      quarto render "$qmd"
-      ;;
-  esac
-
-  local src=labs/$lab/$lab.html
-  [[ -f $src ]] || die "Quarto did not create $src"
-
-  if [[ $type != default ]]; then
-    local dst=labs/$lab/${lab}.${type}.html
-    mv "$src" "$dst"
-  fi
-}
-
-render() {
-  local lab=$1 type=$2
-  local qmd=labs/$lab/$lab.qmd
-  [[ -f $qmd ]] || die "Missing $qmd"
-  echo "Rendering $lab ($type)"
   case $type in
     solved)     quarto render "$qmd" -P answers:true ;;
     simplified) quarto render "$qmd" -P simplified:true ;;
     default)    quarto render "$qmd" ;;
   esac
-  local src=labs/$lab/$lab.html
-  [[ -f $src ]] || die "Quarto did not create $src"
-  [[ $type != default ]] && mv "$src" "labs/$lab/${lab}.${type}.html"
+
+  [[ -f $html ]] || die "Render failed: $html not found"
+  [[ $type != default ]] && mv "$html" "${base}.${type}.html"
 }
 
-for l in "${labs[@]}"; do
-  if [[ " ${DEFAULT_ONLY_LABS[*]} " == *" $l "* ]]; then
-    render "$l" default
+shopt -s nullglob
+for lab in "${labs[@]}"; do
+  qmd_files=(labs/"$lab"/*.qmd)
+  [[ ${#qmd_files[@]} -eq 0 ]] && { echo "Skip: no .qmd in $lab"; continue; }
+
+  if [[ " ${DEFAULT_ONLY_LABS[*]} " == *" $lab "* ]]; then
+    for qmd in "${qmd_files[@]}"; do render "$qmd" default; done
   else
-    for t in "${types[@]}"; do
-      render "$l" "$t"
+    for type in "${types[@]}"; do
+      for qmd in "${qmd_files[@]}"; do render "$qmd" "$type"; done
     done
   fi
 done
-
-
+shopt -u nullglob

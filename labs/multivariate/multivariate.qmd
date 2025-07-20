@@ -13,6 +13,7 @@ format:
 params:
   answers:    false
   simplified: false
+  sessioninfo: false
 ---
 
 ```{r}
@@ -797,11 +798,9 @@ fviz_pca_ind(pca.ath) + ggtitle("") + ylim(c(-2.5, 5.7))
 
 :::
 
-# Session info
-
 ```{r}
 #| label: sessionInfo
-#| eval: true
-#| echo: true
+#| eval: !expr params$sessioninfo
+#| echo: !expr params$sessioninfo
 sessionInfo()
 ```

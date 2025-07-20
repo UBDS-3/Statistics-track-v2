@@ -13,6 +13,7 @@ format:
 params:
   answers:    false
   simplified: false
+  sessioninfo: false
 ---
 
 ```{r}
@@ -516,11 +517,9 @@ Within sum of squares (wss) statistic, we see that the last substantial decrease
 statistic occurres before $k=3$, and for values $k=4,5,6,\dots$ the quantity 'levels-off'.
 In practice, we would choose $k=3$, a value happening at the 'elbow' of the plot (elbow-rule).
 
-# Session info
-
 ```{r}
 #| label: sessionInfo
-#| eval: true
-#| echo: true
+#| eval: !expr params$sessioninfo
+#| echo: !expr params$sessioninfo
 sessionInfo()
 ```
