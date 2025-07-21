@@ -105,15 +105,20 @@ The p value for `testBefore` (=difference before - after) is "significant".
 
 ```{r}
 #| label: pairing-3
-#| fig-width: 3
-#| fig-height: 3
-#| out-width: "40%"
 FitnessW = tidyr::spread(Fitness, test, number) 
 t.test(FitnessW$After, FitnessW$Before, paired = TRUE)
-ggplot(FitnessW, aes(x = Before, y = After)) + geom_point() + geom_abline(col="blue")
 ```
 
 The paired $t$-test is the same as the linear model with `subject` as a covariate.
+
+```{r}
+#| label: pairing-4
+#| fig-width: 3
+#| fig-height: 3
+#| out-width: "40%"
+ggplot(FitnessW, aes(x = Before, y = After)) + geom_point() + geom_abline(col = "#000080")
+```
+
 
 
 # Contrasts and interactions
