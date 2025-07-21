@@ -16,8 +16,6 @@ params:
   simplified: false
 ---
 
-## Interactions and Contrasts
-
 As a running example, we use a dataset which compares the frictional coefficients on the different legs of a spider. Specifically, we will ask whether more friction comes from a pushing or pulling motion of the leg. The original paper from which the data originate:
 
 Jonas O. Wolff  & Stanislav N. Gorb, [Radial arrangement of Janus-like setae permits friction control in spiders](http://dx.doi.org/10.1038/srep01101), Scientific Reports, 22 January 2013.
@@ -27,6 +25,11 @@ The abstract of the paper says:
 > The hunting spider Cupiennius salei (Arachnida, Ctenidae) possesses hairy attachment pads (claw tufts) at its distal legs, consisting of directional branched setae... Friction of claw tufts on smooth glass was measured to reveal the functional effect of seta arrangement within the pad.
 
 We included the data in the GitHub repository. As a fallback, we can also download them from [here](https://raw.githubusercontent.com/genomicsclass/dagdata/master/inst/extdata/spider_wolff_gorb_2013.csv).
+
+<script type='text/javascript' src='bug-min.js'></script>
+<script type='text/javascript'>
+			new SpiderController({'minBugs':1, 'maxBugs':4, 'mouseOver':'random'});
+</script>
 
 ```{r}
 #| label: readcsv
@@ -69,7 +72,7 @@ boxplot(spider$friction ~ spider$type * spider$leg,
 What we can immediately see are two trends:
 
 * The pulling motion has higher friction than the pushing motion.
-* The leg pairs to the back of the spider (L4 being the last) have higher pulling friction.
+* The leg pairs towards the back of the spider (L4 being the last) have higher pulling friction.
 
 Another thing to notice is that the groups have different spread around their average, what we call *within-group variance*. This is somewhat of a problem for the kinds of linear models we will explore below, since we will be assuming that around the population average values, the errors $\varepsilon_i$ are distributed identically, meaning the same variance within each group. The consequence of ignoring the different variances for the different groups is that comparisons between those groups with small variances will be overly "conservative" (because the overall estimate of variance is larger than an estimate for just these groups), and comparisons between those groups with large variances will be overly confident. If the spread is related to the range of friction, such that groups with large friction values also have larger spread, a possibility is to transform the data with a function such as the `log` or `sqrt`. This looks like it could be useful here, since three of the four push groups (L1, L2, L3) have the smallest friction values and also the smallest spread.
 
