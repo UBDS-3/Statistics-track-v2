@@ -1,7 +1,7 @@
 ---
 title: Regression
-date: "July 19 - August 2, 2025"
-author: adapted from Rafael Irizarry & Michael Love <br> by Helena L. Crowell & Wolfgang Huber
+subtitle: "July 19 - August 2, 2025"
+author: Adapted from Rafael Irizarry & Michael Love <br> by Helena L. Crowell & Wolfgang Huber
 format:
   html:
     code-fold: false
@@ -18,39 +18,54 @@ params:
 
 ## Interactions and Contrasts
 
-As a running example to learn about more complex linear models, we will be using a dataset which compares the different frictional coefficients on the different legs of a spider. Specifically, we are interested in **comparing the effect of pulling and pushing motions for different leg pairs on friction.** The original paper from which the data was provided is:
+As a running example, we use a dataset which compares the frictional coefficients on the different legs of a spider. Specifically, we will ask whether more friction comes from a pushing or pulling motion of the leg. The original paper from which the data originate:
 
 Jonas O. Wolff  & Stanislav N. Gorb, [Radial arrangement of Janus-like setae permits friction control in spiders](http://dx.doi.org/10.1038/srep01101), Scientific Reports, 22 January 2013.
 
-The abstract of the paper says,
+The abstract of the paper says: 
 
 > The hunting spider Cupiennius salei (Arachnida, Ctenidae) possesses hairy attachment pads (claw tufts) at its distal legs, consisting of directional branched setae... Friction of claw tufts on smooth glass was measured to reveal the functional effect of seta arrangement within the pad.
 
-We include the data in our dagdata package and can download it from [here](https://raw.githubusercontent.com/genomicsclass/dagdata/master/inst/extdata/spider_wolff_gorb_2013.csv).
+We included the data in the GitHub repository. As a fallback, we can also download them from [here](https://raw.githubusercontent.com/genomicsclass/dagdata/master/inst/extdata/spider_wolff_gorb_2013.csv).
 
-```{r load-data}
+```{r}
+#| label: readcsv
 url <- "https://raw.githubusercontent.com/genomicsclass/dagdata/master/inst/extdata/spider_wolff_gorb_2013.csv"
 csv <- "spider_wolff_gorb_2013.csv"
 if (!file.exists(csv)) download.file(url, csv, quiet=TRUE)
-spider <- read.csv(csv, skip=1)
+spider <- read.csv(csv, skip = 1)
 ```
 
 #### Initial visual inspection of the data
 
-Each measurement comes from one of our legs while it is either pushing or pulling. So we have two variables:
+Each measurement comes from one of the leg pairs while a leg is either pushing or pulling. 
+So we have two variables:
 
 ```{r}
 table(spider$leg, spider$type)
 ```
 
-We can make a boxplot summarizing the measurements for each of the eight pairs:
+We can make a plot summarizing the measurements for each of the eight pairs:
 
-```{r spide_data, fig.cap="Comparison of friction coefficients of spiders' different leg pairs. The friction coefficient is calculated as the ratio of two forces (see paper Methods) so it is unitless."}
-boxplot(spider$friction ~ spider$type * spider$leg,
-        col=c("grey90","grey40"), las=2,
-        main="Comparison of friction coefficients of different leg pairs")
+```{r}
+#| label: spiderdata
+#| fig.cap: "Comparison of friction coefficients of spiders' different leg pairs. The friction coefficient is calculated as the ratio of two forces (see paper Methods), so it is unitless."
+#| fig-width: 4
+#| fig-height: 2.5
+#| message: false
+library("ggbeeswarm")
+ggplot(spider, aes(y = friction, x = leg)) + geom_beeswarm() +
+  facet_grid(col = vars(type))
 ```
 
+```{r}
+#| label: spiderdataold
+#| eval: false
+#| echo: false
+boxplot(spider$friction ~ spider$type * spider$leg,
+        col=c("grey90","grey40"), las = 2,
+        main="Comparison of friction coefficients of different leg pairs")
+```
 What we can immediately see are two trends:
 
 * The pulling motion has higher friction than the pushing motion.
