@@ -16,6 +16,8 @@ params:
   simplified: false
 ---
 
+### Contrasts and interactions in linear regression
+
 As a running example, we use a dataset which compares the frictional coefficients on the different legs of a spider. Specifically, we will ask whether more friction comes from a pushing or pulling motion of the leg. The original paper from which the data originate:
 
 Jonas O. Wolff  & Stanislav N. Gorb, [Radial arrangement of Janus-like setae permits friction control in spiders](http://dx.doi.org/10.1038/srep01101), Scientific Reports, 22 January 2013.
@@ -28,7 +30,7 @@ We included the data in the GitHub repository. As a fallback, we can also downlo
 
 <script type='text/javascript' src='bug-min.js'></script>
 <script type='text/javascript'>
-			new SpiderController({'minBugs':1, 'maxBugs':4, 'mouseOver':'random'});
+			new SpiderController({'minBugs':1, 'maxBugs':3, 'mouseOver':'die'});
 </script>
 
 ```{r}
@@ -55,9 +57,11 @@ We can make a plot summarizing the measurements for each of the eight pairs:
 #| fig.cap: "Comparison of friction coefficients of spiders' different leg pairs. The friction coefficient is calculated as the ratio of two forces (see paper Methods), so it is unitless."
 #| fig-width: 4
 #| fig-height: 2.5
+#| out-width: "70%"
 #| message: false
 library("ggbeeswarm")
-ggplot(spider, aes(y = friction, x = leg)) + geom_beeswarm() +
+ggplot(spider, aes(y = friction, x = leg)) + geom_beeswarm() + 
+  geom_boxplot(aes(fill = type), outliers = FALSE, col = "#0000ff80", fill = "#00000000") +
   facet_grid(col = vars(type))
 ```
 
@@ -74,17 +78,22 @@ What we can immediately see are two trends:
 * The pulling motion has higher friction than the pushing motion.
 * The leg pairs towards the back of the spider (L4 being the last) have higher pulling friction.
 
-Another thing to notice is that the groups have different spread around their average, what we call *within-group variance*. This is somewhat of a problem for the kinds of linear models we will explore below, since we will be assuming that around the population average values, the errors $\varepsilon_i$ are distributed identically, meaning the same variance within each group. The consequence of ignoring the different variances for the different groups is that comparisons between those groups with small variances will be overly "conservative" (because the overall estimate of variance is larger than an estimate for just these groups), and comparisons between those groups with large variances will be overly confident. If the spread is related to the range of friction, such that groups with large friction values also have larger spread, a possibility is to transform the data with a function such as the `log` or `sqrt`. This looks like it could be useful here, since three of the four push groups (L1, L2, L3) have the smallest friction values and also the smallest spread.
+::: {.callout-caution collapse="true"}
+# Heteroskedasticity
+Another thing to notice is that the groups have different spread around their average, what we call *within-group variance*. This phenomenon, also called *heteroskedasticity*, can be a problem for the kinds of linear models we  explore below, since we will be assuming that around the group means, the data are distributed identically, meaning the same variance within each group. The consequence of ignoring the different variances for the different groups is that comparisons between those groups with small variances will be overly "conservative" (because the overall estimate of variance is too large), and comparisons between groups with large variances will be overly confident (because the estimate is too small). 
+
+Sometimes it is possible to transform your way out of this: if the spread increases with the mean, such that groups with mean values also have larger spread, a possibility is to transform the data with a function such as the `log` or `sqrt`. This looks like it could be useful here, since three of the four push groups (L1, L2, L3) have the smallest friction values and also the smallest spread.
 
 Some alternative tests for comparing groups without transforming the values first include: t-tests without the equal variance assumption using a "Welch" or "Satterthwaite approximation", or the Wilcoxon rank sum test mentioned previously. However here, for simplicity of illustration, we will fit a model that assumes equal variance and shows the different kinds of linear model designs using this dataset, setting aside the issue of different within-group variances.
+:::
 
 #### A linear model with one variable
 
 To remind ourselves how the simple two-group linear model looks, we will subset the data to include only the L1 leg pair, and run `lm`:
 
 ```{r}
-spider.sub <- spider[spider$leg == "L1",]
-fit <- lm(friction ~ type, data=spider.sub)
+spider.sub <- dplyr::filter(spider, leg == "L1")
+fit <- lm(friction ~ type, data = spider.sub)
 summary(fit)
 (coefs <- coef(fit))
 ```
@@ -113,16 +122,17 @@ We can form the design matrix, which was used inside `lm`:
 ```{r}
 X <- model.matrix(~ type, data=spider.sub)
 colnames(X)
-# all 1s
-all(X[, 1] == 1)
-# as many 0/1s as pull/push type legs
-table(X[, 2]) == table(spider.sub$type)
+# the intercept values are all 1
+all(X[, "(Intercept)"] == 1)
+# in the second column, there are as many 0/1s as pull/push type legs
+table(X[, "typepush" ])
+table(spider.sub$type)
 ```
 
-Now we'll make a plot of the $\mathbf{X}$ matrix by putting a black block for the 1's and a white block for the 0's. This plot will be more interesting for the linear models later on in this script.
+Now we'll make a plot of the `X` matrix by putting black pixels for the 1's and a white pixels for the 0's. This plot will be more interesting for the linear models later on in this script.
 
-- along the x-axis is the column of the design matrix $\mathbf{X}$
-- along the y-axis is the sample number (the row number of the `data`)
+- along the $x$-axis are the columns of the design matrix `X`
+- along the $y$-axis are the samples (rows of the data)
 
 ```{r model_matrix_image, fig.cap="Model matrix for LM with one variable."}
 #| code-fold: true
@@ -130,11 +140,11 @@ imagemat <- \(x,
     col=c("lavender","blue"),
     las=1, xlab="", ylab="", ...) {
     image(
-        x=seq_len(ncol(x)),
-        y=seq_len(nrow(x)),
-        z=t(x), col=col, ...,
-        ylim=c(nrow(x)+0.5, 0.5),
-        las=las, xlab=xlab, ylab=ylab)
+      x = seq_len(ncol(x)),
+      y = seq_len(nrow(x)),
+      z = t(x), col = col, ...,
+      ylim = 0.5 + c(nrow(x), 0),
+      las = las, xlab = xlab, ylab = ylab, useRaster = TRUE)
 }
 imagemat(X, main="Model matrix for LM with one variable")
 ```
@@ -161,12 +171,12 @@ legend("right",names(coefs),fill=cols,cex=.75,bg="white")
 
 #### A linear model with two variables
 
-Now we'll continue and examine the full dataset, including the observations from all leg pairs. In order to model both the leg pair differences (L1, L2, L3, L4) and the push vs. pull difference, we need to include both terms in the R formula. Let's see what kind of design matrix will be formed with two variables in the formula:
+Now we'll continue and examine the full dataset, including the observations from all leg pairs. In order to model both the leg pair differences (L1, L2, L3, L4) and the push vs. pull difference, we need to include both terms in the model formula. Let's see what design matrix will be formed with two variables in the formula:
 
 ```{r model_matrix_image2, fig.cap="Image of the model matrix for a formula with type + leg"}
 X <- model.matrix(~ type + leg, data=spider)
 colnames(X)
-imagemat(X, main="Model matrix for linear model with two factors")
+imagemat(X, main = "Model matrix for linear model with two factors")
 ```
 
 The first column is the intercept, and so it has 1's for all samples. The second column has 1's for the push samples, and we can see that there are four groups of them. Finally, the third, fourth and fifth columns have 1's for the L2, L3 and L4 samples. The L1 samples do not have a column, because *L1* is the reference level for `leg`. Similarly, there is no *pull* column, because *pull* is the reference level for the `type` variable.
