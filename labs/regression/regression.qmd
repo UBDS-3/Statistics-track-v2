@@ -12,7 +12,7 @@ format:
     toc-depth: 4
     code-line-numbers: false
 knitr:
-  opts_chunk: 
+  opts_chunk:
     R.options:
       width: 120
 params:
@@ -53,7 +53,7 @@ medv|median value of owner-occupied homes in $1000s"), sep = "|", header = TRUE)
 knitr::kable(bostonanno)
 ```
 
-We do two linear regressions with $y$ the house value, and two predictors (`dis` and `rm`), or three (in addition, `nox`). 
+We do two linear regressions with $y$ the house value, and two predictors (`dis` and `rm`), or three (in addition, `nox`).
 
 ```{r}
 #| label: colinear-2
@@ -105,7 +105,7 @@ The p value for `testBefore` (=difference before - after) is "significant".
 
 ```{r}
 #| label: pairing-3
-FitnessW = tidyr::spread(Fitness, test, number) 
+FitnessW = tidyr::spread(Fitness, test, number)
 t.test(FitnessW$After, FitnessW$Before, paired = TRUE)
 ```
 
@@ -127,7 +127,7 @@ We use a dataset that compares the friction coefficients on the different legs o
 
 Jonas O. Wolff  & Stanislav N. Gorb, [Radial arrangement of Janus-like setae permits friction control in spiders](http://dx.doi.org/10.1038/srep01101), Scientific Reports, 22 January 2013.
 
-The abstract of the paper says: 
+The abstract of the paper says:
 
 > The hunting spider Cupiennius salei (Arachnida, Ctenidae) possesses hairy attachment pads (claw tufts) at its distal legs, consisting of directional branched setae... Friction of claw tufts on smooth glass was measured to reveal the functional effect of seta arrangement within the pad.
 
@@ -148,7 +148,7 @@ spider <- read.csv(csv, skip = 1)
 
 #### Initial visual inspection of the data
 
-Each measurement comes from one of the leg pairs while a leg is either pushing or pulling. 
+Each measurement comes from one of the leg pairs while a leg is either pushing or pulling.
 So we have two variables:
 
 ```{r}
@@ -165,7 +165,7 @@ We can make a plot summarizing the measurements for each of the eight pairs:
 #| out-width: "70%"
 #| message: false
 library("ggbeeswarm")
-ggplot(spider, aes(y = friction, x = leg)) + geom_beeswarm() + 
+ggplot(spider, aes(y = friction, x = leg)) + geom_beeswarm() +
   geom_boxplot(aes(fill = type), outliers = FALSE, col = "#0000ff80", fill = "#00000000") +
   facet_grid(col = vars(type))
 ```
@@ -185,7 +185,7 @@ What we can immediately see are two trends:
 
 ::: {.callout-caution collapse="true"}
 # Heteroskedasticity
-Another thing to notice is that the groups have different spread around their average, what we call *within-group variance*. This phenomenon, also called *heteroskedasticity*, can be a problem for the kinds of linear models we  explore below, since we will be assuming that around the group means, the data are distributed identically, meaning the same variance within each group. The consequence of ignoring the different variances for the different groups is that comparisons between those groups with small variances will be overly "conservative" (because the overall estimate of variance is too large), and comparisons between groups with large variances will be overly confident (because the estimate is too small). 
+Another thing to notice is that the groups have different spread around their average, what we call *within-group variance*. This phenomenon, also called *heteroskedasticity*, can be a problem for the kinds of linear models we  explore below, since we will be assuming that around the group means, the data are distributed identically, meaning the same variance within each group. The consequence of ignoring the different variances for the different groups is that comparisons between those groups with small variances will be overly "conservative" (because the overall estimate of variance is too large), and comparisons between groups with large variances will be overly confident (because the estimate is too small).
 
 Sometimes it is possible to transform your way out of this: if the spread increases with the mean, such that groups with mean values also have larger spread, a possibility is to transform the data with a function such as the `log` or `sqrt`. This looks like it could be useful here, since three of the four push groups (L1, L2, L3) have the smallest friction values and also the smallest spread.
 
