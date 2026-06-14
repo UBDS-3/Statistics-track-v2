@@ -1,3 +1,12 @@
+> ⚠️ **OLD / OBSOLETE — DO NOT USE**
+>
+> This repository is no longer maintained and may contain outdated code, data, or instructions.
+> 👉 Please use the current, actively maintained version instead:
+>
+> **[UBDS-3/Statistics_track_2026](https://github.com/UBDS-3/Statistics_track_2026)**
+>
+> Any future updates, fixes, and materials will be published there.
+
 # UBDS3-2025 Statistics source
 If you are a student, who was very curious - well done smart ass, you have all the solutions, but please keep it as our secret :)
 
