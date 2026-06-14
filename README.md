@@ -1,3 +1,12 @@
+> ⚠️ **OLD / OBSOLETE — DO NOT USE**
+>
+> This repository is no longer maintained and may contain outdated code, data, or instructions.
+> 👉 Please use the current, actively maintained version instead:
+>
+> **[UBDS-3/Statistics_track_2026](https://github.com/UBDS-3/Statistics_track_2026)**
+>
+> Any future updates, fixes, and materials will be published there.
+> 
 # UBDS3-2025
 
 This repository contains teaching material for the R statistical course of the Ukrainian Biological Data Science Summer School 2025
